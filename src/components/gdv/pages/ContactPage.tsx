@@ -156,7 +156,7 @@ export default function ContactPage({ settings, services }: ContactPageProps) {
 
                   {success && (
                     <div className="mb-6 p-4 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
-                      ✅ Votre message a été envoyé avec succès ! Vous allez être redirigé vers WhatsApp.
+                      Votre message a été envoyé avec succès ! Vous allez être redirigé vers WhatsApp.
                     </div>
                   )}
                   {error && (
