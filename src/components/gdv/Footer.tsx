@@ -85,16 +85,16 @@ export default function Footer({ pageVisibilities, settings, onNavigate }: Foote
               &ldquo;Vous satisfaire est notre priorité&rdquo;
             </p>
             <div className="flex items-center gap-3 pt-2">
-              <a href={settings?.facebookUrl || '#'} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-gdv-gold/15 flex items-center justify-center hover:bg-gdv-gold/30 transition-colors" aria-label="Facebook">
+              <a href={settings?.facebookUrl || '#'} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-gdv-gold/15 flex items-center justify-center hover:bg-gdv-teal/30 hover:border-gdv-teal/50 transition-colors" aria-label="Facebook">
                 <Facebook className="w-4 h-4 text-gdv-gold" />
               </a>
-              <a href={settings?.instagramUrl || '#'} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-gdv-gold/15 flex items-center justify-center hover:bg-gdv-gold/30 transition-colors" aria-label="Instagram">
+              <a href={settings?.instagramUrl || '#'} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-gdv-gold/15 flex items-center justify-center hover:bg-gdv-teal/30 transition-colors" aria-label="Instagram">
                 <Instagram className="w-4 h-4 text-gdv-gold" />
               </a>
-              <a href={settings?.twitterUrl || '#'} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-gdv-gold/15 flex items-center justify-center hover:bg-gdv-gold/30 transition-colors" aria-label="Twitter">
+              <a href={settings?.twitterUrl || '#'} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-gdv-gold/15 flex items-center justify-center hover:bg-gdv-teal/30 transition-colors" aria-label="Twitter">
                 <Twitter className="w-4 h-4 text-gdv-gold" />
               </a>
-              <a href={settings?.youtubeUrl || '#'} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-gdv-gold/15 flex items-center justify-center hover:bg-gdv-gold/30 transition-colors" aria-label="YouTube">
+              <a href={settings?.youtubeUrl || '#'} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-gdv-gold/15 flex items-center justify-center hover:bg-gdv-teal/30 transition-colors" aria-label="YouTube">
                 <Youtube className="w-4 h-4 text-gdv-gold" />
               </a>
             </div>
@@ -115,9 +115,9 @@ export default function Footer({ pageVisibilities, settings, onNavigate }: Foote
                 <button
                   key={link.key}
                   onClick={() => onNavigate(link.key)}
-                  className="text-gdv-cream/60 text-sm hover:text-gdv-gold transition-colors text-left flex items-center gap-1.5 group"
+                  className="text-gdv-cream/60 text-sm hover:text-gdv-teal-light transition-colors text-left flex items-center gap-1.5 group"
                 >
-                  <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-gdv-gold" />
+                  <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-gdv-teal-light" />
                   {link.label}
                 </button>
               ))}
@@ -135,15 +135,15 @@ export default function Footer({ pageVisibilities, settings, onNavigate }: Foote
           >
             <h3 className="text-gdv-gold font-semibold text-base uppercase tracking-wider">Contact</h3>
             <div className="space-y-3 text-sm">
-              <a href={`tel:${phone1.replace(/\s/g, '')}`} className="flex items-start gap-3 text-gdv-cream/60 hover:text-gdv-gold transition-colors">
+              <a href={`tel:${phone1.replace(/\s/g, '')}`} className="flex items-start gap-3 text-gdv-cream/60 hover:text-gdv-teal-light transition-colors">
                 <Phone className="w-4 h-4 mt-0.5 shrink-0 text-gdv-gold" />
                 <span>{phone1}</span>
               </a>
-              <a href={`tel:${phone2.replace(/\s/g, '')}`} className="flex items-start gap-3 text-gdv-cream/60 hover:text-gdv-gold transition-colors">
+              <a href={`tel:${phone2.replace(/\s/g, '')}`} className="flex items-start gap-3 text-gdv-cream/60 hover:text-gdv-teal-light transition-colors">
                 <Phone className="w-4 h-4 mt-0.5 shrink-0 text-gdv-gold" />
                 <span>{phone2}</span>
               </a>
-              <a href={`mailto:${email1}`} className="flex items-start gap-3 text-gdv-cream/60 hover:text-gdv-gold transition-colors">
+              <a href={`mailto:${email1}`} className="flex items-start gap-3 text-gdv-cream/60 hover:text-gdv-teal-light transition-colors">
                 <Mail className="w-4 h-4 mt-0.5 shrink-0 text-gdv-gold" />
                 <span>{email1}</span>
               </a>
@@ -171,9 +171,9 @@ export default function Footer({ pageVisibilities, settings, onNavigate }: Foote
               <Input
                 type="email"
                 placeholder="Votre email"
-                className="bg-gdv-dark border-gdv-gold/30 text-gdv-cream placeholder:text-gdv-cream/40 text-sm rounded-full px-4 h-10 focus-visible:ring-gdv-gold/50"
+                className="bg-gdv-dark border-gdv-gold/30 text-gdv-cream placeholder:text-gdv-cream/40 text-sm rounded-full px-4 h-10 focus-visible:ring-gdv-teal/50 focus-visible:border-gdv-teal/50"
               />
-              <Button size="sm" className="bg-gdv-gold hover:bg-gdv-gold-light text-white rounded-full shrink-0 px-4">
+              <Button size="sm" className="bg-gdv-teal hover:bg-gdv-teal-light text-white rounded-full shrink-0 px-4">
                 <Send className="w-4 h-4" />
               </Button>
             </div>

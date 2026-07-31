@@ -14,6 +14,7 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import AnimatedSection from '@/components/gdv/AnimatedSection';
+import { IMAGES, SERVICE_IMAGE_MAP } from '@/lib/images';
 
 interface ServicesPageProps {
   services: { id: string; title: string; slug: string; shortDesc: string; icon: string }[] | null;
@@ -49,12 +50,15 @@ export default function ServicesPage({ services, onNavigate }: ServicesPageProps
     <div>
       {/* Hero */}
       <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-gdv-dark via-gdv-brown to-gdv-dark" />
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${IMAGES.servicesHero})` }}
+        />
         <div className="hero-overlay absolute inset-0" />
         <motion.div
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 6, repeat: Infinity }}
-          className="absolute bottom-1/3 left-[10%] w-48 h-48 rounded-full bg-gdv-gold/10 blur-xl"
+          className="absolute bottom-1/3 left-[10%] w-48 h-48 rounded-full bg-gdv-teal/10 blur-xl"
         />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -78,7 +82,7 @@ export default function ServicesPage({ services, onNavigate }: ServicesPageProps
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-gdv-cream/80 text-lg max-w-2xl mx-auto"
+            className="text-white/80 text-lg max-w-2xl mx-auto"
           >
             Des solutions complètes pour tous vos besoins de voyage
           </motion.p>
@@ -86,7 +90,7 @@ export default function ServicesPage({ services, onNavigate }: ServicesPageProps
       </section>
 
       {/* Services Grid */}
-      <section className="py-20 lg:py-28 bg-gdv-cream">
+      <section className="py-20 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             variants={staggerContainer}
@@ -95,33 +99,48 @@ export default function ServicesPage({ services, onNavigate }: ServicesPageProps
             viewport={{ once: true, margin: '-100px' }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            {services?.map((service, index) => (
-              <motion.div key={service.id} variants={fadeInUp} custom={index * 0.1}>
-                <Card
-                  onClick={() => onNavigate(`service-${service.slug}`)}
-                  className="group cursor-pointer border-gdv-beige/50 bg-white hover:shadow-2xl hover:shadow-gdv-gold/10 transition-all duration-500 overflow-hidden h-full"
-                >
-                  {/* Top accent */}
-                  <div className="h-1 bg-gradient-to-r from-gdv-gold via-gdv-gold-light to-gdv-gold transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+            {services?.map((service, index) => {
+              const serviceImg = SERVICE_IMAGE_MAP[service.slug];
+              return (
+                <motion.div key={service.id} variants={fadeInUp} custom={index * 0.1}>
+                  <Card
+                    onClick={() => onNavigate(`service-${service.slug}`)}
+                    className="group cursor-pointer border-gdv-brown-pale/30 bg-white hover:shadow-2xl hover:shadow-gdv-teal/10 transition-all duration-500 overflow-hidden h-full"
+                  >
+                    {/* Service image background */}
+                    <div className="relative h-48 overflow-hidden">
+                      {serviceImg && (
+                        <div
+                          className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500"
+                          style={{ backgroundImage: `url(${serviceImg})` }}
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                      {/* Icon overlay */}
+                      <div className="absolute bottom-4 left-5 w-14 h-14 rounded-2xl bg-gdv-teal/90 flex items-center justify-center text-white group-hover:bg-gdv-teal group-hover:scale-110 transition-all duration-300 group-hover:shadow-lg">
+                        {iconMap[service.icon] || <Plane className="w-8 h-8" />}
+                      </div>
+                    </div>
 
-                  <CardContent className="p-8">
-                    <div className="w-16 h-16 rounded-2xl bg-gdv-gold/10 flex items-center justify-center text-gdv-gold mb-6 group-hover:bg-gdv-gold group-hover:text-white group-hover:scale-110 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-gdv-gold/20">
-                      {iconMap[service.icon] || <Plane className="w-8 h-8" />}
-                    </div>
-                    <h3 className="text-xl font-bold text-gdv-brown mb-3 group-hover:text-gdv-gold transition-colors font-serif">
-                      {service.title}
-                    </h3>
-                    <p className="text-gdv-brown/60 text-sm leading-relaxed mb-6">
-                      {service.shortDesc}
-                    </p>
-                    <div className="flex items-center gap-2 text-gdv-gold text-sm font-semibold group-hover:gap-3 transition-all duration-300">
-                      En savoir plus
-                      <ArrowRight className="w-4 h-4" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+                    {/* Top accent */}
+                    <div className="h-0.5 bg-gradient-to-r from-gdv-teal via-gdv-teal-light to-gdv-teal transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+
+                    <CardContent className="p-6">
+                      <h3 className="text-xl font-bold text-gdv-brown mb-3 group-hover:text-gdv-teal transition-colors font-serif">
+                        {service.title}
+                      </h3>
+                      <p className="text-gdv-brown-light text-sm leading-relaxed mb-6">
+                        {service.shortDesc}
+                      </p>
+                      <div className="flex items-center gap-2 text-gdv-teal text-sm font-semibold group-hover:gap-3 transition-all duration-300">
+                        En savoir plus
+                        <ArrowRight className="w-4 h-4" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </section>
@@ -133,13 +152,13 @@ export default function ServicesPage({ services, onNavigate }: ServicesPageProps
             <h2 className="text-2xl sm:text-3xl font-bold text-white font-serif mb-4">
               Vous avez besoin d&apos;un service sur mesure ?
             </h2>
-            <p className="text-gdv-cream/70 mb-8">
+            <p className="text-white/70 mb-8">
               Contactez-nous pour discuter de vos besoins et obtenir un devis personnalisé.
             </p>
             <Button
               onClick={() => onNavigate('contact')}
               size="lg"
-              className="bg-gdv-gold hover:bg-gdv-gold-light text-white font-semibold px-10 rounded-full shadow-lg transition-all duration-300 group"
+              className="bg-gdv-teal hover:bg-gdv-teal-light text-white font-semibold px-10 rounded-full shadow-lg transition-all duration-300 group"
             >
               Demander un Devis
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />

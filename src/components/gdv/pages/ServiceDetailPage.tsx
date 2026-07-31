@@ -18,6 +18,7 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import AnimatedSection from '@/components/gdv/AnimatedSection';
+import { SERVICE_IMAGE_MAP } from '@/lib/images';
 
 interface ServiceDetailPageProps {
   slug: string;
@@ -74,8 +75,8 @@ export default function ServiceDetailPage({ slug, onNavigate }: ServiceDetailPag
     return (
       <div className="min-h-screen flex items-center justify-center bg-gdv-cream">
         <div className="animate-pulse flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-full border-2 border-gdv-gold border-t-transparent animate-spin" />
-          <span className="text-gdv-brown/60 text-sm">Chargement...</span>
+          <div className="w-10 h-10 rounded-full border-2 border-gdv-teal border-t-transparent animate-spin" />
+          <span className="text-gdv-brown-light text-sm">Chargement...</span>
         </div>
       </div>
     );
@@ -86,7 +87,7 @@ export default function ServiceDetailPage({ slug, onNavigate }: ServiceDetailPag
       <div className="min-h-screen flex items-center justify-center bg-gdv-cream">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gdv-brown mb-4">Service non trouvé</h2>
-          <Button onClick={() => onNavigate('services')} variant="outline" className="border-gdv-gold text-gdv-gold rounded-full">
+          <Button onClick={() => onNavigate('services')} variant="outline" className="border-gdv-teal text-gdv-teal rounded-full">
             Retour aux services
           </Button>
         </div>
@@ -95,17 +96,21 @@ export default function ServiceDetailPage({ slug, onNavigate }: ServiceDetailPag
   }
 
   const features = service.features ? JSON.parse(service.features) : [];
+  const serviceImg = SERVICE_IMAGE_MAP[service.slug];
 
   return (
     <div>
       {/* Hero */}
       <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-gdv-dark via-gdv-brown to-gdv-dark" />
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${serviceImg || ''})` }}
+        />
         <div className="hero-overlay absolute inset-0" />
         <motion.div
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 6, repeat: Infinity }}
-          className="absolute top-1/4 right-[10%] w-40 h-40 rounded-full bg-gdv-gold/10 blur-xl"
+          className="absolute top-1/4 right-[10%] w-40 h-40 rounded-full bg-gdv-teal/10 blur-xl"
         />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -114,18 +119,18 @@ export default function ServiceDetailPage({ slug, onNavigate }: ServiceDetailPag
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="flex items-center gap-2 text-gdv-cream/60 text-sm mb-8"
+            className="flex items-center gap-2 text-white/60 text-sm mb-8"
           >
-            <button onClick={() => onNavigate('accueil')} className="hover:text-gdv-gold transition-colors flex items-center gap-1">
+            <button onClick={() => onNavigate('accueil')} className="hover:text-gdv-teal-light transition-colors flex items-center gap-1">
               <Home className="w-4 h-4" />
               Accueil
             </button>
             <ChevronRight className="w-4 h-4" />
-            <button onClick={() => onNavigate('services')} className="hover:text-gdv-gold transition-colors">
+            <button onClick={() => onNavigate('services')} className="hover:text-gdv-teal-light transition-colors">
               Services
             </button>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-gdv-gold">{service.title}</span>
+            <span className="text-gdv-teal-light">{service.title}</span>
           </motion.nav>
 
           <motion.div
@@ -134,14 +139,14 @@ export default function ServiceDetailPage({ slug, onNavigate }: ServiceDetailPag
             transition={{ duration: 0.6 }}
             className="flex items-center gap-5 mb-6"
           >
-            <div className="w-16 h-16 rounded-2xl bg-gdv-gold/20 flex items-center justify-center text-gdv-gold">
+            <div className="w-16 h-16 rounded-2xl bg-gdv-teal/20 backdrop-blur-sm flex items-center justify-center text-white">
               {iconMap[service.icon] || <Plane className="w-8 h-8" />}
             </div>
             <div>
               <h1 className="text-4xl sm:text-5xl font-bold text-white font-serif">
                 {service.title}
               </h1>
-              <p className="text-gdv-cream/70 mt-1">{service.shortDesc}</p>
+              <p className="text-white/70 mt-1">{service.shortDesc}</p>
             </div>
           </motion.div>
         </div>
@@ -154,11 +159,11 @@ export default function ServiceDetailPage({ slug, onNavigate }: ServiceDetailPag
             {/* Main Content */}
             <div className="lg:col-span-2">
               <AnimatedSection>
-                <Card className="border-gdv-beige/50 bg-white p-8 sm:p-10 shadow-lg shadow-gdv-brown/5">
+                <Card className="border-gdv-brown-pale/30 bg-white p-8 sm:p-10 shadow-lg shadow-black/5">
                   <h2 className="text-2xl font-bold text-gdv-brown font-serif mb-6">
                     Description du Service
                   </h2>
-                  <p className="text-gdv-brown/70 leading-relaxed text-base sm:text-lg">
+                  <p className="text-gdv-brown-light leading-relaxed text-base sm:text-lg">
                     {service.description}
                   </p>
                 </Card>
@@ -169,8 +174,8 @@ export default function ServiceDetailPage({ slug, onNavigate }: ServiceDetailPag
             <div className="space-y-8">
               {/* Features */}
               <AnimatedSection delay={0.15}>
-                <Card className="border-gdv-beige/50 bg-white overflow-hidden">
-                  <div className="h-1.5 bg-gradient-to-r from-gdv-gold to-gdv-gold-light" />
+                <Card className="border-gdv-brown-pale/30 bg-white overflow-hidden">
+                  <div className="h-1.5 bg-gradient-to-r from-gdv-teal to-gdv-teal-light" />
                   <CardContent className="p-6">
                     <h3 className="text-xl font-bold text-gdv-brown font-serif mb-5">
                       Ce qui est inclus
@@ -189,10 +194,10 @@ export default function ServiceDetailPage({ slug, onNavigate }: ServiceDetailPag
                           custom={index * 0.06}
                           className="flex items-start gap-3"
                         >
-                          <div className="w-6 h-6 rounded-full bg-gdv-gold/15 flex items-center justify-center shrink-0 mt-0.5">
-                            <Check className="w-3.5 h-3.5 text-gdv-gold" />
+                          <div className="w-6 h-6 rounded-full bg-gdv-teal/15 flex items-center justify-center shrink-0 mt-0.5">
+                            <Check className="w-3.5 h-3.5 text-gdv-teal" />
                           </div>
-                          <span className="text-gdv-brown/70 text-sm">{feature}</span>
+                          <span className="text-gdv-brown-light text-sm">{feature}</span>
                         </motion.div>
                       ))}
                     </motion.div>
@@ -202,15 +207,15 @@ export default function ServiceDetailPage({ slug, onNavigate }: ServiceDetailPag
 
               {/* CTA */}
               <AnimatedSection delay={0.3}>
-                <Card className="border-gdv-gold/30 bg-gradient-to-br from-gdv-brown to-gdv-dark text-white">
+                <Card className="border-gdv-teal/30 bg-gradient-to-br from-gdv-brown to-gdv-dark text-white">
                   <CardContent className="p-6 text-center">
                     <h3 className="text-xl font-bold font-serif mb-3">Intéressé ?</h3>
-                    <p className="text-gdv-cream/70 text-sm mb-5">
+                    <p className="text-white/70 text-sm mb-5">
                       Demandez un devis gratuit pour ce service.
                     </p>
                     <Button
                       onClick={() => onNavigate('contact')}
-                      className="w-full bg-gdv-gold hover:bg-gdv-gold-light text-white font-semibold rounded-full transition-all duration-300 group"
+                      className="w-full bg-gdv-teal hover:bg-gdv-teal-light text-white font-semibold rounded-full transition-all duration-300 group"
                     >
                       Demander un Devis
                       <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -219,7 +224,7 @@ export default function ServiceDetailPage({ slug, onNavigate }: ServiceDetailPag
                       href={`https://wa.me/224627104646?text=${encodeURIComponent(`Bonjour, je suis intéressé par votre service de ${service.title}. Pouvez-vous me donner plus d'informations ?`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-3 block text-center text-gdv-gold text-sm hover:underline"
+                      className="mt-3 block text-center text-gdv-teal-light text-sm hover:underline"
                     >
                       Ou contactez-nous sur WhatsApp
                     </a>

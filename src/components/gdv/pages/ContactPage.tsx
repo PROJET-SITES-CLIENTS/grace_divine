@@ -19,6 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import AnimatedSection from '@/components/gdv/AnimatedSection';
+import { IMAGES } from '@/lib/images';
 
 interface ContactPageProps {
   settings: Record<string, string> | null;
@@ -92,12 +93,15 @@ export default function ContactPage({ settings, services }: ContactPageProps) {
     <div>
       {/* Hero */}
       <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-gdv-dark via-gdv-brown to-gdv-dark" />
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${IMAGES.contactHero})` }}
+        />
         <div className="hero-overlay absolute inset-0" />
         <motion.div
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 6, repeat: Infinity }}
-          className="absolute top-1/4 right-[10%] w-40 h-40 rounded-full bg-gdv-gold/10 blur-xl"
+          className="absolute top-1/4 right-[10%] w-40 h-40 rounded-full bg-gdv-teal/10 blur-xl"
         />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.span
@@ -120,7 +124,7 @@ export default function ContactPage({ settings, services }: ContactPageProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-gdv-cream/80 text-lg max-w-2xl mx-auto"
+            className="text-white/80 text-lg max-w-2xl mx-auto"
           >
             Nous sommes à votre écoute pour répondre à toutes vos questions
           </motion.p>
@@ -128,7 +132,7 @@ export default function ContactPage({ settings, services }: ContactPageProps) {
       </section>
 
       {/* Contact Content */}
-      <section className="py-20 lg:py-28 bg-gdv-cream">
+      <section className="py-20 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
             {/* Form */}
@@ -140,10 +144,10 @@ export default function ContactPage({ settings, services }: ContactPageProps) {
               variants={fadeInUp}
               className="lg:col-span-3"
             >
-              <Card className="border-gdv-beige/50 bg-white shadow-lg shadow-gdv-brown/5">
+              <Card className="border-gdv-brown-pale/30 bg-white shadow-lg shadow-black/5">
                 <CardContent className="p-8 sm:p-10">
                   <h2 className="text-2xl font-bold text-gdv-brown font-serif mb-2">Envoyez-nous un message</h2>
-                  <p className="text-gdv-brown/60 text-sm mb-8">Remplissez le formulaire ci-dessous et nous vous répondrons rapidement.</p>
+                  <p className="text-gdv-brown-light text-sm mb-8">Remplissez le formulaire ci-dessous et nous vous répondrons rapidement.</p>
 
                   {success && (
                     <div className="mb-6 p-4 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
@@ -169,7 +173,7 @@ export default function ContactPage({ settings, services }: ContactPageProps) {
                           onChange={handleChange}
                           required
                           placeholder="Votre nom"
-                          className="bg-gdv-cream/50 border-gdv-beige/50 focus-visible:ring-gdv-gold/30 focus-visible:border-gdv-gold"
+                          className="bg-gdv-cream/50 border-gdv-brown-pale/30 focus-visible:ring-gdv-teal/30 focus-visible:border-gdv-teal"
                         />
                       </div>
                       <div className="space-y-2">
@@ -183,7 +187,7 @@ export default function ContactPage({ settings, services }: ContactPageProps) {
                           value={form.email}
                           onChange={handleChange}
                           placeholder="votre@email.com"
-                          className="bg-gdv-cream/50 border-gdv-beige/50 focus-visible:ring-gdv-gold/30 focus-visible:border-gdv-gold"
+                          className="bg-gdv-cream/50 border-gdv-brown-pale/30 focus-visible:ring-gdv-teal/30 focus-visible:border-gdv-teal"
                         />
                       </div>
                     </div>
@@ -199,7 +203,7 @@ export default function ContactPage({ settings, services }: ContactPageProps) {
                           value={form.phone}
                           onChange={handleChange}
                           placeholder="+224 ..."
-                          className="bg-gdv-cream/50 border-gdv-beige/50 focus-visible:ring-gdv-gold/30 focus-visible:border-gdv-gold"
+                          className="bg-gdv-cream/50 border-gdv-brown-pale/30 focus-visible:ring-gdv-teal/30 focus-visible:border-gdv-teal"
                         />
                       </div>
                       <div className="space-y-2">
@@ -212,7 +216,7 @@ export default function ContactPage({ settings, services }: ContactPageProps) {
                           value={form.subject}
                           onChange={handleChange}
                           placeholder="Sujet de votre demande"
-                          className="bg-gdv-cream/50 border-gdv-beige/50 focus-visible:ring-gdv-gold/30 focus-visible:border-gdv-gold"
+                          className="bg-gdv-cream/50 border-gdv-brown-pale/30 focus-visible:ring-gdv-teal/30 focus-visible:border-gdv-teal"
                         />
                       </div>
                     </div>
@@ -226,7 +230,7 @@ export default function ContactPage({ settings, services }: ContactPageProps) {
                         name="service"
                         value={form.service}
                         onChange={handleChange}
-                        className="w-full h-10 rounded-md bg-gdv-cream/50 border border-gdv-beige/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gdv-gold/30 focus:border-gdv-gold text-gdv-brown"
+                        className="w-full h-10 rounded-md bg-gdv-cream/50 border border-gdv-brown-pale/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gdv-teal/30 focus:border-gdv-teal text-gdv-brown"
                       >
                         <option value="">Sélectionnez un service</option>
                         {services?.map((s) => (
@@ -249,14 +253,14 @@ export default function ContactPage({ settings, services }: ContactPageProps) {
                         required
                         placeholder="Décrivez votre demande..."
                         rows={5}
-                        className="bg-gdv-cream/50 border-gdv-beige/50 focus-visible:ring-gdv-gold/30 focus-visible:border-gdv-gold resize-none"
+                        className="bg-gdv-cream/50 border-gdv-brown-pale/30 focus-visible:ring-gdv-teal/30 focus-visible:border-gdv-teal resize-none"
                       />
                     </div>
 
                     <Button
                       type="submit"
                       disabled={submitting}
-                      className="w-full sm:w-auto bg-gdv-gold hover:bg-gdv-gold-light text-white font-semibold px-8 rounded-full transition-all duration-300 disabled:opacity-50 group"
+                      className="w-full sm:w-auto bg-gdv-teal hover:bg-gdv-teal-light text-white font-semibold px-8 rounded-full transition-all duration-300 disabled:opacity-50 group"
                     >
                       {submitting ? (
                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -282,44 +286,44 @@ export default function ContactPage({ settings, services }: ContactPageProps) {
               className="lg:col-span-2 space-y-6"
             >
               {/* Quick Contact */}
-              <Card className="border-gdv-beige/50 bg-white overflow-hidden">
-                <div className="h-1.5 bg-gradient-to-r from-gdv-gold to-gdv-gold-light" />
+              <Card className="border-gdv-brown-pale/30 bg-white overflow-hidden">
+                <div className="h-1.5 bg-gradient-to-r from-gdv-teal to-gdv-teal-light" />
                 <CardContent className="p-6">
                   <h3 className="text-lg font-bold text-gdv-brown font-serif mb-5">Coordonnées</h3>
                   <div className="space-y-4">
-                    <a href={`tel:${phone1.replace(/\s/g, '')}`} className="flex items-start gap-3 text-gdv-brown/70 hover:text-gdv-gold transition-colors group">
-                      <div className="w-10 h-10 rounded-lg bg-gdv-gold/10 flex items-center justify-center shrink-0 group-hover:bg-gdv-gold/20 transition-colors">
-                        <Phone className="w-5 h-5 text-gdv-gold" />
+                    <a href={`tel:${phone1.replace(/\s/g, '')}`} className="flex items-start gap-3 text-gdv-brown-light hover:text-gdv-teal transition-colors group">
+                      <div className="w-10 h-10 rounded-lg bg-gdv-teal/10 flex items-center justify-center shrink-0 group-hover:bg-gdv-teal/20 transition-colors">
+                        <Phone className="w-5 h-5 text-gdv-teal" />
                       </div>
                       <div>
-                        <p className="text-xs text-gdv-brown/50 font-medium">Téléphone 1</p>
+                        <p className="text-xs text-gdv-brown-light/70 font-medium">Téléphone 1</p>
                         <p className="text-sm font-medium">{phone1}</p>
                       </div>
                     </a>
-                    <a href={`tel:${phone2.replace(/\s/g, '')}`} className="flex items-start gap-3 text-gdv-brown/70 hover:text-gdv-gold transition-colors group">
-                      <div className="w-10 h-10 rounded-lg bg-gdv-gold/10 flex items-center justify-center shrink-0 group-hover:bg-gdv-gold/20 transition-colors">
-                        <Phone className="w-5 h-5 text-gdv-gold" />
+                    <a href={`tel:${phone2.replace(/\s/g, '')}`} className="flex items-start gap-3 text-gdv-brown-light hover:text-gdv-teal transition-colors group">
+                      <div className="w-10 h-10 rounded-lg bg-gdv-teal/10 flex items-center justify-center shrink-0 group-hover:bg-gdv-teal/20 transition-colors">
+                        <Phone className="w-5 h-5 text-gdv-teal" />
                       </div>
                       <div>
-                        <p className="text-xs text-gdv-brown/50 font-medium">Téléphone 2</p>
+                        <p className="text-xs text-gdv-brown-light/70 font-medium">Téléphone 2</p>
                         <p className="text-sm font-medium">{phone2}</p>
                       </div>
                     </a>
-                    <a href={`mailto:${email1}`} className="flex items-start gap-3 text-gdv-brown/70 hover:text-gdv-gold transition-colors group">
-                      <div className="w-10 h-10 rounded-lg bg-gdv-gold/10 flex items-center justify-center shrink-0 group-hover:bg-gdv-gold/20 transition-colors">
-                        <Mail className="w-5 h-5 text-gdv-gold" />
+                    <a href={`mailto:${email1}`} className="flex items-start gap-3 text-gdv-brown-light hover:text-gdv-teal transition-colors group">
+                      <div className="w-10 h-10 rounded-lg bg-gdv-teal/10 flex items-center justify-center shrink-0 group-hover:bg-gdv-teal/20 transition-colors">
+                        <Mail className="w-5 h-5 text-gdv-teal" />
                       </div>
                       <div>
-                        <p className="text-xs text-gdv-brown/50 font-medium">Email</p>
+                        <p className="text-xs text-gdv-brown-light/70 font-medium">Email</p>
                         <p className="text-sm font-medium">{email1}</p>
                       </div>
                     </a>
-                    <div className="flex items-start gap-3 text-gdv-brown/70">
-                      <div className="w-10 h-10 rounded-lg bg-gdv-gold/10 flex items-center justify-center shrink-0">
-                        <MapPin className="w-5 h-5 text-gdv-gold" />
+                    <div className="flex items-start gap-3 text-gdv-brown-light">
+                      <div className="w-10 h-10 rounded-lg bg-gdv-teal/10 flex items-center justify-center shrink-0">
+                        <MapPin className="w-5 h-5 text-gdv-teal" />
                       </div>
                       <div>
-                        <p className="text-xs text-gdv-brown/50 font-medium">Adresse</p>
+                        <p className="text-xs text-gdv-brown-light/70 font-medium">Adresse</p>
                         <p className="text-sm font-medium">{address}</p>
                       </div>
                     </div>
@@ -345,20 +349,20 @@ export default function ContactPage({ settings, services }: ContactPageProps) {
               </Card>
 
               {/* Social Links */}
-              <Card className="border-gdv-beige/50 bg-white">
+              <Card className="border-gdv-brown-pale/30 bg-white">
                 <CardContent className="p-6">
                   <h3 className="text-lg font-bold text-gdv-brown font-serif mb-4">Réseaux Sociaux</h3>
                   <div className="flex items-center gap-3">
-                    <a href={settings?.facebookUrl || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gdv-gold/10 flex items-center justify-center hover:bg-gdv-gold hover:text-white text-gdv-gold transition-all" aria-label="Facebook">
+                    <a href={settings?.facebookUrl || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gdv-teal/10 flex items-center justify-center hover:bg-gdv-teal hover:text-white text-gdv-teal transition-all" aria-label="Facebook">
                       <Facebook className="w-5 h-5" />
                     </a>
-                    <a href={settings?.instagramUrl || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gdv-gold/10 flex items-center justify-center hover:bg-gdv-gold hover:text-white text-gdv-gold transition-all" aria-label="Instagram">
+                    <a href={settings?.instagramUrl || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gdv-teal/10 flex items-center justify-center hover:bg-gdv-teal hover:text-white text-gdv-teal transition-all" aria-label="Instagram">
                       <Instagram className="w-5 h-5" />
                     </a>
-                    <a href={settings?.twitterUrl || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gdv-gold/10 flex items-center justify-center hover:bg-gdv-gold hover:text-white text-gdv-gold transition-all" aria-label="Twitter">
+                    <a href={settings?.twitterUrl || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gdv-teal/10 flex items-center justify-center hover:bg-gdv-teal hover:text-white text-gdv-teal transition-all" aria-label="Twitter">
                       <Twitter className="w-5 h-5" />
                     </a>
-                    <a href={settings?.youtubeUrl || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gdv-gold/10 flex items-center justify-center hover:bg-gdv-gold hover:text-white text-gdv-gold transition-all" aria-label="YouTube">
+                    <a href={settings?.youtubeUrl || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gdv-teal/10 flex items-center justify-center hover:bg-gdv-teal hover:text-white text-gdv-teal transition-all" aria-label="YouTube">
                       <Youtube className="w-5 h-5" />
                     </a>
                   </div>
@@ -366,8 +370,8 @@ export default function ContactPage({ settings, services }: ContactPageProps) {
               </Card>
 
               {/* Map Placeholder */}
-              <Card className="border-gdv-beige/50 bg-white overflow-hidden">
-                <div className="aspect-video bg-gdv-warm flex flex-col items-center justify-center text-gdv-brown/40">
+              <Card className="border-gdv-brown-pale/30 bg-white overflow-hidden">
+                <div className="aspect-video bg-gdv-warm flex flex-col items-center justify-center text-gdv-brown-light">
                   <MapPin className="w-8 h-8 mb-2" />
                   <p className="text-sm font-medium">Carte</p>
                   <p className="text-xs mt-1">Kaloum, Conakry, Guinée</p>

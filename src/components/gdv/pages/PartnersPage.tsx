@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ExternalLink, Building } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import AnimatedSection from '@/components/gdv/AnimatedSection';
+import { IMAGES } from '@/lib/images';
 
 interface PartnersPageProps {
   partners: { id: string; name: string; logo: string; website: string }[] | null;
@@ -34,10 +35,10 @@ function getInitials(name: string): string {
 
 function getColor(name: string): string {
   const colors = [
-    'from-gdv-brown to-gdv-gold',
-    'from-gdv-gold to-gdv-gold-light',
+    'from-gdv-brown to-gdv-teal',
+    'from-gdv-teal to-gdv-teal-light',
     'from-gdv-dark to-gdv-brown',
-    'from-gdv-gold-light to-gdv-brown',
+    'from-gdv-teal-light to-gdv-brown',
     'from-gdv-brown to-gdv-dark',
   ];
   const index = name.length % colors.length;
@@ -49,12 +50,15 @@ export default function PartnersPage({ partners }: PartnersPageProps) {
     <div>
       {/* Hero */}
       <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-gdv-dark via-gdv-brown to-gdv-dark" />
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${IMAGES.partenairesHero})` }}
+        />
         <div className="hero-overlay absolute inset-0" />
         <motion.div
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 6, repeat: Infinity }}
-          className="absolute bottom-1/4 right-[15%] w-40 h-40 rounded-full bg-gdv-gold/10 blur-xl"
+          className="absolute bottom-1/4 right-[15%] w-40 h-40 rounded-full bg-gdv-teal/10 blur-xl"
         />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.span
@@ -77,7 +81,7 @@ export default function PartnersPage({ partners }: PartnersPageProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-gdv-cream/80 text-lg max-w-2xl mx-auto"
+            className="text-white/80 text-lg max-w-2xl mx-auto"
           >
             Nous collaborons avec les meilleurs pour vous offrir un service d&apos;excellence
           </motion.p>
@@ -85,12 +89,12 @@ export default function PartnersPage({ partners }: PartnersPageProps) {
       </section>
 
       {/* Partners Grid */}
-      <section className="py-20 lg:py-28 bg-gdv-cream">
+      <section className="py-20 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {!partners || partners.length === 0 ? (
             <div className="text-center py-20">
-              <Building className="w-16 h-16 text-gdv-beige mx-auto mb-4" />
-              <p className="text-gdv-brown/60 text-lg">Aucun partenaire affiché pour le moment.</p>
+              <Building className="w-16 h-16 text-gdv-brown-pale mx-auto mb-4" />
+              <p className="text-gdv-brown-light text-lg">Aucun partenaire affiché pour le moment.</p>
             </div>
           ) : (
             <motion.div
@@ -102,7 +106,7 @@ export default function PartnersPage({ partners }: PartnersPageProps) {
             >
               {partners.map((partner, index) => (
                 <motion.div key={partner.id} variants={fadeInUp} custom={index * 0.08}>
-                  <Card className="border-gdv-beige/50 bg-white hover:shadow-xl hover:shadow-gdv-gold/5 transition-all duration-300 group cursor-pointer h-full">
+                  <Card className="border-gdv-brown-pale/30 bg-white hover:shadow-xl hover:shadow-gdv-teal/5 transition-all duration-300 group cursor-pointer h-full">
                     <CardContent className="p-6 flex flex-col items-center text-center justify-center min-h-[180px]">
                       {partner.logo ? (
                         <img
@@ -115,7 +119,7 @@ export default function PartnersPage({ partners }: PartnersPageProps) {
                           {getInitials(partner.name)}
                         </div>
                       )}
-                      <h3 className="font-semibold text-gdv-brown text-sm group-hover:text-gdv-gold transition-colors">
+                      <h3 className="font-semibold text-gdv-brown text-sm group-hover:text-gdv-teal transition-colors">
                         {partner.name}
                       </h3>
                       {partner.website && (
@@ -123,7 +127,7 @@ export default function PartnersPage({ partners }: PartnersPageProps) {
                           href={partner.website}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="mt-2 text-gdv-brown/40 hover:text-gdv-gold transition-colors"
+                          className="mt-2 text-gdv-brown-light hover:text-gdv-teal transition-colors"
                           aria-label={`Visiter ${partner.name}`}
                         >
                           <ExternalLink className="w-4 h-4" />

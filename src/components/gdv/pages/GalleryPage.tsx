@@ -6,6 +6,7 @@ import { X, Play, ChevronLeft, ChevronRight, Camera, Video } from 'lucide-react'
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AnimatedSection from '@/components/gdv/AnimatedSection';
+import { IMAGES } from '@/lib/images';
 
 interface GalleryImage {
   id: string;
@@ -69,7 +70,7 @@ export default function GalleryPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gdv-cream pt-20">
-        <div className="w-10 h-10 rounded-full border-2 border-gdv-gold border-t-transparent animate-spin" />
+        <div className="w-10 h-10 rounded-full border-2 border-gdv-teal border-t-transparent animate-spin" />
       </div>
     );
   }
@@ -78,12 +79,15 @@ export default function GalleryPage() {
     <div>
       {/* Hero */}
       <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-gdv-dark via-gdv-brown to-gdv-dark" />
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${IMAGES.galleryHero})` }}
+        />
         <div className="hero-overlay absolute inset-0" />
         <motion.div
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 6, repeat: Infinity }}
-          className="absolute top-1/3 right-[10%] w-40 h-40 rounded-full bg-gdv-gold/10 blur-xl"
+          className="absolute top-1/3 right-[10%] w-40 h-40 rounded-full bg-gdv-teal/10 blur-xl"
         />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.span
@@ -106,7 +110,7 @@ export default function GalleryPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-gdv-cream/80 text-lg max-w-2xl mx-auto"
+            className="text-white/80 text-lg max-w-2xl mx-auto"
           >
             Découvrez nos plus belles destinations et moments
           </motion.p>
@@ -114,21 +118,21 @@ export default function GalleryPage() {
       </section>
 
       {/* Gallery Content */}
-      <section className="py-20 lg:py-28 bg-gdv-cream">
+      <section className="py-20 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Tabs defaultValue="images" className="w-full">
             <AnimatedSection>
-              <TabsList className="mx-auto flex w-fit bg-white border border-gdv-beige/50 rounded-full p-1 mb-10">
+              <TabsList className="mx-auto flex w-fit bg-white border border-gdv-brown-pale/30 rounded-full p-1 mb-10">
                 <TabsTrigger
                   value="images"
-                  className="rounded-full px-6 py-2.5 text-sm font-medium data-[state=active]:bg-gdv-gold data-[state=active]:text-white transition-all duration-200 flex items-center gap-2"
+                  className="rounded-full px-6 py-2.5 text-sm font-medium data-[state=active]:bg-gdv-teal data-[state=active]:text-white transition-all duration-200 flex items-center gap-2"
                 >
                   <Camera className="w-4 h-4" />
                   Images ({images.length})
                 </TabsTrigger>
                 <TabsTrigger
                   value="videos"
-                  className="rounded-full px-6 py-2.5 text-sm font-medium data-[state=active]:bg-gdv-gold data-[state=active]:text-white transition-all duration-200 flex items-center gap-2"
+                  className="rounded-full px-6 py-2.5 text-sm font-medium data-[state=active]:bg-gdv-teal data-[state=active]:text-white transition-all duration-200 flex items-center gap-2"
                 >
                   <Video className="w-4 h-4" />
                   Vidéos ({videos.length})
@@ -140,8 +144,8 @@ export default function GalleryPage() {
             <TabsContent value="images">
               {images.length === 0 ? (
                 <div className="text-center py-20">
-                  <Camera className="w-16 h-16 text-gdv-beige mx-auto mb-4" />
-                  <p className="text-gdv-brown/60 text-lg">Aucune image disponible pour le moment.</p>
+                  <Camera className="w-16 h-16 text-gdv-brown-pale mx-auto mb-4" />
+                  <p className="text-gdv-brown-light text-lg">Aucune image disponible pour le moment.</p>
                 </div>
               ) : (
                 <motion.div
@@ -159,7 +163,7 @@ export default function GalleryPage() {
                       className="break-inside-avoid cursor-pointer group"
                       onClick={() => setLightboxIndex(index)}
                     >
-                      <div className="relative rounded-xl overflow-hidden bg-gdv-warm border border-gdv-beige/30 hover:shadow-xl hover:shadow-gdv-gold/10 transition-all duration-300">
+                      <div className="relative rounded-xl overflow-hidden bg-gdv-warm border border-gdv-brown-pale/20 hover:shadow-xl hover:shadow-gdv-teal/10 transition-all duration-300">
                         <img
                           src={image.url}
                           alt={image.title || 'Galerie'}
@@ -183,8 +187,8 @@ export default function GalleryPage() {
             <TabsContent value="videos">
               {videos.length === 0 ? (
                 <div className="text-center py-20">
-                  <Video className="w-16 h-16 text-gdv-beige mx-auto mb-4" />
-                  <p className="text-gdv-brown/60 text-lg">Aucune vidéo disponible pour le moment.</p>
+                  <Video className="w-16 h-16 text-gdv-brown-pale mx-auto mb-4" />
+                  <p className="text-gdv-brown-light text-lg">Aucune vidéo disponible pour le moment.</p>
                 </div>
               ) : (
                 <motion.div
@@ -202,7 +206,7 @@ export default function GalleryPage() {
                       className="cursor-pointer group"
                       onClick={() => setVideoModal(video.url)}
                     >
-                      <div className="relative rounded-xl overflow-hidden bg-gdv-warm border border-gdv-beige/30 hover:shadow-xl hover:shadow-gdv-gold/10 transition-all duration-300 aspect-video">
+                      <div className="relative rounded-xl overflow-hidden bg-gdv-warm border border-gdv-brown-pale/20 hover:shadow-xl hover:shadow-gdv-teal/10 transition-all duration-300 aspect-video">
                         <img
                           src={video.thumbnail || video.url}
                           alt={video.title || 'Vidéo'}
@@ -210,7 +214,7 @@ export default function GalleryPage() {
                           loading="lazy"
                         />
                         <div className="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/40 transition-colors duration-300">
-                          <div className="w-16 h-16 rounded-full bg-gdv-gold/90 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                          <div className="w-16 h-16 rounded-full bg-gdv-teal/90 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                             <Play className="w-7 h-7 text-white ml-1" />
                           </div>
                         </div>

@@ -68,37 +68,37 @@ export default function Header({ pageVisibilities, onNavigate, currentPage }: He
         initial={{ y: -40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className={`bg-gdv-dark text-gdv-cream/90 transition-all duration-300 ${
+        className={`bg-gdv-warm text-gdv-brown-medium transition-all duration-300 ${
           isScrolled ? 'h-0 overflow-hidden opacity-0' : 'h-auto'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between text-xs sm:text-sm">
           <div className="flex items-center gap-4 sm:gap-6">
-            <a href="tel:+224627104646" className="flex items-center gap-1.5 hover:text-gdv-gold transition-colors">
+            <a href="tel:+224627104646" className="flex items-center gap-1.5 hover:text-gdv-teal transition-colors">
               <Phone className="w-3 h-3" />
               <span className="hidden sm:inline">+224 627 10 46 46</span>
               <span className="sm:hidden">+224 627 10 46 46</span>
             </a>
-            <a href="tel:+224627104949" className="flex items-center gap-1.5 hover:text-gdv-gold transition-colors hidden sm:flex">
+            <a href="tel:+224627104949" className="flex items-center gap-1.5 hover:text-gdv-teal transition-colors hidden sm:flex">
               <Phone className="w-3 h-3" />
               +224 627 10 49 49
             </a>
-            <a href="mailto:contact@gracedivinevoyage.net" className="flex items-center gap-1.5 hover:text-gdv-gold transition-colors hidden md:flex">
+            <a href="mailto:contact@gracedivinevoyage.net" className="flex items-center gap-1.5 hover:text-gdv-teal transition-colors hidden md:flex">
               <Mail className="w-3 h-3" />
               contact@gracedivinevoyage.net
             </a>
           </div>
           <div className="flex items-center gap-3">
-            <a href="https://facebook.com/gracedivinevoyage" target="_blank" rel="noopener noreferrer" className="hover:text-gdv-gold transition-colors" aria-label="Facebook">
+            <a href="https://facebook.com/gracedivinevoyage" target="_blank" rel="noopener noreferrer" className="hover:text-gdv-teal transition-colors" aria-label="Facebook">
               <Facebook className="w-3.5 h-3.5" />
             </a>
-            <a href="https://instagram.com/gracedivinevoyage" target="_blank" rel="noopener noreferrer" className="hover:text-gdv-gold transition-colors" aria-label="Instagram">
+            <a href="https://instagram.com/gracedivinevoyage" target="_blank" rel="noopener noreferrer" className="hover:text-gdv-teal transition-colors" aria-label="Instagram">
               <Instagram className="w-3.5 h-3.5" />
             </a>
-            <a href="#" className="hover:text-gdv-gold transition-colors" aria-label="Twitter">
+            <a href="#" className="hover:text-gdv-teal transition-colors" aria-label="Twitter">
               <Twitter className="w-3.5 h-3.5" />
             </a>
-            <a href="#" className="hover:text-gdv-gold transition-colors" aria-label="YouTube">
+            <a href="#" className="hover:text-gdv-teal transition-colors" aria-label="YouTube">
               <Youtube className="w-3.5 h-3.5" />
             </a>
           </div>
@@ -112,8 +112,8 @@ export default function Header({ pageVisibilities, onNavigate, currentPage }: He
         transition={{ duration: 0.5, delay: 0.1 }}
         className={`transition-all duration-300 ${
           isScrolled
-            ? 'glass shadow-lg shadow-gdv-dark/10'
-            : 'bg-gdv-dark/95 backdrop-blur-sm'
+            ? 'glass shadow-lg shadow-black/5'
+            : 'bg-white/95 backdrop-blur-sm'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -123,14 +123,14 @@ export default function Header({ pageVisibilities, onNavigate, currentPage }: He
               onClick={() => onNavigate('accueil')}
               className="flex items-center gap-2 group"
             >
-              <div className="w-10 h-10 rounded-full bg-gdv-gold/20 flex items-center justify-center border border-gdv-gold/40 group-hover:bg-gdv-gold/30 transition-colors">
-                <Plane className="w-5 h-5 text-gdv-gold" />
+              <div className="w-10 h-10 rounded-full bg-gdv-teal/10 flex items-center justify-center border border-gdv-teal/30 group-hover:bg-gdv-teal/20 transition-colors">
+                <Plane className="w-5 h-5 text-gdv-teal" />
               </div>
               <div className="flex flex-col leading-tight">
-                <span className="text-lg lg:text-xl font-bold text-gdv-cream tracking-wide">
+                <span className="text-lg lg:text-xl font-bold text-gdv-brown tracking-wide">
                   Grace Divine
                 </span>
-                <span className="text-gdv-gold text-sm lg:text-base font-semibold tracking-widest uppercase">
+                <span className="text-gdv-teal text-sm lg:text-base font-semibold tracking-widest uppercase">
                   Voyage
                 </span>
               </div>
@@ -144,8 +144,8 @@ export default function Header({ pageVisibilities, onNavigate, currentPage }: He
                   onClick={() => onNavigate(item.key)}
                   className={`relative px-3 xl:px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                     currentPage === item.key
-                      ? 'text-gdv-gold'
-                      : 'text-gdv-cream/80 hover:text-gdv-cream hover:bg-white/10'
+                      ? 'text-gdv-teal'
+                      : 'text-gdv-brown-medium hover:text-gdv-brown hover:bg-gdv-beige/60'
                   }`}
                 >
                   <span className="flex items-center gap-1">
@@ -153,7 +153,7 @@ export default function Header({ pageVisibilities, onNavigate, currentPage }: He
                     {currentPage === item.key && (
                       <motion.div
                         layoutId="activeNav"
-                        className="absolute bottom-0 left-2 right-2 h-0.5 bg-gdv-gold rounded-full"
+                        className="absolute bottom-0 left-2 right-2 h-0.5 bg-gdv-teal rounded-full"
                         transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                       />
                     )}
@@ -167,7 +167,7 @@ export default function Header({ pageVisibilities, onNavigate, currentPage }: He
               <Button
                 onClick={() => onNavigate('contact')}
                 size="sm"
-                className="hidden sm:flex bg-gdv-gold hover:bg-gdv-gold-light text-white text-xs font-semibold px-4 rounded-full transition-all duration-200 hover:shadow-lg hover:shadow-gdv-gold/25"
+                className="hidden sm:flex bg-gdv-teal hover:bg-gdv-teal-light text-white text-xs font-semibold px-4 rounded-full transition-all duration-200 hover:shadow-lg hover:shadow-gdv-teal/25"
               >
                 Devis Gratuit
               </Button>
@@ -175,7 +175,7 @@ export default function Header({ pageVisibilities, onNavigate, currentPage }: He
                 onClick={() => onNavigate('admin')}
                 variant="ghost"
                 size="sm"
-                className="text-gdv-cream/50 hover:text-gdv-gold hover:bg-white/5 text-xs px-2"
+                className="text-gdv-brown-light hover:text-gdv-teal hover:bg-gdv-teal/5 text-xs px-2"
                 aria-label="Administration"
               >
                 <ShieldCheck className="w-4 h-4" />
@@ -184,7 +184,7 @@ export default function Header({ pageVisibilities, onNavigate, currentPage }: He
               {/* Mobile menu button */}
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="lg:hidden text-gdv-cream hover:text-gdv-gold p-2 rounded-lg hover:bg-white/10 transition-colors"
+                className="lg:hidden text-gdv-brown hover:text-gdv-teal p-2 rounded-lg hover:bg-gdv-beige/60 transition-colors"
                 aria-label="Menu"
               >
                 {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -202,7 +202,7 @@ export default function Header({ pageVisibilities, onNavigate, currentPage }: He
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="lg:hidden bg-gdv-dark/98 backdrop-blur-lg border-t border-gdv-gold/20 overflow-hidden"
+            className="lg:hidden bg-white/98 backdrop-blur-lg border-t border-gdv-brown-pale/50 overflow-hidden"
           >
             <div className="max-w-7xl mx-auto px-4 py-4 space-y-1">
               {visibleNavItems.map((item, index) => (
@@ -217,8 +217,8 @@ export default function Header({ pageVisibilities, onNavigate, currentPage }: He
                   }}
                   className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                     currentPage === item.key
-                      ? 'bg-gdv-gold/15 text-gdv-gold border-l-2 border-gdv-gold'
-                      : 'text-gdv-cream/80 hover:bg-white/5 hover:text-gdv-cream'
+                      ? 'bg-gdv-teal/10 text-gdv-teal border-l-2 border-gdv-teal'
+                      : 'text-gdv-brown-medium hover:bg-gdv-beige/60 hover:text-gdv-brown'
                   }`}
                 >
                   {item.label}
@@ -236,7 +236,7 @@ export default function Header({ pageVisibilities, onNavigate, currentPage }: He
                     onNavigate('contact');
                     setMobileOpen(false);
                   }}
-                  className="w-full bg-gdv-gold hover:bg-gdv-gold-light text-white font-semibold rounded-full"
+                  className="w-full bg-gdv-teal hover:bg-gdv-teal-light text-white font-semibold rounded-full"
                 >
                   Devis Gratuit
                 </Button>

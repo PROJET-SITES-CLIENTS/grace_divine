@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import AnimatedSection from '@/components/gdv/AnimatedSection';
+import { IMAGES } from '@/lib/images';
 
 interface TestimonialsPageProps {
   testimonials: { id: string; name: string; role: string; content: string; rating: number }[] | null;
@@ -28,12 +29,15 @@ export default function TestimonialsPage({ testimonials }: TestimonialsPageProps
     <div>
       {/* Hero */}
       <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-gdv-dark via-gdv-brown to-gdv-dark" />
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${IMAGES.temoignagesHero})` }}
+        />
         <div className="hero-overlay absolute inset-0" />
         <motion.div
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 6, repeat: Infinity }}
-          className="absolute top-1/4 left-[10%] w-40 h-40 rounded-full bg-gdv-gold/10 blur-xl"
+          className="absolute top-1/4 left-[10%] w-40 h-40 rounded-full bg-gdv-teal/10 blur-xl"
         />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.span
@@ -56,7 +60,7 @@ export default function TestimonialsPage({ testimonials }: TestimonialsPageProps
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-gdv-cream/80 text-lg max-w-2xl mx-auto"
+            className="text-white/80 text-lg max-w-2xl mx-auto"
           >
             Découvrez les expériences de nos voyageurs satisfaits
           </motion.p>
@@ -64,12 +68,12 @@ export default function TestimonialsPage({ testimonials }: TestimonialsPageProps
       </section>
 
       {/* Testimonials Grid */}
-      <section className="py-20 lg:py-28 bg-gdv-cream">
+      <section className="py-20 lg:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {!testimonials || testimonials.length === 0 ? (
             <div className="text-center py-20">
-              <Quote className="w-16 h-16 text-gdv-beige mx-auto mb-4" />
-              <p className="text-gdv-brown/60 text-lg">Aucun témoignage disponible pour le moment.</p>
+              <Quote className="w-16 h-16 text-gdv-brown-pale mx-auto mb-4" />
+              <p className="text-gdv-brown-light text-lg">Aucun témoignage disponible pour le moment.</p>
             </div>
           ) : (
             <motion.div
@@ -81,10 +85,10 @@ export default function TestimonialsPage({ testimonials }: TestimonialsPageProps
             >
               {testimonials.map((testimonial, index) => (
                 <motion.div key={testimonial.id} variants={fadeInUp} custom={index * 0.1}>
-                  <Card className="border-gdv-beige/50 bg-white hover:shadow-xl hover:shadow-gdv-gold/5 transition-all duration-300 h-full relative group">
+                  <Card className="border-gdv-brown-pale/30 bg-white hover:shadow-xl hover:shadow-gdv-teal/5 transition-all duration-300 h-full relative group">
                     {/* Quote icon */}
                     <div className="absolute -top-3 right-6 opacity-10 group-hover:opacity-20 transition-opacity duration-300">
-                      <Quote className="w-16 h-16 text-gdv-gold" />
+                      <Quote className="w-16 h-16 text-gdv-teal" />
                     </div>
                     <CardContent className="p-8">
                       {/* Stars */}
@@ -95,25 +99,25 @@ export default function TestimonialsPage({ testimonials }: TestimonialsPageProps
                             className={`w-5 h-5 ${
                               i < testimonial.rating
                                 ? 'text-gdv-gold fill-gdv-gold'
-                                : 'text-gdv-beige'
+                                : 'text-gdv-brown-pale'
                             }`}
                           />
                         ))}
                       </div>
 
                       {/* Content */}
-                      <p className="text-gdv-brown/70 leading-relaxed italic font-serif mb-6">
+                      <p className="text-gdv-brown-light leading-relaxed italic font-serif mb-6">
                         &ldquo;{testimonial.content}&rdquo;
                       </p>
 
                       {/* Author */}
-                      <div className="flex items-center gap-3 pt-4 border-t border-gdv-beige/30">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gdv-gold to-gdv-gold-light flex items-center justify-center text-white font-bold">
+                      <div className="flex items-center gap-3 pt-4 border-t border-gdv-brown-pale/30">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gdv-teal to-gdv-teal-light flex items-center justify-center text-white font-bold">
                           {testimonial.name.charAt(0)}
                         </div>
                         <div>
                           <p className="font-semibold text-gdv-brown">{testimonial.name}</p>
-                          <p className="text-gdv-brown/60 text-sm">{testimonial.role}</p>
+                          <p className="text-gdv-brown-light text-sm">{testimonial.role}</p>
                         </div>
                       </div>
                     </CardContent>
