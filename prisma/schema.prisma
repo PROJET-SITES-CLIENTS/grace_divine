@@ -1,0 +1,202 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ===== SITE SETTINGS =====
+model SiteSettings {
+  id             String   @id @default(cuid())
+  siteName       String   @default("Grace Divine Voyage")
+  slogan         String   @default("Vous satisfaire est notre priorité")
+  address        String   @default("Kaloum Manque pas, Immeuble Yansané")
+  phone1         String   @default("+224627104646")
+  phone2         String   @default("+224627104949")
+  email1         String   @default("")
+  email2         String   @default("")
+  whatsappNumber String   @default("224627104646")
+  facebookUrl    String   @default("")
+  instagramUrl   String   @default("")
+  twitterUrl     String   @default("")
+  tiktokUrl      String   @default("")
+  linkedinUrl    String   @default("")
+  youtubeUrl     String   @default("")
+  logoUrl        String   @default("")
+  heroImage      String   @default("")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// ===== PAGE VISIBILITY =====
+model PageVisibility {
+  id        String   @id @default(cuid())
+  pageKey   String   @unique
+  title     String
+  visible   Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ===== SERVICES =====
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  shortDesc   String   @default("")
+  description String   @default("")
+  icon        String   @default("")
+  image       String   @default("")
+  features    String   @default("[]")
+  order       Int      @default(0)
+  visible     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ===== TEAM MEMBERS =====
+model TeamMember {
+  id        String   @id @default(cuid())
+  name      String
+  role      String   @default("")
+  bio       String   @default("")
+  photo     String   @default("")
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ===== TESTIMONIALS =====
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String   @default("")
+  content   String
+  rating    Int      @default(5)
+  avatar    String   @default("")
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ===== PARTNERS =====
+model Partner {
+  id        String   @id @default(cuid())
+  name      String
+  logo      String   @default("")
+  website   String   @default("")
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ===== FAQ =====
+model FAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  category  String   @default("Général")
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ===== GALLERY =====
+model GalleryImage {
+  id        String   @id @default(cuid())
+  title     String   @default("")
+  url       String
+  thumbnail String   @default("")
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GalleryVideo {
+  id        String   @id @default(cuid())
+  title     String   @default("")
+  url       String
+  thumbnail String   @default("")
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ===== CONTACT SUBMISSIONS =====
+model ContactSubmission {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @default("")
+  phone     String   @default("")
+  subject   String   @default("")
+  message   String
+  service   String   @default("")
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+// ===== PROMOTIONAL ADS =====
+model PromotionalAd {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @default("")
+  imageUrl    String   @default("")
+  linkUrl     String   @default("")
+  whatsappMsg String   @default("")
+  position    String   @default("popup")
+  active      Boolean  @default(true)
+  startDate   DateTime?
+  endDate     DateTime?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ===== JOB LISTINGS =====
+model JobListing {
+  id        String   @id @default(cuid())
+  title     String
+  description String  @default("")
+  requirements String @default("")
+  location  String   @default("")
+  type      String   @default("CDI")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ===== HOME PAGE SECTIONS =====
+model HomePageSection {
+  id        String   @id @default(cuid())
+  sectionKey String   @unique
+  title     String   @default("")
+  subtitle  String   @default("")
+  content   String   @default("")
+  imageUrl  String   @default("")
+  visible   Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ===== ABOUT PAGE =====
+model AboutPage {
+  id          String   @id @default(cuid())
+  heroTitle   String   @default("À propos de Grace Divine Voyage")
+  heroSubtitle String   @default("")
+  mission     String   @default("")
+  vision      String   @default("")
+  values      String   @default("[]")
+  story       String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
