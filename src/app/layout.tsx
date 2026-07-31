@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -13,12 +13,28 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Grace Divine Voyage | Agence de Voyage",
-  description: "Vous satisfaire est notre priorité. Vente de billets, réservation de vol, assistance visa, réservation d'hôtel et plus encore.",
-  keywords: ["voyage", "billet d'avion", "visa", "hôtel", "Guinée", "Conakry", "grace divine voyage"],
+  description: "Vous satisfaire est notre priorite. Vente de billets, reservation de vol, assistance visa, reservation d'hotel et plus encore.",
+  keywords: ["voyage", "billet d'avion", "visa", "hotel", "Guinee", "Conakry", "grace divine voyage"],
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+    { url: "/favicon.svg", type: "image/svg+xml" },
+  ],
+  },
+  openGraph: {
+    title: "Grace Divine Voyage | Agence de Voyage",
+    description: "Vous satisfaire est notre priorite. Vente de billets, reservation de vol, assistance visa, reservation d'hotel et plus encore.",
+    siteName: "Grace Divine Voyage",
+    type: "website",
+    locale: "fr_FR",
   },
 };
 
@@ -30,7 +46,7 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased`}
       >
         {children}
         <Toaster />

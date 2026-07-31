@@ -34,7 +34,7 @@ export default function PromotionalPopup() {
           sessionStorage.setItem('gdv-popup-shown', 'true');
         }
       })
-      .catch(() => {});
+      .catch((err) => { console.error("Erreur popup:", err); });
   }, []);
 
   const closePopup = () => setShowPopup(false);

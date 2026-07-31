@@ -53,7 +53,7 @@ export default function GalleryPage() {
         setImages(imgs || []);
         setVideos(vids || []);
       })
-      .catch(() => {})
+      .catch((err) => { console.error('Erreur galerie:', err); })
       .finally(() => setLoading(false));
   }, []);
 
@@ -253,6 +253,7 @@ export default function GalleryPage() {
               <button
                 onClick={() => setLightboxIndex(null)}
                 className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70 transition-colors z-10"
+                aria-label="Fermer la lightbox"
               >
                 <X className="w-5 h-5" />
               </button>

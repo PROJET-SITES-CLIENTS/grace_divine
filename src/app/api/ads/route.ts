@@ -1,5 +1,6 @@
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
+import { adSchema } from '@/lib/validations';
 
 export async function GET() {
   try {
@@ -17,7 +18,11 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const ad = await db.promotionalAd.create({ data: body });
+    const validated = adSchema.safeParse(body);
+    if (!validated.success) {
+      return NextResponse.json({ error: validated.error.flatten().fieldErrors }, { status: 400 });
+    }
+    const ad = await db.promotionalAd.create({ data: validated.data });
     return NextResponse.json(ad, { status: 201 });
   } catch (error) {
     console.error('Error creating ad:', error);

@@ -31,9 +31,9 @@ export const IMAGES = {
 export const SERVICE_IMAGE_MAP: Record<string, string> = {
   'vente-billets': IMAGES.serviceBillets,
   'reservation-vol': IMAGES.serviceVol,
-  'visa': IMAGES.serviceVisa,
-  'hebergement': IMAGES.serviceHotel,
-  'transfert-aeroport': IMAGES.serviceAeroport,
-  'location-voiture': IMAGES.serviceVoiture,
-  'fret': IMAGES.serviceFret,
+  'assistance-visa': IMAGES.serviceVisa,
+  'reservation-hotel': IMAGES.serviceHotel,
+  'assistance-aeroportuaire': IMAGES.serviceAeroport,
+  'location-vehicules': IMAGES.serviceVoiture,
+  'fret-cargo': IMAGES.serviceFret,
 };

@@ -76,8 +76,7 @@ export default function Header({ pageVisibilities, onNavigate, currentPage }: He
           <div className="flex items-center gap-4 sm:gap-6">
             <a href="tel:+224627104646" className="flex items-center gap-1.5 hover:text-gdv-teal transition-colors">
               <Phone className="w-3 h-3" />
-              <span className="hidden sm:inline">+224 627 10 46 46</span>
-              <span className="sm:hidden">+224 627 10 46 46</span>
+              <span>+224 627 10 46 46</span>
             </a>
             <a href="tel:+224627104949" className="flex items-center gap-1.5 hover:text-gdv-teal transition-colors hidden sm:flex">
               <Phone className="w-3 h-3" />
@@ -100,6 +99,9 @@ export default function Header({ pageVisibilities, onNavigate, currentPage }: He
             </a>
             <a href="#" className="hover:text-gdv-teal transition-colors" aria-label="YouTube">
               <Youtube className="w-3.5 h-3.5" />
+            </a>
+            <a href="https://tiktok.com/@gracedivinevoyage" target="_blank" rel="noopener noreferrer" className="hover:text-gdv-teal transition-colors" aria-label="TikTok">
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.42V13.2a8.16 8.16 0 005.58 2.18V11.9a4.85 4.85 0 01-3.77-1.82V6.69h3.77z"/></svg>
             </a>
           </div>
         </div>

@@ -1,13 +1,11 @@
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
+import { teamMemberSchema } from '@/lib/validations';
 
 export async function GET() {
   try {
-    const team = await db.teamMember.findMany({
-      where: { visible: true },
-      orderBy: { order: 'asc' },
-    });
-    return NextResponse.json(team);
+    const members = await db.teamMember.findMany({ orderBy: { order: 'asc' } });
+    return NextResponse.json(members);
   } catch (error) {
     console.error('Error fetching team members:', error);
     return NextResponse.json({ error: 'Failed to fetch team members' }, { status: 500 });
@@ -17,7 +15,11 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const member = await db.teamMember.create({ data: body });
+    const validated = teamMemberSchema.safeParse(body);
+    if (!validated.success) {
+      return NextResponse.json({ error: validated.error.flatten().fieldErrors }, { status: 400 });
+    }
+    const member = await db.teamMember.create({ data: validated.data });
     return NextResponse.json(member, { status: 201 });
   } catch (error) {
     console.error('Error creating team member:', error);

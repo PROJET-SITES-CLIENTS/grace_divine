@@ -63,11 +63,16 @@ export default function ContactPage({ settings, services }: ContactPageProps) {
     setError('');
 
     try {
-      await fetch('/api/contact', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
+
+      if (!response.ok) {
+        setError("Une erreur est survenue lors de l'envoi. Veuillez reessayer.");
+        return;
+      }
 
       setSuccess(true);
 

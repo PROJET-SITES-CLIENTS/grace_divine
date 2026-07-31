@@ -143,7 +143,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
         images: gi?.length || 0,
         videos: gv?.length || 0,
       });
-    } catch {}
+    } catch (err) { console.error('Erreur chargement dashboard:', err); }
 
     try {
       const [set, pg, hs, ab] = await Promise.all([
@@ -156,7 +156,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
       setPages(pg || []);
       setHomeSections(hs || []);
       setAboutData(ab || {});
-    } catch {}
+    } catch (err) { console.error('Erreur chargement settings/pages:', err); }
   }, []);
 
   useEffect(() => {
@@ -645,7 +645,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                           {galleryImages.map((img: any) => (
                             <TableRow key={img.id}>
                               <TableCell className="font-medium">{img.title || '-'}</TableCell>
-                              <TableCell><img src={img.url} alt="" className="w-16 h-12 object-cover rounded" /></TableCell>
+                              <TableCell><img src={img.url} alt={img.title || "Image de galerie"} className="w-16 h-12 object-cover rounded" /></TableCell>
                               <TableCell>
                                 <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => deleteItem('/api/gallery/images', img.id, galleryImages, setGalleryImages)}><Trash2 className="w-4 h-4" /></Button>
                               </TableCell>
@@ -829,7 +829,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                           <Label className="text-xs text-gray-500">Contenu</Label>
                           <Textarea value={section.content || ''} onChange={(e) => setHomeSections(homeSections.map((s: any) => s.id === section.id ? { ...s, content: e.target.value } : s))} rows={2} />
                         </div>
-                        <Button size="sm" onClick={async () => { await fetch(`/api/home-sections`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(homeSections.find((s: any) => s.id === section.id)) }); toast({ title: 'Section mise à jour' }); }} className="bg-gdv-gold hover:bg-gdv-gold-light text-white">
+                        <Button size="sm" onClick={async () => { const res = await fetch(`/api/home-sections`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(homeSections.find((s: any) => s.id === section.id)) }); if (res.ok) toast({ title: 'Section mise à jour' }); else toast({ title: 'Erreur', variant: 'destructive' }); }} className="bg-gdv-gold hover:bg-gdv-gold-light text-white">
                           <Save className="w-3.5 h-3.5 mr-1.5" /> Sauvegarder
                         </Button>
                       </CardContent>
@@ -871,8 +871,8 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                     </div>
                     <Separator />
                     <Button onClick={async () => {
-                      await fetch('/api/about', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...aboutData, values: JSON.stringify(aboutData.values || []) }) });
-                      toast({ title: 'Page À propos mise à jour' });
+                      const res = await fetch('/api/about', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...aboutData, values: JSON.stringify(aboutData.values || []) }) });
+                      if (res.ok) toast({ title: 'Page À propos mise à jour' }); else toast({ title: 'Erreur de sauvegarde', variant: 'destructive' });
                     }} className="bg-gdv-gold hover:bg-gdv-gold-light text-white">
                       <Save className="w-4 h-4 mr-2" /> Sauvegarder
                     </Button>

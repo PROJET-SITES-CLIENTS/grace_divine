@@ -1,5 +1,6 @@
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
+import { contactSchema } from '@/lib/validations';
 
 export async function GET() {
   try {
@@ -16,7 +17,11 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const submission = await db.contactSubmission.create({ data: body });
+    const validated = contactSchema.safeParse(body);
+    if (!validated.success) {
+      return NextResponse.json({ error: validated.error.flatten().fieldErrors }, { status: 400 });
+    }
+    const submission = await db.contactSubmission.create({ data: validated.data });
     return NextResponse.json(submission, { status: 201 });
   } catch (error) {
     console.error('Error creating contact submission:', error);

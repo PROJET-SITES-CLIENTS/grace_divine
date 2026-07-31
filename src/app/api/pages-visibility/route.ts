@@ -22,7 +22,7 @@ export async function PUT(request: NextRequest) {
     const updated = await db.pageVisibility.upsert({
       where: { pageKey },
       update: { visible },
-      create: { pageKey, visible },
+      create: { pageKey, visible, title: pageKey.charAt(0).toUpperCase() + pageKey.slice(1) },
     });
     return NextResponse.json(updated);
   } catch (error) {

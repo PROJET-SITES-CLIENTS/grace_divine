@@ -20,6 +20,7 @@ export default function PromoBanner() {
   const [bannerAds, setBannerAds] = useState<Ad[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
     fetch('/api/ads')
@@ -49,7 +50,7 @@ export default function PromoBanner() {
     return () => clearInterval(interval);
   }, [bannerAds.length, nextAd]);
 
-  if (bannerAds.length === 0) return null;
+  if (dismissed || bannerAds.length === 0) return null;
 
   const currentAd = bannerAds[currentIndex];
   if (!currentAd) return null;
@@ -102,10 +103,10 @@ export default function PromoBanner() {
               </Button>
               {bannerAds.length > 1 && (
                 <div className="flex items-center gap-1">
-                  <button onClick={prevAd} className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-gdv-cream transition-colors">
+                  <button onClick={prevAd} className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-gdv-cream transition-colors" aria-label="Publicite precedente">
                     <ArrowRight className="w-3.5 h-3.5 rotate-180" />
                   </button>
-                  <button onClick={nextAd} className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-gdv-cream transition-colors">
+                  <button onClick={nextAd} className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-gdv-cream transition-colors" aria-label="Publicite suivante">
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -131,7 +132,7 @@ export default function PromoBanner() {
       </div>
 
       {/* Close button */}
-      <button className="absolute top-2 right-2 text-gdv-cream/40 hover:text-gdv-cream transition-colors sm:hidden">
+      <button onClick={() => setDismissed(true)} className="absolute top-2 right-2 text-gdv-cream/40 hover:text-gdv-cream transition-colors sm:hidden" aria-label="Fermer la banniere">
         <X className="w-4 h-4" />
       </button>
     </div>
