@@ -76,7 +76,7 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
         fetch('/api/gallery/images').then((r) => r.json()).catch(() => []),
         fetch('/api/gallery/videos').then((r) => r.json()).catch(() => []),
       ]);
-      const [settingsData, pagesData, servicesData, teamData, testimonialsData, partnersData, faqsData, adsData, jobsData, homeSectionsData, aboutData, galleryImagesData, galleryVideosData] = results;
+      const [settingsData, pagesData, servicesData, teamData, testimonialsData, partnersData, faqsData, adsData, jobsData, homeSectionsData, aboutResult, galleryImagesData, galleryVideosData] = results;
       if (settingsData) setSettings(settingsData);
       if (pagesData) setPageVisibilities(pagesData);
       if (servicesData) setServices(servicesData);
@@ -87,7 +87,7 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
       if (adsData) setAds(adsData);
       if (jobsData) setJobs(jobsData);
       if (homeSectionsData) setHomeSections(homeSectionsData);
-      if (aboutData) setAboutData(aboutData);
+      if (aboutResult) setAboutData(aboutResult);
       if (galleryImagesData) setGalleryImages(galleryImagesData);
       if (galleryVideosData) setGalleryVideos(galleryVideosData);
     } catch (err) {
