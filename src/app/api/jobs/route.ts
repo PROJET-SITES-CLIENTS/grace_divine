@@ -2,9 +2,14 @@ import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { jobSchema } from '@/lib/validations';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const jobs = await db.jobListing.findMany({ orderBy: { createdAt: 'desc' } });
+    const { searchParams } = new URL(request.url);
+    const showAll = searchParams.get('all') === 'true';
+    const jobs = await db.jobListing.findMany({
+      ...(showAll ? {} : { where: { active: true } }),
+      orderBy: { createdAt: 'desc' },
+    });
     return NextResponse.json(jobs);
   } catch (error) {
     console.error('Error fetching jobs:', error);

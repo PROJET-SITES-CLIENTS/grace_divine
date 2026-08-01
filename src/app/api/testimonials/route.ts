@@ -2,9 +2,14 @@ import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { testimonialSchema } from '@/lib/validations';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const testimonials = await db.testimonial.findMany({ orderBy: { order: 'asc' } });
+    const { searchParams } = new URL(request.url);
+    const showAll = searchParams.get('all') === 'true';
+    const testimonials = await db.testimonial.findMany({
+      ...(showAll ? {} : { where: { visible: true } }),
+      orderBy: { order: 'asc' },
+    });
     return NextResponse.json(testimonials);
   } catch (error) {
     console.error('Error fetching testimonials:', error);

@@ -2,9 +2,14 @@ import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { faqSchema } from '@/lib/validations';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const faqs = await db.fAQ.findMany({ orderBy: { order: 'asc' } });
+    const { searchParams } = new URL(request.url);
+    const showAll = searchParams.get('all') === 'true';
+    const faqs = await db.fAQ.findMany({
+      ...(showAll ? {} : { where: { visible: true } }),
+      orderBy: { order: 'asc' },
+    });
     return NextResponse.json(faqs);
   } catch (error) {
     console.error('Error fetching FAQs:', error);

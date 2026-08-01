@@ -2,9 +2,14 @@ import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { galleryVideoSchema } from '@/lib/validations';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const videos = await db.galleryVideo.findMany({ orderBy: { order: 'asc' } });
+    const { searchParams } = new URL(request.url);
+    const showAll = searchParams.get('all') === 'true';
+    const videos = await db.galleryVideo.findMany({
+      ...(showAll ? {} : { where: { visible: true } }),
+      orderBy: { order: 'asc' },
+    });
     return NextResponse.json(videos);
   } catch (error) {
     console.error('Error fetching gallery videos:', error);

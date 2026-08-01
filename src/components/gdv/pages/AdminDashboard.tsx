@@ -117,15 +117,15 @@ export default function AdminDashboard({ onNavigate, onDataChanged }: AdminDashb
     try {
       const [c, s, t, tm, p, f, j, a, gi, gv] = await Promise.all([
         fetch('/api/contact').then((r) => r.json()),
-        fetch('/api/services').then((r) => r.json()),
-        fetch('/api/testimonials').then((r) => r.json()),
-        fetch('/api/team').then((r) => r.json()),
-        fetch('/api/partners').then((r) => r.json()),
-        fetch('/api/faq').then((r) => r.json()),
-        fetch('/api/jobs').then((r) => r.json()),
+        fetch('/api/services?all=true').then((r) => r.json()),
+        fetch('/api/testimonials?all=true').then((r) => r.json()),
+        fetch('/api/team?all=true').then((r) => r.json()),
+        fetch('/api/partners?all=true').then((r) => r.json()),
+        fetch('/api/faq?all=true').then((r) => r.json()),
+        fetch('/api/jobs?all=true').then((r) => r.json()),
         fetch('/api/ads/admin').then((r) => r.json()),
-        fetch('/api/gallery/images').then((r) => r.json()),
-        fetch('/api/gallery/videos').then((r) => r.json()),
+        fetch('/api/gallery/images?all=true').then((r) => r.json()),
+        fetch('/api/gallery/videos?all=true').then((r) => r.json()),
       ]);
       setContacts(c || []);
       setServices(s || []);
@@ -180,8 +180,8 @@ export default function AdminDashboard({ onNavigate, onDataChanged }: AdminDashb
     }
     if (activeTab === 'gallery') {
       Promise.all([
-        fetch('/api/gallery/images').then((r) => r.json()),
-        fetch('/api/gallery/videos').then((r) => r.json()),
+        fetch('/api/gallery/images?all=true').then((r) => r.json()),
+        fetch('/api/gallery/videos?all=true').then((r) => r.json()),
       ]).then(([imgs, vids]) => {
         setGalleryImages(imgs || []);
         setGalleryVideos(vids || []);

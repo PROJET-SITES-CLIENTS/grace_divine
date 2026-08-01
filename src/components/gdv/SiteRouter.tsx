@@ -57,8 +57,13 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
   const [currentPage, setCurrentPage] = useState('accueil');
   const [refreshing, setRefreshing] = useState(false);
   const prevPageRef = useRef('accueil');
+  const lastRefreshRef = useRef(0);
 
   const refreshAllData = useCallback(async () => {
+    // Skip if refreshed less than 2 seconds ago to avoid redundant calls
+    const now = Date.now();
+    if (now - lastRefreshRef.current < 2000) return;
+    lastRefreshRef.current = now;
     setRefreshing(true);
     try {
       const results = await Promise.all([
@@ -77,19 +82,20 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
         fetch('/api/gallery/videos').then((r) => r.json()).catch(() => []),
       ]);
       const [settingsData, pagesData, servicesData, teamData, testimonialsData, partnersData, faqsData, adsData, jobsData, homeSectionsData, aboutResult, galleryImagesData, galleryVideosData] = results;
+      // Apply same filters as page.tsx server component for consistency
       if (settingsData) setSettings(settingsData);
-      if (pagesData) setPageVisibilities(pagesData);
-      if (servicesData) setServices(servicesData);
-      if (teamData) setTeam(teamData);
-      if (testimonialsData) setTestimonials(testimonialsData);
-      if (partnersData) setPartners(partnersData);
-      if (faqsData) setFaqs(faqsData);
-      if (adsData) setAds(adsData);
-      if (jobsData) setJobs(jobsData);
+      if (pagesData) setPageVisibilities((pagesData as any[]).filter((p: any) => p.visible !== false));
+      if (servicesData) setServices(servicesData); // API already filters visible: true
+      if (teamData) setTeam((teamData as any[]).filter((t: any) => t.visible !== false));
+      if (testimonialsData) setTestimonials((testimonialsData as any[]).filter((t: any) => t.visible !== false));
+      if (partnersData) setPartners((partnersData as any[]).filter((p: any) => p.visible !== false));
+      if (faqsData) setFaqs((faqsData as any[]).filter((f: any) => f.visible !== false));
+      if (adsData) setAds(adsData); // API already filters active: true
+      if (jobsData) setJobs((jobsData as any[]).filter((j: any) => j.active !== false));
       if (homeSectionsData) setHomeSections(homeSectionsData);
       if (aboutResult) setAboutData(aboutResult);
-      if (galleryImagesData) setGalleryImages(galleryImagesData);
-      if (galleryVideosData) setGalleryVideos(galleryVideosData);
+      if (galleryImagesData) setGalleryImages((galleryImagesData as any[]).filter((g: any) => g.visible !== false));
+      if (galleryVideosData) setGalleryVideos((galleryVideosData as any[]).filter((g: any) => g.visible !== false));
     } catch (err) {
       console.error('Erreur rafraichissement:', err);
     } finally {
@@ -97,14 +103,17 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
     }
   }, []);
 
-  const handleNavigate = useCallback((page: string) => {
+  const handleNavigate = useCallback(async (page: string) => {
     const wasAdmin = prevPageRef.current === 'admin';
     prevPageRef.current = page;
-    setCurrentPage(page);
-    // Always refresh data when leaving admin to sync site pages
+    // When leaving admin, wait for data to refresh BEFORE changing page
+    // This ensures the new page always renders with fresh data
     if (wasAdmin && page !== 'admin') {
-      refreshAllData();
+      // Reset debounce to force refresh even if recently refreshed
+      lastRefreshRef.current = 0;
+      await refreshAllData();
     }
+    setCurrentPage(page);
   }, [refreshAllData]);
 
   const handleDataChanged = useCallback(() => {

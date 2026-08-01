@@ -2,9 +2,14 @@ import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { partnerSchema } from '@/lib/validations';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const partners = await db.partner.findMany({ orderBy: { order: 'asc' } });
+    const { searchParams } = new URL(request.url);
+    const showAll = searchParams.get('all') === 'true';
+    const partners = await db.partner.findMany({
+      ...(showAll ? {} : { where: { visible: true } }),
+      orderBy: { order: 'asc' },
+    });
     return NextResponse.json(partners);
   } catch (error) {
     console.error('Error fetching partners:', error);

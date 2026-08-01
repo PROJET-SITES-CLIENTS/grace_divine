@@ -2,10 +2,12 @@ import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { serviceSchema } from '@/lib/validations';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const showAll = searchParams.get('all') === 'true';
     const services = await db.service.findMany({
-      where: { visible: true },
+      ...(showAll ? {} : { where: { visible: true } }),
       orderBy: { order: 'asc' },
     });
     return NextResponse.json(services);

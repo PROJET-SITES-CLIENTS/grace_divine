@@ -2,9 +2,15 @@ import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { teamMemberSchema } from '@/lib/validations';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const members = await db.teamMember.findMany({ orderBy: { order: 'asc' } });
+    const { searchParams } = new URL(request.url);
+    // Admin route passes ?all=true to see everything (including hidden)
+    const showAll = searchParams.get('all') === 'true';
+    const members = await db.teamMember.findMany({
+      ...(showAll ? {} : { where: { visible: true } }),
+      orderBy: { order: 'asc' },
+    });
     return NextResponse.json(members);
   } catch (error) {
     console.error('Error fetching team members:', error);
