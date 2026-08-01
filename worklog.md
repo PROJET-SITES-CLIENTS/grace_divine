@@ -68,3 +68,24 @@ Stage Summary:
 - M9 (unused deps) deferred to avoid breaking changes
 - L6, L8, L9 are nice-to-have improvements, not bugs
 - Build verified: `next build` succeeds, all routes compile
+---
+Task ID: 1
+Agent: main
+Task: Fix synchronisation admin ↔ site + contraste boutons
+
+Work Log:
+- Analysed full data flow: page.tsx (server) → SiteRouter (client state) → pages
+- Discovered CRITICAL destructuring bug in refreshAllData(): 14 variables for 13 results, variable f (ads) unused, all subsequent assignments shifted by 1
+- Fixed destructuring to use clear, correctly-mapped variable names
+- Modified GalleryPage to accept initialImages/initialVideos props from SiteRouter
+- Added useEffect in AdminDashboard to re-fetch contacts when switching to contact tab
+- Added useEffect in AdminDashboard to re-fetch gallery data when switching to gallery tab
+- Added useEffect in AdminDashboard to re-fetch all data when switching to dashboard tab
+- Fixed 6 Ajouter buttons: changed bg-gdv-gold hover:bg-gdv-gold-light text-white to text-gdv-dark font-semibold for WCAG contrast compliance
+- Clean build: 0 errors
+- API sync verified: POST contact → immediately visible in GET, POST gallery image → immediately visible in GET
+
+Stage Summary:
+- Root cause of sync failure: destructuring mismatch in refreshAllData() causing ads/jobs/homeSections/aboutData/galleryImages/galleryVideos to never update correctly
+- 3 files modified: SiteRouter.tsx, AdminDashboard.tsx, GalleryPage.tsx
+- Server running on port 3000, all APIs functional

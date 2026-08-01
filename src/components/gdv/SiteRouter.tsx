@@ -76,20 +76,20 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
         fetch('/api/gallery/images').then((r) => r.json()).catch(() => []),
         fetch('/api/gallery/videos').then((r) => r.json()).catch(() => []),
       ]);
-      const [s, p, sv, t, tm, te, pa, f, ad, j, h, ab, gi, gv] = results;
-      if (s) setSettings(s);
-      if (p) setPageVisibilities(p);
-      if (sv) setServices(sv);
-      if (t) setTeam(t);
-      if (tm) setTestimonials(tm);
-      if (te) setPartners(te);
-      if (pa) setFaqs(pa);
-      if (ad) setAds(ad);
-      if (j) setJobs(j);
-      if (h) setHomeSections(h);
-      if (ab) setAboutData(ab);
-      if (gi) setGalleryImages(gi);
-      if (gv) setGalleryVideos(gv);
+      const [settingsData, pagesData, servicesData, teamData, testimonialsData, partnersData, faqsData, adsData, jobsData, homeSectionsData, aboutData, galleryImagesData, galleryVideosData] = results;
+      if (settingsData) setSettings(settingsData);
+      if (pagesData) setPageVisibilities(pagesData);
+      if (servicesData) setServices(servicesData);
+      if (teamData) setTeam(teamData);
+      if (testimonialsData) setTestimonials(testimonialsData);
+      if (partnersData) setPartners(partnersData);
+      if (faqsData) setFaqs(faqsData);
+      if (adsData) setAds(adsData);
+      if (jobsData) setJobs(jobsData);
+      if (homeSectionsData) setHomeSections(homeSectionsData);
+      if (aboutData) setAboutData(aboutData);
+      if (galleryImagesData) setGalleryImages(galleryImagesData);
+      if (galleryVideosData) setGalleryVideos(galleryVideosData);
     } catch (err) {
       console.error('Erreur rafraichissement:', err);
     } finally {
@@ -101,6 +101,7 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
     const wasAdmin = prevPageRef.current === 'admin';
     prevPageRef.current = page;
     setCurrentPage(page);
+    // Always refresh data when leaving admin to sync site pages
     if (wasAdmin && page !== 'admin') {
       refreshAllData();
     }
@@ -128,7 +129,7 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
       case 'services':
         return <ServicesPage services={services} onNavigate={handleNavigate} />;
       case 'galerie':
-        return <GalleryPage />;
+        return <GalleryPage initialImages={galleryImages} initialVideos={galleryVideos} />;
       case 'temoignages':
         return <TestimonialsPage testimonials={testimonials} />;
       case 'partenaires':

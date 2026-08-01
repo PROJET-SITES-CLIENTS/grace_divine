@@ -170,6 +170,29 @@ export default function AdminDashboard({ onNavigate, onDataChanged }: AdminDashb
     fetchDashboard();
   }, [fetchDashboard]);
 
+  // Re-fetch specific data when switching tabs for perfect sync
+  useEffect(() => {
+    if (activeTab === 'contact') {
+      fetch('/api/contact').then((r) => r.json()).then((data) => {
+        setContacts(data || []);
+        setCounts((prev) => ({ ...prev, contacts: data?.length || 0 }));
+      }).catch(() => {});
+    }
+    if (activeTab === 'gallery') {
+      Promise.all([
+        fetch('/api/gallery/images').then((r) => r.json()),
+        fetch('/api/gallery/videos').then((r) => r.json()),
+      ]).then(([imgs, vids]) => {
+        setGalleryImages(imgs || []);
+        setGalleryVideos(vids || []);
+        setCounts((prev) => ({ ...prev, images: imgs?.length || 0, videos: vids?.length || 0 }));
+      }).catch(() => {});
+    }
+    if (activeTab === 'dashboard') {
+      fetchDashboard();
+    }
+  }, [activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Settings
   const saveSettings = async (newSettings: Record<string, string>) => {
     setSettings(newSettings);
@@ -492,7 +515,7 @@ export default function AdminDashboard({ onNavigate, onDataChanged }: AdminDashb
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-gray-900">Équipe</h2>
                   <Dialog>
-                    <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-white"><Plus className="w-4 h-4 mr-2" />Ajouter</Button></DialogTrigger>
+                    <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-gdv-dark font-semibold"><Plus className="w-4 h-4 mr-2" />Ajouter</Button></DialogTrigger>
                     <DialogContent>
                       <GenericForm fields={[{ name: 'name', label: 'Nom', required: true }, { name: 'role', label: 'Rôle' }, { name: 'bio', label: 'Bio', type: 'textarea' }, { name: 'photo', label: 'URL de la photo' }]} onSave={async (data) => { await createItem('/api/team', data, team, setTeam); }} />
                     </DialogContent>
@@ -529,7 +552,7 @@ export default function AdminDashboard({ onNavigate, onDataChanged }: AdminDashb
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-gray-900">Témoignages</h2>
                   <Dialog>
-                    <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-white"><Plus className="w-4 h-4 mr-2" />Ajouter</Button></DialogTrigger>
+                    <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-gdv-dark font-semibold"><Plus className="w-4 h-4 mr-2" />Ajouter</Button></DialogTrigger>
                     <DialogContent>
                       <GenericForm fields={[{ name: 'name', label: 'Nom', required: true }, { name: 'role', label: 'Rôle' }, { name: 'content', label: 'Contenu', type: 'textarea', required: true }, { name: 'rating', label: 'Note (1-5)', type: 'number' }]} onSave={async (data) => { await createItem('/api/testimonials', { ...data, rating: parseInt(data.rating) || 5 }, testimonials, setTestimonials); }} />
                     </DialogContent>
@@ -567,7 +590,7 @@ export default function AdminDashboard({ onNavigate, onDataChanged }: AdminDashb
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-gray-900">Partenaires</h2>
                   <Dialog>
-                    <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-white"><Plus className="w-4 h-4 mr-2" />Ajouter</Button></DialogTrigger>
+                    <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-gdv-dark font-semibold"><Plus className="w-4 h-4 mr-2" />Ajouter</Button></DialogTrigger>
                     <DialogContent><GenericForm fields={[{ name: 'name', label: 'Nom', required: true }, { name: 'logo', label: 'URL du logo' }, { name: 'website', label: 'Site web' }]} onSave={async (data) => { await createItem('/api/partners', data, partners, setPartners); }} /></DialogContent>
                   </Dialog>
                 </div>
@@ -602,7 +625,7 @@ export default function AdminDashboard({ onNavigate, onDataChanged }: AdminDashb
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-gray-900">FAQ</h2>
                   <Dialog>
-                    <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-white"><Plus className="w-4 h-4 mr-2" />Ajouter</Button></DialogTrigger>
+                    <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-gdv-dark font-semibold"><Plus className="w-4 h-4 mr-2" />Ajouter</Button></DialogTrigger>
                     <DialogContent>
                       <GenericForm fields={[{ name: 'question', label: 'Question', required: true }, { name: 'answer', label: 'Réponse', type: 'textarea', required: true }, { name: 'category', label: 'Catégorie' }]} onSave={async (data) => { await createItem('/api/faq', data, faqs, setFaqs); }} />
                     </DialogContent>
@@ -699,7 +722,7 @@ export default function AdminDashboard({ onNavigate, onDataChanged }: AdminDashb
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-gray-900">Publicités</h2>
                   <Dialog>
-                    <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-white"><Plus className="w-4 h-4 mr-2" />Ajouter</Button></DialogTrigger>
+                    <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-gdv-dark font-semibold"><Plus className="w-4 h-4 mr-2" />Ajouter</Button></DialogTrigger>
                     <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                       <AdForm onSave={async (data) => { await createItem('/api/ads', data, ads, setAds); }} />
                     </DialogContent>
@@ -780,7 +803,7 @@ export default function AdminDashboard({ onNavigate, onDataChanged }: AdminDashb
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-gray-900">Recrutement</h2>
                   <Dialog>
-                    <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-white"><Plus className="w-4 h-4 mr-2" />Ajouter</Button></DialogTrigger>
+                    <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-gdv-dark font-semibold"><Plus className="w-4 h-4 mr-2" />Ajouter</Button></DialogTrigger>
                     <DialogContent className="max-w-2xl">
                       <GenericForm fields={[{ name: 'title', label: 'Titre du poste', required: true }, { name: 'description', label: 'Description', type: 'textarea' }, { name: 'requirements', label: 'Exigences', type: 'textarea' }, { name: 'location', label: 'Lieu' }, { name: 'type', label: 'Type (CDI/CDD)' }]} onSave={async (data) => { await createItem('/api/jobs', data, jobs, setJobs); }} />
                     </DialogContent>

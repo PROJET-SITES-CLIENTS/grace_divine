@@ -37,10 +37,15 @@ const staggerContainer = {
   visible: { transition: { staggerChildren: 0.06 } },
 };
 
-export default function GalleryPage() {
-  const [images, setImages] = useState<GalleryImage[]>([]);
-  const [videos, setVideos] = useState<GalleryVideo[]>([]);
-  const [loading, setLoading] = useState(true);
+interface GalleryPageProps {
+  initialImages?: GalleryImage[] | null;
+  initialVideos?: GalleryVideo[] | null;
+}
+
+export default function GalleryPage({ initialImages, initialVideos }: GalleryPageProps) {
+  const [images, setImages] = useState<GalleryImage[]>(initialImages || []);
+  const [videos, setVideos] = useState<GalleryVideo[]>(initialVideos || []);
+  const [loading, setLoading] = useState(!initialImages && !initialVideos);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [videoModal, setVideoModal] = useState<string | null>(null);
 
