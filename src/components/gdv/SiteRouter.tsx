@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Header from '@/components/gdv/Header';
 import Footer from '@/components/gdv/Footer';
@@ -40,66 +40,93 @@ const pageVariants = {
   exit: { opacity: 0, y: -8, transition: { duration: 0.2 } },
 };
 
-export default function SiteRouter({
-  pageVisibilities,
-  settings,
-  services,
-  team,
-  testimonials,
-  partners,
-  faqs,
-  ads,
-  jobs,
-  galleryImages,
-  galleryVideos,
-  homeSections,
-  aboutData,
-}: SiteRouterProps) {
+export default function SiteRouter(initialProps: SiteRouterProps) {
+  const [settings, setSettings] = useState(initialProps.settings);
+  const [pageVisibilities, setPageVisibilities] = useState(initialProps.pageVisibilities);
+  const [services, setServices] = useState(initialProps.services);
+  const [team, setTeam] = useState(initialProps.team);
+  const [testimonials, setTestimonials] = useState(initialProps.testimonials);
+  const [partners, setPartners] = useState(initialProps.partners);
+  const [faqs, setFaqs] = useState(initialProps.faqs);
+  const [jobs, setJobs] = useState(initialProps.jobs);
+  const [homeSections, setHomeSections] = useState(initialProps.homeSections);
+  const [aboutData, setAboutData] = useState(initialProps.aboutData);
+  const [ads, setAds] = useState(initialProps.ads);
+  const [galleryImages, setGalleryImages] = useState(initialProps.galleryImages);
+  const [galleryVideos, setGalleryVideos] = useState(initialProps.galleryVideos);
   const [currentPage, setCurrentPage] = useState('accueil');
+  const [refreshing, setRefreshing] = useState(false);
+  const prevPageRef = useRef('accueil');
 
-  const handleNavigate = useCallback((page: string) => {
-    setCurrentPage(page);
+  const refreshAllData = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      const results = await Promise.all([
+        fetch('/api/settings').then((r) => r.json()).catch(() => null),
+        fetch('/api/pages-visibility').then((r) => r.json()).catch(() => []),
+        fetch('/api/services').then((r) => r.json()).catch(() => []),
+        fetch('/api/team').then((r) => r.json()).catch(() => []),
+        fetch('/api/testimonials').then((r) => r.json()).catch(() => []),
+        fetch('/api/partners').then((r) => r.json()).catch(() => []),
+        fetch('/api/faq').then((r) => r.json()).catch(() => []),
+        fetch('/api/ads').then((r) => r.json()).catch(() => []),
+        fetch('/api/jobs').then((r) => r.json()).catch(() => []),
+        fetch('/api/home-sections').then((r) => r.json()).catch(() => []),
+        fetch('/api/about').then((r) => r.json()).catch(() => null),
+        fetch('/api/gallery/images').then((r) => r.json()).catch(() => []),
+        fetch('/api/gallery/videos').then((r) => r.json()).catch(() => []),
+      ]);
+      const [s, p, sv, t, tm, te, pa, f, ad, j, h, ab, gi, gv] = results;
+      if (s) setSettings(s);
+      if (p) setPageVisibilities(p);
+      if (sv) setServices(sv);
+      if (t) setTeam(t);
+      if (tm) setTestimonials(tm);
+      if (te) setPartners(te);
+      if (pa) setFaqs(pa);
+      if (ad) setAds(ad);
+      if (j) setJobs(j);
+      if (h) setHomeSections(h);
+      if (ab) setAboutData(ab);
+      if (gi) setGalleryImages(gi);
+      if (gv) setGalleryVideos(gv);
+    } catch (err) {
+      console.error('Erreur rafraichissement:', err);
+    } finally {
+      setRefreshing(false);
+    }
   }, []);
 
-  const isAdmin = currentPage === 'admin';
+  const handleNavigate = useCallback((page: string) => {
+    const wasAdmin = prevPageRef.current === 'admin';
+    prevPageRef.current = page;
+    setCurrentPage(page);
+    if (wasAdmin && page !== 'admin') {
+      refreshAllData();
+    }
+  }, [refreshAllData]);
 
-  // Extract slug for service detail pages
+  const handleDataChanged = useCallback(() => {
+    refreshAllData();
+  }, [refreshAllData]);
+
+  const isAdmin = currentPage === 'admin';
   const serviceSlug = currentPage.startsWith('service-') ? currentPage.replace('service-', '') : null;
 
   const renderPage = () => {
     if (isAdmin) {
-      return <AdminDashboard onNavigate={handleNavigate} />;
+      return <AdminDashboard onNavigate={handleNavigate} onDataChanged={handleDataChanged} />;
     }
-
     if (serviceSlug) {
       return <ServiceDetailPage slug={serviceSlug} onNavigate={handleNavigate} />;
     }
-
     switch (currentPage) {
       case 'accueil':
-        return (
-          <HomePage
-            services={services}
-            testimonials={testimonials}
-            homeSections={homeSections}
-            onNavigate={handleNavigate}
-          />
-        );
+        return <HomePage services={services} testimonials={testimonials} homeSections={homeSections} onNavigate={handleNavigate} />;
       case 'a-propos':
-        return (
-          <AboutPage
-            aboutData={aboutData}
-            team={team}
-            onNavigate={handleNavigate}
-          />
-        );
+        return <AboutPage aboutData={aboutData} team={team} onNavigate={handleNavigate} />;
       case 'services':
-        return (
-          <ServicesPage
-            services={services}
-            onNavigate={handleNavigate}
-          />
-        );
+        return <ServicesPage services={services} onNavigate={handleNavigate} />;
       case 'galerie':
         return <GalleryPage />;
       case 'temoignages':
@@ -115,19 +142,19 @@ export default function SiteRouter({
       case 'contact':
         return <ContactPage settings={settings} services={services} />;
       default:
-        return (
-          <HomePage
-            services={services}
-            testimonials={testimonials}
-            homeSections={homeSections}
-            onNavigate={handleNavigate}
-          />
-        );
+        return <HomePage services={services} testimonials={testimonials} homeSections={homeSections} onNavigate={handleNavigate} />;
     }
   };
 
   return (
     <>
+      {refreshing && (
+        <div className="fixed top-20 right-4 z-[200] bg-gdv-teal text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 text-sm font-medium animate-pulse">
+          <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+          <span>Synchronisation...</span>
+        </div>
+      )}
+
       {!isAdmin && (
         <Header
           pageVisibilities={pageVisibilities}

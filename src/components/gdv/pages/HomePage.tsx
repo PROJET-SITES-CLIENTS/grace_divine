@@ -372,7 +372,7 @@ export default function HomePage({ services, testimonials, homeSections, onNavig
                     <div className="flex items-center justify-between mt-6 pt-6 border-t border-gdv-brown-pale/30">
                       <button
                         onClick={prevTestimonial}
-                        className="w-10 h-10 rounded-full border border-gdv-brown-pale/50 flex items-center justify-center text-gdv-brown-light hover:bg-gdv-teal hover:text-white hover:border-gdv-teal transition-all"
+                        className="w-10 h-10 rounded-full border border-gdv-brown-pale/50 flex items-center justify-center text-gdv-brown hover:bg-gdv-teal hover:text-white hover:border-gdv-teal transition-all"
                       >
                         <ChevronLeft className="w-5 h-5" />
                       </button>
@@ -389,7 +389,7 @@ export default function HomePage({ services, testimonials, homeSections, onNavig
                       </div>
                       <button
                         onClick={nextTestimonial}
-                        className="w-10 h-10 rounded-full border border-gdv-brown-pale/50 flex items-center justify-center text-gdv-brown-light hover:bg-gdv-teal hover:text-white hover:border-gdv-teal transition-all"
+                        className="w-10 h-10 rounded-full border border-gdv-brown-pale/50 flex items-center justify-center text-gdv-brown hover:bg-gdv-teal hover:text-white hover:border-gdv-teal transition-all"
                       >
                         <ChevronRight className="w-5 h-5" />
                       </button>

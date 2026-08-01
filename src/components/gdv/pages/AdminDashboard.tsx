@@ -57,6 +57,7 @@ import { useToast } from '@/hooks/use-toast';
 
 interface AdminDashboardProps {
   onNavigate: (page: string) => void;
+  onDataChanged?: () => void;
 }
 
 type AdminTab = 'dashboard' | 'settings' | 'pages' | 'services' | 'team' | 'testimonials' | 'partners' | 'faq' | 'gallery' | 'ads' | 'contact' | 'jobs' | 'home' | 'about';
@@ -66,7 +67,12 @@ const fadeIn = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
 };
 
-export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
+export default function AdminDashboard({ onNavigate, onDataChanged }: AdminDashboardProps) {
+
+  // Notify parent that data changed so the site can refresh
+  const notifyDataChanged = useCallback(() => {
+    onDataChanged?.();
+  }, [onDataChanged]);
   const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { toast } = useToast();
@@ -169,6 +175,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
     setSettings(newSettings);
     await fetch('/api/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newSettings) });
     toast({ title: 'Paramètres sauvegardés' });
+    notifyDataChanged();
   };
 
   // Pages visibility
@@ -176,6 +183,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
     await fetch('/api/pages-visibility', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pageKey, visible }) });
     setPages(pages.map((p) => (p.pageKey === pageKey ? { ...p, visible } : p)));
     toast({ title: 'Visibilité mise à jour' });
+    notifyDataChanged();
   };
 
   // Generic delete
@@ -183,6 +191,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
     await fetch(`${url}/${id}`, { method: 'DELETE' });
     setList(list.filter((item) => item.id !== id));
     toast({ title: 'Élément supprimé' });
+    notifyDataChanged();
   };
 
   // Generic create
@@ -191,6 +200,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
     const item = await res.json();
     setList([...list, item]);
     toast({ title: 'Élément créé' });
+    notifyDataChanged();
     return item;
   };
 
@@ -200,6 +210,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
     const item = await res.json();
     setList(list.map((l) => (l.id === id ? { ...l, ...item } : l)));
     toast({ title: 'Élément mis à jour' });
+    notifyDataChanged();
   };
 
   return (
@@ -256,7 +267,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
             </button>
             <h1 className="text-lg font-semibold text-gray-900">Administration</h1>
           </div>
-          <Button onClick={() => onNavigate('accueil')} variant="outline" size="sm" className="text-sm">
+          <Button onClick={() => onNavigate('accueil')} size="sm" className="bg-gdv-teal hover:bg-gdv-teal-light text-white text-sm">
             <ArrowLeft className="w-4 h-4 mr-1.5" />
             Retour au site
           </Button>
@@ -271,7 +282,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                   {[
                     { label: 'Contacts', value: counts.contacts, icon: <Mail className="w-5 h-5" />, color: 'text-blue-600 bg-blue-50' },
-                    { label: 'Services', value: counts.services, icon: <Plane className="w-5 h-5" />, color: 'text-gdv-gold bg-yellow-50' },
+                    { label: 'Services', value: counts.services, icon: <Plane className="w-5 h-5" />, color: 'text-amber-700 bg-amber-50' },
                     { label: 'Témoignages', value: counts.testimonials, icon: <MessageSquare className="w-5 h-5" />, color: 'text-green-600 bg-green-50' },
                     { label: 'Équipe', value: counts.team, icon: <Users className="w-5 h-5" />, color: 'text-purple-600 bg-purple-50' },
                     { label: 'Partenaires', value: counts.partners, icon: <Building className="w-5 h-5" />, color: 'text-indigo-600 bg-indigo-50' },
@@ -319,7 +330,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                             <TableCell className="text-sm">{c.subject || '-'}</TableCell>
                             <TableCell className="text-sm text-gray-500">{new Date(c.createdAt).toLocaleDateString('fr-FR')}</TableCell>
                             <TableCell>
-                              <Badge variant={c.read ? 'secondary' : 'default'} className={c.read ? 'bg-gray-100' : 'bg-gdv-gold text-white'}>
+                              <Badge variant={c.read ? 'secondary' : 'default'} className={c.read ? 'bg-gray-100 text-gray-600' : 'bg-amber-600 text-white'}>
                                 {c.read ? 'Lu' : 'Non lu'}
                               </Badge>
                             </TableCell>
@@ -401,7 +412,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                       </div>
                     </div>
                     <Separator />
-                    <Button onClick={() => saveSettings(settings)} className="bg-gdv-gold hover:bg-gdv-gold-light text-white">
+                    <Button onClick={() => saveSettings(settings)} className="bg-gdv-teal hover:bg-gdv-teal-light text-white">
                       <Save className="w-4 h-4 mr-2" /> Sauvegarder
                     </Button>
                   </CardContent>
@@ -439,7 +450,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                   <h2 className="text-2xl font-bold text-gray-900">Services</h2>
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button className="bg-gdv-gold hover:bg-gdv-gold-light text-white"><Plus className="w-4 h-4 mr-2" />Ajouter</Button>
+                      <Button className="bg-gdv-dark hover:bg-gdv-brown text-white"><Plus className="w-4 h-4 mr-2" />Ajouter</Button>
                     </DialogTrigger>
                     <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                       <ServiceForm onSave={async (data) => { await createItem('/api/services', data, services, setServices); fetchDashboard(); }} />
@@ -634,7 +645,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                   <TabsContent value="images" className="mt-4">
                     <div className="flex justify-end mb-4">
                       <Dialog>
-                        <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-white"><Upload className="w-4 h-4 mr-2" />Ajouter une image</Button></DialogTrigger>
+                        <DialogTrigger asChild><Button className="bg-gdv-dark hover:bg-gdv-brown text-white"><Upload className="w-4 h-4 mr-2" />Ajouter une image</Button></DialogTrigger>
                         <DialogContent><GenericForm fields={[{ name: 'title', label: 'Titre' }, { name: 'url', label: 'URL de l\'image', required: true }]} onSave={async (data) => { await createItem('/api/gallery/images', data, galleryImages, setGalleryImages); }} /></DialogContent>
                       </Dialog>
                     </div>
@@ -658,7 +669,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                   <TabsContent value="videos" className="mt-4">
                     <div className="flex justify-end mb-4">
                       <Dialog>
-                        <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-white"><Upload className="w-4 h-4 mr-2" />Ajouter une vidéo</Button></DialogTrigger>
+                        <DialogTrigger asChild><Button className="bg-gdv-dark hover:bg-gdv-brown text-white"><Upload className="w-4 h-4 mr-2" />Ajouter une vidéo</Button></DialogTrigger>
                         <DialogContent><GenericForm fields={[{ name: 'title', label: 'Titre' }, { name: 'url', label: 'URL de la vidéo', required: true }, { name: 'thumbnail', label: 'Miniature URL' }]} onSave={async (data) => { await createItem('/api/gallery/videos', data, galleryVideos, setGalleryVideos); }} /></DialogContent>
                       </Dialog>
                     </div>
@@ -738,7 +749,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                             <TableCell className="text-sm max-w-[200px] truncate">{c.message}</TableCell>
                             <TableCell className="text-sm text-gray-500">{new Date(c.createdAt).toLocaleDateString('fr-FR')}</TableCell>
                             <TableCell>
-                              <Badge variant={c.read ? 'secondary' : 'default'} className={c.read ? 'bg-gray-100' : 'bg-gdv-gold text-white'}>
+                              <Badge variant={c.read ? 'secondary' : 'default'} className={c.read ? 'bg-gray-100 text-gray-600' : 'bg-amber-600 text-white'}>
                                 {c.read ? 'Lu' : 'Non lu'}
                               </Badge>
                             </TableCell>
@@ -810,7 +821,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                     <Card key={section.id}>
                       <CardHeader className="pb-3">
                         <CardTitle className="text-base flex items-center gap-2">
-                          <Home className="w-5 h-5 text-gdv-gold" />
+                          <Home className="w-5 h-5 text-amber-700" />
                           {section.sectionKey}
                         </CardTitle>
                       </CardHeader>
@@ -829,7 +840,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                           <Label className="text-xs text-gray-500">Contenu</Label>
                           <Textarea value={section.content || ''} onChange={(e) => setHomeSections(homeSections.map((s: any) => s.id === section.id ? { ...s, content: e.target.value } : s))} rows={2} />
                         </div>
-                        <Button size="sm" onClick={async () => { const res = await fetch(`/api/home-sections`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(homeSections.find((s: any) => s.id === section.id)) }); if (res.ok) toast({ title: 'Section mise à jour' }); else toast({ title: 'Erreur', variant: 'destructive' }); }} className="bg-gdv-gold hover:bg-gdv-gold-light text-white">
+                        <Button size="sm" onClick={async () => { const res = await fetch(`/api/home-sections`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(homeSections.find((s: any) => s.id === section.id)) }); if (res.ok) { toast({ title: 'Section mise à jour' }); notifyDataChanged(); } else toast({ title: 'Erreur', variant: 'destructive' }); }} className="bg-gdv-teal hover:bg-gdv-teal-light text-white">
                           <Save className="w-3.5 h-3.5 mr-1.5" /> Sauvegarder
                         </Button>
                       </CardContent>
@@ -872,8 +883,8 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                     <Separator />
                     <Button onClick={async () => {
                       const res = await fetch('/api/about', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...aboutData, values: JSON.stringify(aboutData.values || []) }) });
-                      if (res.ok) toast({ title: 'Page À propos mise à jour' }); else toast({ title: 'Erreur de sauvegarde', variant: 'destructive' });
-                    }} className="bg-gdv-gold hover:bg-gdv-gold-light text-white">
+                      if (res.ok) { toast({ title: 'Page À propos mise à jour' }); notifyDataChanged(); } else toast({ title: 'Erreur de sauvegarde', variant: 'destructive' });
+                    }} className="bg-gdv-teal hover:bg-gdv-teal-light text-white">
                       <Save className="w-4 h-4 mr-2" /> Sauvegarder
                     </Button>
                   </CardContent>
@@ -917,7 +928,7 @@ function GenericForm({ initial, fields, onSave }: { initial?: Record<string, any
             )}
           </div>
         ))}
-        <Button onClick={handleSave} className="bg-gdv-gold hover:bg-gdv-gold-light text-white w-full">
+        <Button onClick={handleSave} className="bg-gdv-teal hover:bg-gdv-teal-light text-white w-full">
           <Save className="w-4 h-4 mr-2" /> Sauvegarder
         </Button>
       </div>
@@ -955,7 +966,7 @@ function ServiceForm({ initial, onSave }: { initial?: Record<string, any>; onSav
           <Label>Fonctionnalités (une par ligne)</Label>
           <Textarea value={data.featuresText || (Array.isArray(data.features) ? data.features.join('\n') : '')} onChange={(e) => setData({ ...data, featuresText: e.target.value })} rows={4} placeholder="Vols domestiques et internationaux&#10;Comparaison de prix&#10;Options flexibles" />
         </div>
-        <Button onClick={handleSave} className="bg-gdv-gold hover:bg-gdv-gold-light text-white w-full"><Save className="w-4 h-4 mr-2" />Sauvegarder</Button>
+        <Button onClick={handleSave} className="bg-gdv-teal hover:bg-gdv-teal-light text-white w-full"><Save className="w-4 h-4 mr-2" />Sauvegarder</Button>
       </div>
     </>
   );
@@ -998,7 +1009,7 @@ function AdForm({ initial, onSave }: { initial?: Record<string, any>; onSave: (d
             <Switch checked={data.active !== false} onCheckedChange={(checked) => setData({ ...data, active: checked })} />
           </div>
         </div>
-        <Button onClick={handleSave} className="bg-gdv-gold hover:bg-gdv-gold-light text-white w-full"><Save className="w-4 h-4 mr-2" />Sauvegarder</Button>
+        <Button onClick={handleSave} className="bg-gdv-teal hover:bg-gdv-teal-light text-white w-full"><Save className="w-4 h-4 mr-2" />Sauvegarder</Button>
       </div>
     </>
   );
