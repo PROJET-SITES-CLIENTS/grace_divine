@@ -117,15 +117,15 @@
    117→    try {
    118→      const [c, s, t, tm, p, f, j, a, gi, gv] = await Promise.all([
    119→        fetch('/api/contact').then((r) => r.json()),
-   120→        fetch('/api/services').then((r) => r.json()),
-   121→        fetch('/api/testimonials').then((r) => r.json()),
-   122→        fetch('/api/team').then((r) => r.json()),
-   123→        fetch('/api/partners').then((r) => r.json()),
-   124→        fetch('/api/faq').then((r) => r.json()),
-   125→        fetch('/api/jobs').then((r) => r.json()),
+   120→        fetch('/api/services?all=true').then((r) => r.json()),
+   121→        fetch('/api/testimonials?all=true').then((r) => r.json()),
+   122→        fetch('/api/team?all=true').then((r) => r.json()),
+   123→        fetch('/api/partners?all=true').then((r) => r.json()),
+   124→        fetch('/api/faq?all=true').then((r) => r.json()),
+   125→        fetch('/api/jobs?all=true').then((r) => r.json()),
    126→        fetch('/api/ads/admin').then((r) => r.json()),
-   127→        fetch('/api/gallery/images').then((r) => r.json()),
-   128→        fetch('/api/gallery/videos').then((r) => r.json()),
+   127→        fetch('/api/gallery/images?all=true').then((r) => r.json()),
+   128→        fetch('/api/gallery/videos?all=true').then((r) => r.json()),
    129→      ]);
    130→      setContacts(c || []);
    131→      setServices(s || []);
@@ -180,8 +180,8 @@
    180→    }
    181→    if (activeTab === 'gallery') {
    182→      Promise.all([
-   183→        fetch('/api/gallery/images').then((r) => r.json()),
-   184→        fetch('/api/gallery/videos').then((r) => r.json()),
+   183→        fetch('/api/gallery/images?all=true').then((r) => r.json()),
+   184→        fetch('/api/gallery/videos?all=true').then((r) => r.json()),
    185→      ]).then(([imgs, vids]) => {
    186→        setGalleryImages(imgs || []);
    187→        setGalleryVideos(vids || []);

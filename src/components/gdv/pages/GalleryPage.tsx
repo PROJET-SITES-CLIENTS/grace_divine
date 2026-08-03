@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Play, ChevronLeft, ChevronRight, Camera, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -45,22 +45,8 @@ interface GalleryPageProps {
 export default function GalleryPage({ initialImages, initialVideos }: GalleryPageProps) {
   const [images, setImages] = useState<GalleryImage[]>(initialImages || []);
   const [videos, setVideos] = useState<GalleryVideo[]>(initialVideos || []);
-  const [loading, setLoading] = useState(!initialImages && !initialVideos);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [videoModal, setVideoModal] = useState<string | null>(null);
-
-  useEffect(() => {
-    Promise.all([
-      fetch('/api/gallery/images').then((r) => r.json()),
-      fetch('/api/gallery/videos').then((r) => r.json()),
-    ])
-      .then(([imgs, vids]) => {
-        setImages(imgs || []);
-        setVideos(vids || []);
-      })
-      .catch((err) => { console.error('Erreur galerie:', err); })
-      .finally(() => setLoading(false));
-  }, []);
 
   const nextImage = () => {
     if (lightboxIndex === null) return;
@@ -71,14 +57,6 @@ export default function GalleryPage({ initialImages, initialVideos }: GalleryPag
     if (lightboxIndex === null) return;
     setLightboxIndex((lightboxIndex - 1 + images.length) % images.length);
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gdv-cream pt-20">
-        <div className="w-10 h-10 rounded-full border-2 border-gdv-teal border-t-transparent animate-spin" />
-      </div>
-    );
-  }
 
   return (
     <div>

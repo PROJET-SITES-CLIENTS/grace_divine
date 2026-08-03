@@ -57,14 +57,13 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
   const [currentPage, setCurrentPage] = useState('accueil');
   const [refreshing, setRefreshing] = useState(false);
   const prevPageRef = useRef('accueil');
-  const lastRefreshRef = useRef(0);
+  const refreshPromiseRef = useRef<Promise<void> | null>(null);
 
-  const refreshAllData = useCallback(async () => {
-    // Skip if refreshed less than 2 seconds ago to avoid redundant calls
-    const now = Date.now();
-    if (now - lastRefreshRef.current < 2000) return;
-    lastRefreshRef.current = now;
+  const refreshAllData = useCallback(async (force = false) => {
+    // Deduplicate: if a refresh is already in progress, reuse its promise
+    if (refreshPromiseRef.current && !force) return refreshPromiseRef.current;
     setRefreshing(true);
+    const promise = (async () => {
     try {
       const results = await Promise.all([
         fetch('/api/settings').then((r) => r.json()).catch(() => null),
@@ -100,18 +99,20 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
       console.error('Erreur rafraichissement:', err);
     } finally {
       setRefreshing(false);
+      refreshPromiseRef.current = null;
     }
+    })();
+    refreshPromiseRef.current = promise;
+    return promise;
   }, []);
 
   const handleNavigate = useCallback(async (page: string) => {
     const wasAdmin = prevPageRef.current === 'admin';
     prevPageRef.current = page;
-    // When leaving admin, wait for data to refresh BEFORE changing page
-    // This ensures the new page always renders with fresh data
+    // When leaving admin, wait for fresh data BEFORE rendering the new page
     if (wasAdmin && page !== 'admin') {
-      // Reset debounce to force refresh even if recently refreshed
-      lastRefreshRef.current = 0;
-      await refreshAllData();
+      refreshPromiseRef.current = null; // force a fresh refresh
+      await refreshAllData(true);
     }
     setCurrentPage(page);
   }, [refreshAllData]);

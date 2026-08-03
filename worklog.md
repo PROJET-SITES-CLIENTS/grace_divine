@@ -89,3 +89,28 @@ Stage Summary:
 - Root cause of sync failure: destructuring mismatch in refreshAllData() causing ads/jobs/homeSections/aboutData/galleryImages/galleryVideos to never update correctly
 - 3 files modified: SiteRouter.tsx, AdminDashboard.tsx, GalleryPage.tsx
 - Server running on port 3000, all APIs functional
+
+---
+Task ID: 2
+Agent: main
+Task: Analyse complète et correction finale de la synchronisation dashboard ↔ site
+
+Work Log:
+- Lu SiteRouter.tsx (202 lignes) en entier - analysé refreshAllData, handleNavigate, handleDataChanged
+- Lu AdminDashboard.tsx (1040 lignes) en entier - analysé toutes les fonctions CRUD, notifyDataChanged
+- Lu GalleryPage.tsx (327 puis 305 lignes) - identifié le useEffect qui écrase les props
+- Lu ContactPage.tsx (392 lignes) - vérifié le flux d'envoi de messages
+- Lu HomePage.tsx (461 lignes) - vérifié la réception des props
+- Vérifié les autres pages (AboutPage, ServicesPage, etc.) pour les useEffect
+- Identifié 2 bugs critiques et analysé le comportement de toutes les pages
+- CORRIGE SiteRouter.tsx: remplacé le debounce temporel (2s) par une déduplication de promesse avec paramètre force
+- CORRIGE GalleryPage.tsx: supprimé le useEffect([]) qui refetchait et écrasait les données fraîches au mount
+- Compilation réussie (next build) sans erreurs
+- Testé toutes les API (gallery/images POST/GET/DELETE, contact POST/GET/DELETE) - OK
+
+Stage Summary:
+- BUG CRITIQUE 1 CORRIGE: GalleryPage avait un useEffect([]) qui refetchait les images au mount, écrasant les données fraîches transmises par refreshAllData via les props
+- BUG CRITIQUE 2 CORRIGE: refreshAllData avait un debounce de 2 secondes (lastRefreshRef) qui bloquait les refreshs consécutifs - remplacé par une déduplication de promesse
+- Flux de synchronisation final: Admin CRUD -> notifyDataChanged() -> refreshAllData() met à jour les 13 states -> handleNavigate(force=true) au départ de l'admin attend le refresh AVANT de changer de page -> les pages reçoivent les nouvelles props au montage (AnimatePresence key=currentPage démonte/remonte)
+- Toutes les autres pages (Services, About, FAQ, etc.) n'ont pas de fetch interne et utilisent directement les props du parent - elles se mettent à jour correctement au remontage
+- 2 fichiers modifiés: SiteRouter.tsx, GalleryPage.tsx
