@@ -1,0 +1,1043 @@
+     1→     1→'use client';
+     2→     2→
+     3→     3→import { useState, useEffect, useCallback, useRef } from 'react';
+     4→     4→import { motion } from 'framer-motion';
+     5→     5→import {
+     6→     6→  ArrowLeft,
+     7→     7→  LayoutDashboard,
+     8→     8→  Settings,
+     9→     9→  Eye,
+    10→    10→  EyeOff,
+    11→    11→  Plane,
+    12→    12→  Users,
+    13→    13→  MessageSquare,
+    14→    14→  HelpCircle,
+    15→    15→  ImageIcon,
+    16→    16→  Video,
+    17→    17→  Briefcase,
+    18→    18→  Building,
+    19→    19→  FileText,
+    20→    20→  Trash2,
+    21→    21→  Pencil,
+    22→    22→  Plus,
+    23→    23→  Save,
+    24→    24→  X,
+    25→    25→  Upload,
+    26→    26→  Mail,
+    27→    27→  Check,
+    28→    28→  Megaphone,
+    29→    29→  Home,
+    30→    30→  Info,
+    31→    31→} from 'lucide-react';
+    32→    32→import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+    33→    33→import { Button } from '@/components/ui/button';
+    34→    34→import { Input } from '@/components/ui/input';
+    35→    35→import { Textarea } from '@/components/ui/textarea';
+    36→    36→import { Label } from '@/components/ui/label';
+    37→    37→import { Switch } from '@/components/ui/switch';
+    38→    38→import { Badge } from '@/components/ui/badge';
+    39→    39→import {
+    40→    40→  Dialog,
+    41→    41→  DialogContent,
+    42→    42→  DialogHeader,
+    43→    43→  DialogTitle,
+    44→    44→  DialogTrigger,
+    45→    45→} from '@/components/ui/dialog';
+    46→    46→import {
+    47→    47→  Table,
+    48→    48→  TableBody,
+    49→    49→  TableCell,
+    50→    50→  TableHead,
+    51→    51→  TableHeader,
+    52→    52→  TableRow,
+    53→    53→} from '@/components/ui/table';
+    54→    54→import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+    55→    55→import { Separator } from '@/components/ui/separator';
+    56→    56→import { useToast } from '@/hooks/use-toast';
+    57→    57→
+    58→    58→interface AdminDashboardProps {
+    59→    59→  onNavigate: (page: string) => void;
+    60→    60→  onDataChanged?: () => void;
+    61→    61→}
+    62→    62→
+    63→    63→type AdminTab = 'dashboard' | 'settings' | 'pages' | 'services' | 'team' | 'testimonials' | 'partners' | 'faq' | 'gallery' | 'ads' | 'contact' | 'jobs' | 'home' | 'about';
+    64→    64→
+    65→    65→const fadeIn = {
+    66→    66→  hidden: { opacity: 0, y: 10 },
+    67→    67→  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+    68→    68→};
+    69→    69→
+    70→    70→export default function AdminDashboard({ onNavigate, onDataChanged }: AdminDashboardProps) {
+    71→    71→
+    72→    72→  // Notify parent that data changed so the site can refresh
+    73→    73→  const notifyDataChanged = useCallback(() => {
+    74→    74→    onDataChanged?.();
+    75→    75→  }, [onDataChanged]);
+    76→    76→  const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
+    77→    77→  const [sidebarOpen, setSidebarOpen] = useState(false);
+    78→    78→  const { toast } = useToast();
+    79→    79→
+    80→    80→  // Data states
+    81→    81→  const [settings, setSettings] = useState<Record<string, string>>({});
+    82→    82→  const [pages, setPages] = useState<{ id: string; pageKey: string; title: string; visible: boolean }[]>([]);
+    83→    83→  const [services, setServices] = useState<any[]>([]);
+    84→    84→  const [team, setTeam] = useState<any[]>([]);
+    85→    85→  const [testimonials, setTestimonials] = useState<any[]>([]);
+    86→    86→  const [partners, setPartners] = useState<any[]>([]);
+    87→    87→  const [faqs, setFaqs] = useState<any[]>([]);
+    88→    88→  const [ads, setAds] = useState<any[]>([]);
+    89→    89→  const [contacts, setContacts] = useState<any[]>([]);
+    90→    90→  const [jobs, setJobs] = useState<any[]>([]);
+    91→    91→  const [homeSections, setHomeSections] = useState<any[]>([]);
+    92→    92→  const [aboutData, setAboutData] = useState<any>({});
+    93→    93→  const [galleryImages, setGalleryImages] = useState<any[]>([]);
+    94→    94→  const [galleryVideos, setGalleryVideos] = useState<any[]>([]);
+    95→    95→
+    96→    96→  // Loading states
+    97→    97→  const [counts, setCounts] = useState({ contacts: 0, services: 0, testimonials: 0, team: 0, partners: 0, faqs: 0, jobs: 0, ads: 0, images: 0, videos: 0 });
+    98→    98→
+    99→    99→  const sidebarItems: { key: AdminTab; label: string; icon: React.ReactNode }[] = [
+   100→   100→    { key: 'dashboard', label: 'Tableau de bord', icon: <LayoutDashboard className="w-5 h-5" /> },
+   101→   101→    { key: 'settings', label: 'Contenu du Site', icon: <Settings className="w-5 h-5" /> },
+   102→   102→    { key: 'pages', label: 'Pages', icon: <Eye className="w-5 h-5" /> },
+   103→   103→    { key: 'services', label: 'Services', icon: <Plane className="w-5 h-5" /> },
+   104→   104→    { key: 'team', label: 'Équipe', icon: <Users className="w-5 h-5" /> },
+   105→   105→    { key: 'testimonials', label: 'Témoignages', icon: <MessageSquare className="w-5 h-5" /> },
+   106→   106→    { key: 'partners', label: 'Partenaires', icon: <Building className="w-5 h-5" /> },
+   107→   107→    { key: 'faq', label: 'FAQ', icon: <HelpCircle className="w-5 h-5" /> },
+   108→   108→    { key: 'gallery', label: 'Galerie', icon: <ImageIcon className="w-5 h-5" /> },
+   109→   109→    { key: 'ads', label: 'Publicités', icon: <Megaphone className="w-5 h-5" /> },
+   110→   110→    { key: 'contact', label: 'Contact', icon: <Mail className="w-5 h-5" /> },
+   111→   111→    { key: 'jobs', label: 'Recrutement', icon: <Briefcase className="w-5 h-5" /> },
+   112→   112→    { key: 'home', label: 'Accueil', icon: <Home className="w-5 h-5" /> },
+   113→   113→    { key: 'about', label: 'À propos', icon: <Info className="w-5 h-5" /> },
+   114→   114→  ];
+   115→   115→
+   116→   116→  const fetchDashboard = useCallback(async () => {
+   117→   117→    try {
+   118→   118→      const [c, s, t, tm, p, f, j, a, gi, gv] = await Promise.all([
+   119→   119→        fetch('/api/contact').then((r) => r.json()),
+   120→   120→        fetch('/api/services?all=true').then((r) => r.json()),
+   121→   121→        fetch('/api/testimonials?all=true').then((r) => r.json()),
+   122→   122→        fetch('/api/team?all=true').then((r) => r.json()),
+   123→   123→        fetch('/api/partners?all=true').then((r) => r.json()),
+   124→   124→        fetch('/api/faq?all=true').then((r) => r.json()),
+   125→   125→        fetch('/api/jobs?all=true').then((r) => r.json()),
+   126→   126→        fetch('/api/ads/admin').then((r) => r.json()),
+   127→   127→        fetch('/api/gallery/images?all=true').then((r) => r.json()),
+   128→   128→        fetch('/api/gallery/videos?all=true').then((r) => r.json()),
+   129→   129→      ]);
+   130→   130→      setContacts(c || []);
+   131→   131→      setServices(s || []);
+   132→   132→      setTestimonials(t || []);
+   133→   133→      setTeam(tm || []);
+   134→   134→      setPartners(p || []);
+   135→   135→      setFaqs(f || []);
+   136→   136→      setJobs(j || []);
+   137→   137→      setAds(a || []);
+   138→   138→      setGalleryImages(gi || []);
+   139→   139→      setGalleryVideos(gv || []);
+   140→   140→      setCounts({
+   141→   141→        contacts: c?.length || 0,
+   142→   142→        services: s?.length || 0,
+   143→   143→        testimonials: t?.length || 0,
+   144→   144→        team: tm?.length || 0,
+   145→   145→        partners: p?.length || 0,
+   146→   146→        faqs: f?.length || 0,
+   147→   147→        jobs: j?.length || 0,
+   148→   148→        ads: a?.length || 0,
+   149→   149→        images: gi?.length || 0,
+   150→   150→        videos: gv?.length || 0,
+   151→   151→      });
+   152→   152→    } catch (err) { console.error('Erreur chargement dashboard:', err); }
+   153→   153→
+   154→   154→    try {
+   155→   155→      const [set, pg, hs, ab] = await Promise.all([
+   156→   156→        fetch('/api/settings').then((r) => r.json()),
+   157→   157→        fetch('/api/pages-visibility').then((r) => r.json()),
+   158→   158→        fetch('/api/home-sections').then((r) => r.json()),
+   159→   159→        fetch('/api/about').then((r) => r.json()),
+   160→   160→      ]);
+   161→   161→      setSettings(set || {});
+   162→   162→      setPages(pg || []);
+   163→   163→      setHomeSections(hs || []);
+   164→   164→      setAboutData(ab || {});
+   165→   165→    } catch (err) { console.error('Erreur chargement settings/pages:', err); }
+   166→   166→  }, []);
+   167→   167→
+   168→   168→  useEffect(() => {
+   169→   169→    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentionally fetch data on mount
+   170→   170→    fetchDashboard();
+   171→   171→  }, [fetchDashboard]);
+   172→   172→
+   173→   173→  // Re-fetch specific data when switching tabs for perfect sync
+   174→   174→  // (skips the initial mount to avoid double-fetching with the effect above)
+   175→   175→  const isInitialMount = useRef(true);
+   176→   176→  useEffect(() => {
+   177→   177→    if (isInitialMount.current) { isInitialMount.current = false; return; }
+   178→   178→    if (activeTab === 'contact') {
+   179→   179→      fetch('/api/contact').then((r) => r.json()).then((data) => {
+   180→   180→        setContacts(data || []);
+   181→   181→        setCounts((prev) => ({ ...prev, contacts: data?.length || 0 }));
+   182→   182→      }).catch(() => {});
+   183→   183→    }
+   184→   184→    if (activeTab === 'gallery') {
+   185→   185→      Promise.all([
+   186→   186→        fetch('/api/gallery/images?all=true').then((r) => r.json()),
+   187→   187→        fetch('/api/gallery/videos?all=true').then((r) => r.json()),
+   188→   188→      ]).then(([imgs, vids]) => {
+   189→   189→        setGalleryImages(imgs || []);
+   190→   190→        setGalleryVideos(vids || []);
+   191→   191→        setCounts((prev) => ({ ...prev, images: imgs?.length || 0, videos: vids?.length || 0 }));
+   192→   192→      }).catch(() => {});
+   193→   193→    }
+   194→   194→    if (activeTab === 'dashboard') {
+   195→   195→      fetchDashboard();
+   196→   196→    }
+   197→   197→  }, [activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
+   198→   198→
+   199→   199→  // Settings
+   200→   200→  const saveSettings = async (newSettings: Record<string, string>) => {
+   201→   201→    setSettings(newSettings);
+   202→   202→    await fetch('/api/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newSettings) });
+   203→   203→    toast({ title: 'Paramètres sauvegardés' });
+   204→   204→    notifyDataChanged();
+   205→   205→  };
+   206→   206→
+   207→   207→  // Pages visibility
+   208→   208→  const togglePage = async (pageKey: string, visible: boolean) => {
+   209→   209→    await fetch('/api/pages-visibility', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pageKey, visible }) });
+   210→   210→    setPages(pages.map((p) => (p.pageKey === pageKey ? { ...p, visible } : p)));
+   211→   211→    toast({ title: 'Visibilité mise à jour' });
+   212→   212→    notifyDataChanged();
+   213→   213→  };
+   214→   214→
+   215→   215→  // Generic delete
+   216→   216→  const deleteItem = async (url: string, id: string, list: any[], setList: (v: any[]) => void) => {
+   217→   217→    await fetch(`${url}/${id}`, { method: 'DELETE' });
+   218→   218→    setList(list.filter((item) => item.id !== id));
+   219→   219→    toast({ title: 'Élément supprimé' });
+   220→   220→    notifyDataChanged();
+   221→   221→  };
+   222→   222→
+   223→   223→  // Generic create
+   224→   224→  const createItem = async (url: string, data: any, list: any[], setList: (v: any[]) => void) => {
+   225→   225→    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+   226→   226→    const item = await res.json();
+   227→   227→    setList([...list, item]);
+   228→   228→    toast({ title: 'Élément créé' });
+   229→   229→    notifyDataChanged();
+   230→   230→    return item;
+   231→   231→  };
+   232→   232→
+   233→   233→  // Generic update
+   234→   234→  const updateItem = async (url: string, id: string, data: any, list: any[], setList: (v: any[]) => void) => {
+   235→   235→    const res = await fetch(`${url}/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+   236→   236→    const item = await res.json();
+   237→   237→    setList(list.map((l) => (l.id === id ? { ...l, ...item } : l)));
+   238→   238→    toast({ title: 'Élément mis à jour' });
+   239→   239→    notifyDataChanged();
+   240→   240→  };
+   241→   241→
+   242→   242→  return (
+   243→   243→    <div className="min-h-screen bg-gray-50 flex">
+   244→   244→      {/* Sidebar overlay for mobile */}
+   245→   245→      {sidebarOpen && (
+   246→   246→        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
+   247→   247→      )}
+   248→   248→
+   249→   249→      {/* Sidebar */}
+   250→   250→      <aside className={`fixed lg:sticky top-0 left-0 h-screen w-64 bg-gdv-dark text-gdv-cream z-50 transform transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} overflow-y-auto`}>
+   251→   251→        <div className="p-4 border-b border-gdv-gold/20">
+   252→   252→          <div className="flex items-center justify-between">
+   253→   253→            <div className="flex items-center gap-2">
+   254→   254→              <div className="w-8 h-8 rounded-full bg-gdv-gold/20 flex items-center justify-center">
+   255→   255→                <Plane className="w-4 h-4 text-gdv-gold" />
+   256→   256→              </div>
+   257→   257→              <div>
+   258→   258→                <span className="text-sm font-bold">Grace Divine</span>
+   259→   259→                <span className="text-xs text-gdv-gold block">Admin</span>
+   260→   260→              </div>
+   261→   261→            </div>
+   262→   262→            <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-gdv-cream/60 hover:text-gdv-cream">
+   263→   263→              <X className="w-5 h-5" />
+   264→   264→            </button>
+   265→   265→          </div>
+   266→   266→        </div>
+   267→   267→
+   268→   268→        <nav className="p-3 space-y-1">
+   269→   269→          {sidebarItems.map((item) => (
+   270→   270→            <button
+   271→   271→              key={item.key}
+   272→   272→              onClick={() => { setActiveTab(item.key); setSidebarOpen(false); }}
+   273→   273→              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 ${
+   274→   274→                activeTab === item.key
+   275→   275→                  ? 'bg-gdv-gold/20 text-gdv-gold font-medium'
+   276→   276→                  : 'text-gdv-cream/60 hover:bg-white/5 hover:text-gdv-cream'
+   277→   277→              }`}
+   278→   278→            >
+   279→   279→              {item.icon}
+   280→   280→              {item.label}
+   281→   281→            </button>
+   282→   282→          ))}
+   283→   283→        </nav>
+   284→   284→      </aside>
+   285→   285→
+   286→   286→      {/* Main Content */}
+   287→   287→      <main className="flex-1 min-h-screen">
+   288→   288→        {/* Top bar */}
+   289→   289→        <header className="sticky top-0 z-30 bg-white border-b border-gray-200 px-4 sm:px-6 py-3 flex items-center justify-between">
+   290→   290→          <div className="flex items-center gap-3">
+   291→   291→            <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-gray-600 hover:text-gray-900">
+   292→   292→              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+   293→   293→            </button>
+   294→   294→            <h1 className="text-lg font-semibold text-gray-900">Administration</h1>
+   295→   295→          </div>
+   296→   296→          <Button onClick={() => onNavigate('accueil')} size="sm" className="bg-gdv-teal hover:bg-gdv-teal-light text-white text-sm">
+   297→   297→            <ArrowLeft className="w-4 h-4 mr-1.5" />
+   298→   298→            Retour au site
+   299→   299→          </Button>
+   300→   300→        </header>
+   301→   301→
+   302→   302→        <div className="p-4 sm:p-6 lg:p-8">
+   303→   303→          <motion.div key={activeTab} initial="hidden" animate="visible" variants={fadeIn}>
+   304→   304→            {/* Dashboard */}
+   305→   305→            {activeTab === 'dashboard' && (
+   306→   306→              <div>
+   307→   307→                <h2 className="text-2xl font-bold text-gray-900 mb-6">Tableau de bord</h2>
+   308→   308→                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+   309→   309→                  {[
+   310→   310→                    { label: 'Contacts', value: counts.contacts, icon: <Mail className="w-5 h-5" />, color: 'text-blue-600 bg-blue-50' },
+   311→   311→                    { label: 'Services', value: counts.services, icon: <Plane className="w-5 h-5" />, color: 'text-amber-700 bg-amber-50' },
+   312→   312→                    { label: 'Témoignages', value: counts.testimonials, icon: <MessageSquare className="w-5 h-5" />, color: 'text-green-600 bg-green-50' },
+   313→   313→                    { label: 'Équipe', value: counts.team, icon: <Users className="w-5 h-5" />, color: 'text-purple-600 bg-purple-50' },
+   314→   314→                    { label: 'Partenaires', value: counts.partners, icon: <Building className="w-5 h-5" />, color: 'text-indigo-600 bg-indigo-50' },
+   315→   315→                    { label: 'FAQ', value: counts.faqs, icon: <HelpCircle className="w-5 h-5" />, color: 'text-orange-600 bg-orange-50' },
+   316→   316→                    { label: 'Emplois', value: counts.jobs, icon: <Briefcase className="w-5 h-5" />, color: 'text-teal-600 bg-teal-50' },
+   317→   317→                    { label: 'Publicités', value: counts.ads, icon: <Megaphone className="w-5 h-5" />, color: 'text-pink-600 bg-pink-50' },
+   318→   318→                    { label: 'Images', value: counts.images, icon: <ImageIcon className="w-5 h-5" />, color: 'text-cyan-600 bg-cyan-50' },
+   319→   319→                    { label: 'Vidéos', value: counts.videos, icon: <Video className="w-5 h-5" />, color: 'text-red-600 bg-red-50' },
+   320→   320→                  ].map((stat) => (
+   321→   321→                    <Card key={stat.label}>
+   322→   322→                      <CardContent className="p-4 sm:p-6 flex items-center gap-4">
+   323→   323→                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${stat.color}`}>
+   324→   324→                          {stat.icon}
+   325→   325→                        </div>
+   326→   326→                        <div>
+   327→   327→                          <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+   328→   328→                          <p className="text-sm text-gray-500">{stat.label}</p>
+   329→   329→                        </div>
+   330→   330→                      </CardContent>
+   331→   331→                    </Card>
+   332→   332→                  ))}
+   333→   333→                </div>
+   334→   334→
+   335→   335→                {/* Recent Contacts */}
+   336→   336→                <Card>
+   337→   337→                  <CardHeader>
+   338→   338→                    <CardTitle className="text-lg">Derniers contacts</CardTitle>
+   339→   339→                  </CardHeader>
+   340→   340→                  <CardContent>
+   341→   341→                    <Table>
+   342→   342→                      <TableHeader>
+   343→   343→                        <TableRow>
+   344→   344→                          <TableHead>Nom</TableHead>
+   345→   345→                          <TableHead>Email</TableHead>
+   346→   346→                          <TableHead>Sujet</TableHead>
+   347→   347→                          <TableHead>Date</TableHead>
+   348→   348→                          <TableHead>Statut</TableHead>
+   349→   349→                        </TableRow>
+   350→   350→                      </TableHeader>
+   351→   351→                      <TableBody>
+   352→   352→                        {contacts.slice(0, 5).map((c: any) => (
+   353→   353→                          <TableRow key={c.id}>
+   354→   354→                            <TableCell className="font-medium">{c.name}</TableCell>
+   355→   355→                            <TableCell className="text-sm text-gray-500">{c.email || '-'}</TableCell>
+   356→   356→                            <TableCell className="text-sm">{c.subject || '-'}</TableCell>
+   357→   357→                            <TableCell className="text-sm text-gray-500">{new Date(c.createdAt).toLocaleDateString('fr-FR')}</TableCell>
+   358→   358→                            <TableCell>
+   359→   359→                              <Badge variant={c.read ? 'secondary' : 'default'} className={c.read ? 'bg-gray-100 text-gray-600' : 'bg-amber-600 text-white'}>
+   360→   360→                                {c.read ? 'Lu' : 'Non lu'}
+   361→   361→                              </Badge>
+   362→   362→                            </TableCell>
+   363→   363→                          </TableRow>
+   364→   364→                        ))}
+   365→   365→                      </TableBody>
+   366→   366→                    </Table>
+   367→   367→                  </CardContent>
+   368→   368→                </Card>
+   369→   369→              </div>
+   370→   370→            )}
+   371→   371→
+   372→   372→            {/* Settings */}
+   373→   373→            {activeTab === 'settings' && (
+   374→   374→              <div className="max-w-3xl">
+   375→   375→                <h2 className="text-2xl font-bold text-gray-900 mb-6">Contenu du Site</h2>
+   376→   376→                <Card>
+   377→   377→                  <CardContent className="p-6 space-y-4">
+   378→   378→                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+   379→   379→                      <div className="space-y-2">
+   380→   380→                        <Label>Nom du site</Label>
+   381→   381→                        <Input value={settings.siteName || ''} onChange={(e) => setSettings({ ...settings, siteName: e.target.value })} />
+   382→   382→                      </div>
+   383→   383→                      <div className="space-y-2">
+   384→   384→                        <Label>Slogan</Label>
+   385→   385→                        <Input value={settings.slogan || ''} onChange={(e) => setSettings({ ...settings, slogan: e.target.value })} />
+   386→   386→                      </div>
+   387→   387→                      <div className="space-y-2">
+   388→   388→                        <Label>Téléphone 1</Label>
+   389→   389→                        <Input value={settings.phone1 || ''} onChange={(e) => setSettings({ ...settings, phone1: e.target.value })} />
+   390→   390→                      </div>
+   391→   391→                      <div className="space-y-2">
+   392→   392→                        <Label>Téléphone 2</Label>
+   393→   393→                        <Input value={settings.phone2 || ''} onChange={(e) => setSettings({ ...settings, phone2: e.target.value })} />
+   394→   394→                      </div>
+   395→   395→                      <div className="space-y-2">
+   396→   396→                        <Label>Email 1</Label>
+   397→   397→                        <Input value={settings.email1 || ''} onChange={(e) => setSettings({ ...settings, email1: e.target.value })} />
+   398→   398→                      </div>
+   399→   399→                      <div className="space-y-2">
+   400→   400→                        <Label>Email 2</Label>
+   401→   401→                        <Input value={settings.email2 || ''} onChange={(e) => setSettings({ ...settings, email2: e.target.value })} />
+   402→   402→                      </div>
+   403→   403→                      <div className="space-y-2 sm:col-span-2">
+   404→   404→                        <Label>Adresse</Label>
+   405→   405→                        <Input value={settings.address || ''} onChange={(e) => setSettings({ ...settings, address: e.target.value })} />
+   406→   406→                      </div>
+   407→   407→                      <div className="space-y-2">
+   408→   408→                        <Label>Numéro WhatsApp</Label>
+   409→   409→                        <Input value={settings.whatsappNumber || ''} onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })} />
+   410→   410→                      </div>
+   411→   411→                      <div className="space-y-2">
+   412→   412→                        <Label>URL du logo</Label>
+   413→   413→                        <Input value={settings.logoUrl || ''} onChange={(e) => setSettings({ ...settings, logoUrl: e.target.value })} />
+   414→   414→                      </div>
+   415→   415→                      <div className="space-y-2">
+   416→   416→                        <Label>Facebook URL</Label>
+   417→   417→                        <Input value={settings.facebookUrl || ''} onChange={(e) => setSettings({ ...settings, facebookUrl: e.target.value })} />
+   418→   418→                      </div>
+   419→   419→                      <div className="space-y-2">
+   420→   420→                        <Label>Instagram URL</Label>
+   421→   421→                        <Input value={settings.instagramUrl || ''} onChange={(e) => setSettings({ ...settings, instagramUrl: e.target.value })} />
+   422→   422→                      </div>
+   423→   423→                      <div className="space-y-2">
+   424→   424→                        <Label>Twitter URL</Label>
+   425→   425→                        <Input value={settings.twitterUrl || ''} onChange={(e) => setSettings({ ...settings, twitterUrl: e.target.value })} />
+   426→   426→                      </div>
+   427→   427→                      <div className="space-y-2">
+   428→   428→                        <Label>TikTok URL</Label>
+   429→   429→                        <Input value={settings.tiktokUrl || ''} onChange={(e) => setSettings({ ...settings, tiktokUrl: e.target.value })} />
+   430→   430→                      </div>
+   431→   431→                      <div className="space-y-2">
+   432→   432→                        <Label>LinkedIn URL</Label>
+   433→   433→                        <Input value={settings.linkedinUrl || ''} onChange={(e) => setSettings({ ...settings, linkedinUrl: e.target.value })} />
+   434→   434→                      </div>
+   435→   435→                      <div className="space-y-2">
+   436→   436→                        <Label>YouTube URL</Label>
+   437→   437→                        <Input value={settings.youtubeUrl || ''} onChange={(e) => setSettings({ ...settings, youtubeUrl: e.target.value })} />
+   438→   438→                      </div>
+   439→   439→                    </div>
+   440→   440→                    <Separator />
+   441→   441→                    <Button onClick={() => saveSettings(settings)} className="bg-gdv-teal hover:bg-gdv-teal-light text-white">
+   442→   442→                      <Save className="w-4 h-4 mr-2" /> Sauvegarder
+   443→   443→                    </Button>
+   444→   444→                  </CardContent>
+   445→   445→                </Card>
+   446→   446→              </div>
+   447→   447→            )}
+   448→   448→
+   449→   449→            {/* Pages */}
+   450→   450→            {activeTab === 'pages' && (
+   451→   451→              <div className="max-w-3xl">
+   452→   452→                <h2 className="text-2xl font-bold text-gray-900 mb-6">Visibilité des Pages</h2>
+   453→   453→                <Card>
+   454→   454→                  <CardContent className="p-4">
+   455→   455→                    <div className="space-y-3">
+   456→   456→                      {pages.map((page) => (
+   457→   457→                        <div key={page.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors">
+   458→   458→                          <div className="flex items-center gap-3">
+   459→   459→                            {page.visible ? <Eye className="w-5 h-5 text-green-600" /> : <EyeOff className="w-5 h-5 text-gray-400" />}
+   460→   460→                            <span className="font-medium">{page.title}</span>
+   461→   461→                            <Badge variant="secondary" className="text-xs">{page.pageKey}</Badge>
+   462→   462→                          </div>
+   463→   463→                          <Switch checked={page.visible} onCheckedChange={(checked) => togglePage(page.pageKey, checked)} />
+   464→   464→                        </div>
+   465→   465→                      ))}
+   466→   466→                    </div>
+   467→   467→                  </CardContent>
+   468→   468→                </Card>
+   469→   469→              </div>
+   470→   470→            )}
+   471→   471→
+   472→   472→            {/* Services CRUD */}
+   473→   473→            {activeTab === 'services' && (
+   474→   474→              <div>
+   475→   475→                <div className="flex items-center justify-between mb-6">
+   476→   476→                  <h2 className="text-2xl font-bold text-gray-900">Services</h2>
+   477→   477→                  <Dialog>
+   478→   478→                    <DialogTrigger asChild>
+   479→   479→                      <Button className="bg-gdv-dark hover:bg-gdv-brown text-white"><Plus className="w-4 h-4 mr-2" />Ajouter</Button>
+   480→   480→                    </DialogTrigger>
+   481→   481→                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+   482→   482→                      <ServiceForm onSave={async (data) => { await createItem('/api/services', data, services, setServices); fetchDashboard(); }} />
+   483→   483→                    </DialogContent>
+   484→   484→                  </Dialog>
+   485→   485→                </div>
+   486→   486→                <Card>
+   487→   487→                  <Table>
+   488→   488→                    <TableHeader><TableRow><TableHead>Titre</TableHead><TableHead>Slug</TableHead><TableHead>Icône</TableHead><TableHead>Visible</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
+   489→   489→                    <TableBody>
+   490→   490→                      {services.map((s: any) => (
+   491→   491→                        <TableRow key={s.id}>
+   492→   492→                          <TableCell className="font-medium">{s.title}</TableCell>
+   493→   493→                          <TableCell className="text-sm text-gray-500">{s.slug}</TableCell>
+   494→   494→                          <TableCell className="text-sm">{s.icon}</TableCell>
+   495→   495→                          <TableCell><Badge variant={s.visible ? 'default' : 'secondary'} className={s.visible ? 'bg-green-100 text-green-700' : ''}>{s.visible ? 'Oui' : 'Non'}</Badge></TableCell>
+   496→   496→                          <TableCell>
+   497→   497→                            <div className="flex gap-1">
+   498→   498→                              <Dialog>
+   499→   499→                                <DialogTrigger asChild><Button variant="ghost" size="sm"><Pencil className="w-4 h-4" /></Button></DialogTrigger>
+   500→   500→                                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+   501→   501→                                  <ServiceForm initial={s} onSave={async (data) => { await updateItem('/api/services', s.slug, data, services, setServices); }} />
+   502→   502→                                </DialogContent>
+   503→   503→                              </Dialog>
+   504→   504→                              <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => deleteItem('/api/services', s.slug, services, setServices)}><Trash2 className="w-4 h-4" /></Button>
+   505→   505→                            </div>
+   506→   506→                          </TableCell>
+   507→   507→                        </TableRow>
+   508→   508→                      ))}
+   509→   509→                    </TableBody>
+   510→   510→                  </Table>
+   511→   511→                </Card>
+   512→   512→              </div>
+   513→   513→            )}
+   514→   514→
+   515→   515→            {/* Team CRUD */}
+   516→   516→            {activeTab === 'team' && (
+   517→   517→              <div>
+   518→   518→                <div className="flex items-center justify-between mb-6">
+   519→   519→                  <h2 className="text-2xl font-bold text-gray-900">Équipe</h2>
+   520→   520→                  <Dialog>
+   521→   521→                    <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-gdv-dark font-semibold"><Plus className="w-4 h-4 mr-2" />Ajouter</Button></DialogTrigger>
+   522→   522→                    <DialogContent>
+   523→   523→                      <GenericForm fields={[{ name: 'name', label: 'Nom', required: true }, { name: 'role', label: 'Rôle' }, { name: 'bio', label: 'Bio', type: 'textarea' }, { name: 'photo', label: 'URL de la photo' }]} onSave={async (data) => { await createItem('/api/team', data, team, setTeam); }} />
+   524→   524→                    </DialogContent>
+   525→   525→                  </Dialog>
+   526→   526→                </div>
+   527→   527→                <Card>
+   528→   528→                  <Table>
+   529→   529→                    <TableHeader><TableRow><TableHead>Nom</TableHead><TableHead>Rôle</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
+   530→   530→                    <TableBody>
+   531→   531→                      {team.map((t: any) => (
+   532→   532→                        <TableRow key={t.id}>
+   533→   533→                          <TableCell className="font-medium">{t.name}</TableCell>
+   534→   534→                          <TableCell className="text-sm text-gray-500">{t.role}</TableCell>
+   535→   535→                          <TableCell>
+   536→   536→                            <div className="flex gap-1">
+   537→   537→                              <Dialog>
+   538→   538→                                <DialogTrigger asChild><Button variant="ghost" size="sm"><Pencil className="w-4 h-4" /></Button></DialogTrigger>
+   539→   539→                                <DialogContent><GenericForm initial={t} fields={[{ name: 'name', label: 'Nom', required: true }, { name: 'role', label: 'Rôle' }, { name: 'bio', label: 'Bio', type: 'textarea' }, { name: 'photo', label: 'URL de la photo' }]} onSave={async (data) => { await updateItem('/api/team', t.id, data, team, setTeam); }} /></DialogContent>
+   540→   540→                              </Dialog>
+   541→   541→                              <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => deleteItem('/api/team', t.id, team, setTeam)}><Trash2 className="w-4 h-4" /></Button>
+   542→   542→                            </div>
+   543→   543→                          </TableCell>
+   544→   544→                        </TableRow>
+   545→   545→                      ))}
+   546→   546→                    </TableBody>
+   547→   547→                  </Table>
+   548→   548→                </Card>
+   549→   549→              </div>
+   550→   550→            )}
+   551→   551→
+   552→   552→            {/* Testimonials CRUD */}
+   553→   553→            {activeTab === 'testimonials' && (
+   554→   554→              <div>
+   555→   555→                <div className="flex items-center justify-between mb-6">
+   556→   556→                  <h2 className="text-2xl font-bold text-gray-900">Témoignages</h2>
+   557→   557→                  <Dialog>
+   558→   558→                    <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-gdv-dark font-semibold"><Plus className="w-4 h-4 mr-2" />Ajouter</Button></DialogTrigger>
+   559→   559→                    <DialogContent>
+   560→   560→                      <GenericForm fields={[{ name: 'name', label: 'Nom', required: true }, { name: 'role', label: 'Rôle' }, { name: 'content', label: 'Contenu', type: 'textarea', required: true }, { name: 'rating', label: 'Note (1-5)', type: 'number' }]} onSave={async (data) => { await createItem('/api/testimonials', { ...data, rating: parseInt(data.rating) || 5 }, testimonials, setTestimonials); }} />
+   561→   561→                    </DialogContent>
+   562→   562→                  </Dialog>
+   563→   563→                </div>
+   564→   564→                <Card>
+   565→   565→                  <Table>
+   566→   566→                    <TableHeader><TableRow><TableHead>Nom</TableHead><TableHead>Rôle</TableHead><TableHead>Note</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
+   567→   567→                    <TableBody>
+   568→   568→                      {testimonials.map((t: any) => (
+   569→   569→                        <TableRow key={t.id}>
+   570→   570→                          <TableCell className="font-medium">{t.name}</TableCell>
+   571→   571→                          <TableCell className="text-sm text-gray-500">{t.role}</TableCell>
+   572→   572→                          <TableCell><Badge variant="secondary">{t.rating}/5</Badge></TableCell>
+   573→   573→                          <TableCell>
+   574→   574→                            <div className="flex gap-1">
+   575→   575→                              <Dialog>
+   576→   576→                                <DialogTrigger asChild><Button variant="ghost" size="sm"><Pencil className="w-4 h-4" /></Button></DialogTrigger>
+   577→   577→                                <DialogContent><GenericForm initial={t} fields={[{ name: 'name', label: 'Nom', required: true }, { name: 'role', label: 'Rôle' }, { name: 'content', label: 'Contenu', type: 'textarea', required: true }, { name: 'rating', label: 'Note (1-5)', type: 'number' }]} onSave={async (data) => { await updateItem('/api/testimonials', t.id, { ...data, rating: parseInt(data.rating) || 5 }, testimonials, setTestimonials); }} /></DialogContent>
+   578→   578→                              </Dialog>
+   579→   579→                              <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => deleteItem('/api/testimonials', t.id, testimonials, setTestimonials)}><Trash2 className="w-4 h-4" /></Button>
+   580→   580→                            </div>
+   581→   581→                          </TableCell>
+   582→   582→                        </TableRow>
+   583→   583→                      ))}
+   584→   584→                    </TableBody>
+   585→   585→                  </Table>
+   586→   586→                </Card>
+   587→   587→              </div>
+   588→   588→            )}
+   589→   589→
+   590→   590→            {/* Partners CRUD */}
+   591→   591→            {activeTab === 'partners' && (
+   592→   592→              <div>
+   593→   593→                <div className="flex items-center justify-between mb-6">
+   594→   594→                  <h2 className="text-2xl font-bold text-gray-900">Partenaires</h2>
+   595→   595→                  <Dialog>
+   596→   596→                    <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-gdv-dark font-semibold"><Plus className="w-4 h-4 mr-2" />Ajouter</Button></DialogTrigger>
+   597→   597→                    <DialogContent><GenericForm fields={[{ name: 'name', label: 'Nom', required: true }, { name: 'logo', label: 'URL du logo' }, { name: 'website', label: 'Site web' }]} onSave={async (data) => { await createItem('/api/partners', data, partners, setPartners); }} /></DialogContent>
+   598→   598→                  </Dialog>
+   599→   599→                </div>
+   600→   600→                <Card>
+   601→   601→                  <Table>
+   602→   602→                    <TableHeader><TableRow><TableHead>Nom</TableHead><TableHead>Site web</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
+   603→   603→                    <TableBody>
+   604→   604→                      {partners.map((p: any) => (
+   605→   605→                        <TableRow key={p.id}>
+   606→   606→                          <TableCell className="font-medium">{p.name}</TableCell>
+   607→   607→                          <TableCell className="text-sm text-gray-500">{p.website || '-'}</TableCell>
+   608→   608→                          <TableCell>
+   609→   609→                            <div className="flex gap-1">
+   610→   610→                              <Dialog>
+   611→   611→                                <DialogTrigger asChild><Button variant="ghost" size="sm"><Pencil className="w-4 h-4" /></Button></DialogTrigger>
+   612→   612→                                <DialogContent><GenericForm initial={p} fields={[{ name: 'name', label: 'Nom', required: true }, { name: 'logo', label: 'URL du logo' }, { name: 'website', label: 'Site web' }]} onSave={async (data) => { await updateItem('/api/partners', p.id, data, partners, setPartners); }} /></DialogContent>
+   613→   613→                              </Dialog>
+   614→   614→                              <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => deleteItem('/api/partners', p.id, partners, setPartners)}><Trash2 className="w-4 h-4" /></Button>
+   615→   615→                            </div>
+   616→   616→                          </TableCell>
+   617→   617→                        </TableRow>
+   618→   618→                      ))}
+   619→   619→                    </TableBody>
+   620→   620→                  </Table>
+   621→   621→                </Card>
+   622→   622→              </div>
+   623→   623→            )}
+   624→   624→
+   625→   625→            {/* FAQ CRUD */}
+   626→   626→            {activeTab === 'faq' && (
+   627→   627→              <div>
+   628→   628→                <div className="flex items-center justify-between mb-6">
+   629→   629→                  <h2 className="text-2xl font-bold text-gray-900">FAQ</h2>
+   630→   630→                  <Dialog>
+   631→   631→                    <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-gdv-dark font-semibold"><Plus className="w-4 h-4 mr-2" />Ajouter</Button></DialogTrigger>
+   632→   632→                    <DialogContent>
+   633→   633→                      <GenericForm fields={[{ name: 'question', label: 'Question', required: true }, { name: 'answer', label: 'Réponse', type: 'textarea', required: true }, { name: 'category', label: 'Catégorie' }]} onSave={async (data) => { await createItem('/api/faq', data, faqs, setFaqs); }} />
+   634→   634→                    </DialogContent>
+   635→   635→                  </Dialog>
+   636→   636→                </div>
+   637→   637→                <Card>
+   638→   638→                  <Table>
+   639→   639→                    <TableHeader><TableRow><TableHead>Question</TableHead><TableHead>Catégorie</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
+   640→   640→                    <TableBody>
+   641→   641→                      {faqs.map((f: any) => (
+   642→   642→                        <TableRow key={f.id}>
+   643→   643→                          <TableCell className="font-medium max-w-xs truncate">{f.question}</TableCell>
+   644→   644→                          <TableCell><Badge variant="secondary">{f.category || 'Général'}</Badge></TableCell>
+   645→   645→                          <TableCell>
+   646→   646→                            <div className="flex gap-1">
+   647→   647→                              <Dialog>
+   648→   648→                                <DialogTrigger asChild><Button variant="ghost" size="sm"><Pencil className="w-4 h-4" /></Button></DialogTrigger>
+   649→   649→                                <DialogContent><GenericForm initial={f} fields={[{ name: 'question', label: 'Question', required: true }, { name: 'answer', label: 'Réponse', type: 'textarea', required: true }, { name: 'category', label: 'Catégorie' }]} onSave={async (data) => { await updateItem('/api/faq', f.id, data, faqs, setFaqs); }} /></DialogContent>
+   650→   650→                              </Dialog>
+   651→   651→                              <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => deleteItem('/api/faq', f.id, faqs, setFaqs)}><Trash2 className="w-4 h-4" /></Button>
+   652→   652→                            </div>
+   653→   653→                          </TableCell>
+   654→   654→                        </TableRow>
+   655→   655→                      ))}
+   656→   656→                    </TableBody>
+   657→   657→                  </Table>
+   658→   658→                </Card>
+   659→   659→              </div>
+   660→   660→            )}
+   661→   661→
+   662→   662→            {/* Gallery */}
+   663→   663→            {activeTab === 'gallery' && (
+   664→   664→              <div>
+   665→   665→                <h2 className="text-2xl font-bold text-gray-900 mb-6">Galerie</h2>
+   666→   666→                <Tabs defaultValue="images">
+   667→   667→                  <TabsList>
+   668→   668→                    <TabsTrigger value="images"><ImageIcon className="w-4 h-4 mr-2" />Images ({galleryImages.length})</TabsTrigger>
+   669→   669→                    <TabsTrigger value="videos"><Video className="w-4 h-4 mr-2" />Vidéos ({galleryVideos.length})</TabsTrigger>
+   670→   670→                  </TabsList>
+   671→   671→                  <TabsContent value="images" className="mt-4">
+   672→   672→                    <div className="flex justify-end mb-4">
+   673→   673→                      <Dialog>
+   674→   674→                        <DialogTrigger asChild><Button className="bg-gdv-dark hover:bg-gdv-brown text-white"><Upload className="w-4 h-4 mr-2" />Ajouter une image</Button></DialogTrigger>
+   675→   675→                        <DialogContent><GenericForm fields={[{ name: 'title', label: 'Titre' }, { name: 'url', label: 'URL de l\'image', required: true }]} onSave={async (data) => { await createItem('/api/gallery/images', data, galleryImages, setGalleryImages); }} /></DialogContent>
+   676→   676→                      </Dialog>
+   677→   677→                    </div>
+   678→   678→                    <Card>
+   679→   679→                      <Table>
+   680→   680→                        <TableHeader><TableRow><TableHead>Titre</TableHead><TableHead>Image</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
+   681→   681→                        <TableBody>
+   682→   682→                          {galleryImages.map((img: any) => (
+   683→   683→                            <TableRow key={img.id}>
+   684→   684→                              <TableCell className="font-medium">{img.title || '-'}</TableCell>
+   685→   685→                              <TableCell><img src={img.url} alt={img.title || "Image de galerie"} className="w-16 h-12 object-cover rounded" /></TableCell>
+   686→   686→                              <TableCell>
+   687→   687→                                <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => deleteItem('/api/gallery/images', img.id, galleryImages, setGalleryImages)}><Trash2 className="w-4 h-4" /></Button>
+   688→   688→                              </TableCell>
+   689→   689→                            </TableRow>
+   690→   690→                          ))}
+   691→   691→                        </TableBody>
+   692→   692→                      </Table>
+   693→   693→                    </Card>
+   694→   694→                  </TabsContent>
+   695→   695→                  <TabsContent value="videos" className="mt-4">
+   696→   696→                    <div className="flex justify-end mb-4">
+   697→   697→                      <Dialog>
+   698→   698→                        <DialogTrigger asChild><Button className="bg-gdv-dark hover:bg-gdv-brown text-white"><Upload className="w-4 h-4 mr-2" />Ajouter une vidéo</Button></DialogTrigger>
+   699→   699→                        <DialogContent><GenericForm fields={[{ name: 'title', label: 'Titre' }, { name: 'url', label: 'URL de la vidéo', required: true }, { name: 'thumbnail', label: 'Miniature URL' }]} onSave={async (data) => { await createItem('/api/gallery/videos', data, galleryVideos, setGalleryVideos); }} /></DialogContent>
+   700→   700→                      </Dialog>
+   701→   701→                    </div>
+   702→   702→                    <Card>
+   703→   703→                      <Table>
+   704→   704→                        <TableHeader><TableRow><TableHead>Titre</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
+   705→   705→                        <TableBody>
+   706→   706→                          {galleryVideos.map((v: any) => (
+   707→   707→                            <TableRow key={v.id}>
+   708→   708→                              <TableCell className="font-medium">{v.title || '-'}</TableCell>
+   709→   709→                              <TableCell>
+   710→   710→                                <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => deleteItem('/api/gallery/videos', v.id, galleryVideos, setGalleryVideos)}><Trash2 className="w-4 h-4" /></Button>
+   711→   711→                              </TableCell>
+   712→   712→                            </TableRow>
+   713→   713→                          ))}
+   714→   714→                        </TableBody>
+   715→   715→                      </Table>
+   716→   716→                    </Card>
+   717→   717→                  </TabsContent>
+   718→   718→                </Tabs>
+   719→   719→              </div>
+   720→   720→            )}
+   721→   721→
+   722→   722→            {/* Ads CRUD */}
+   723→   723→            {activeTab === 'ads' && (
+   724→   724→              <div>
+   725→   725→                <div className="flex items-center justify-between mb-6">
+   726→   726→                  <h2 className="text-2xl font-bold text-gray-900">Publicités</h2>
+   727→   727→                  <Dialog>
+   728→   728→                    <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-gdv-dark font-semibold"><Plus className="w-4 h-4 mr-2" />Ajouter</Button></DialogTrigger>
+   729→   729→                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+   730→   730→                      <AdForm onSave={async (data) => { await createItem('/api/ads', data, ads, setAds); }} />
+   731→   731→                    </DialogContent>
+   732→   732→                  </Dialog>
+   733→   733→                </div>
+   734→   734→                <Card>
+   735→   735→                  <Table>
+   736→   736→                    <TableHeader><TableRow><TableHead>Titre</TableHead><TableHead>Position</TableHead><TableHead>Actif</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
+   737→   737→                    <TableBody>
+   738→   738→                      {ads.map((a: any) => (
+   739→   739→                        <TableRow key={a.id}>
+   740→   740→                          <TableCell className="font-medium">{a.title}</TableCell>
+   741→   741→                          <TableCell><Badge variant="secondary">{a.position}</Badge></TableCell>
+   742→   742→                          <TableCell><Badge variant={a.active ? 'default' : 'secondary'} className={a.active ? 'bg-green-100 text-green-700' : ''}>{a.active ? 'Actif' : 'Inactif'}</Badge></TableCell>
+   743→   743→                          <TableCell>
+   744→   744→                            <div className="flex gap-1">
+   745→   745→                              <Dialog>
+   746→   746→                                <DialogTrigger asChild><Button variant="ghost" size="sm"><Pencil className="w-4 h-4" /></Button></DialogTrigger>
+   747→   747→                                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto"><AdForm initial={a} onSave={async (data) => { await updateItem('/api/ads', a.id, data, ads, setAds); }} /></DialogContent>
+   748→   748→                              </Dialog>
+   749→   749→                              <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => deleteItem('/api/ads', a.id, ads, setAds)}><Trash2 className="w-4 h-4" /></Button>
+   750→   750→                            </div>
+   751→   751→                          </TableCell>
+   752→   752→                        </TableRow>
+   753→   753→                      ))}
+   754→   754→                    </TableBody>
+   755→   755→                  </Table>
+   756→   756→                </Card>
+   757→   757→              </div>
+   758→   758→            )}
+   759→   759→
+   760→   760→            {/* Contact */}
+   761→   761→            {activeTab === 'contact' && (
+   762→   762→              <div>
+   763→   763→                <h2 className="text-2xl font-bold text-gray-900 mb-6">Messages de contact</h2>
+   764→   764→                <Card>
+   765→   765→                  <CardContent className="p-0">
+   766→   766→                    <Table>
+   767→   767→                      <TableHeader><TableRow><TableHead>Nom</TableHead><TableHead>Email</TableHead><TableHead>Téléphone</TableHead><TableHead>Sujet</TableHead><TableHead>Message</TableHead><TableHead>Date</TableHead><TableHead>Statut</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
+   768→   768→                      <TableBody>
+   769→   769→                        {contacts.map((c: any) => (
+   770→   770→                          <TableRow key={c.id} className={c.read ? '' : 'bg-yellow-50/50'}>
+   771→   771→                            <TableCell className="font-medium">{c.name}</TableCell>
+   772→   772→                            <TableCell className="text-sm">{c.email || '-'}</TableCell>
+   773→   773→                            <TableCell className="text-sm">{c.phone || '-'}</TableCell>
+   774→   774→                            <TableCell className="text-sm">{c.subject || '-'}</TableCell>
+   775→   775→                            <TableCell className="text-sm max-w-[200px] truncate">{c.message}</TableCell>
+   776→   776→                            <TableCell className="text-sm text-gray-500">{new Date(c.createdAt).toLocaleDateString('fr-FR')}</TableCell>
+   777→   777→                            <TableCell>
+   778→   778→                              <Badge variant={c.read ? 'secondary' : 'default'} className={c.read ? 'bg-gray-100 text-gray-600' : 'bg-amber-600 text-white'}>
+   779→   779→                                {c.read ? 'Lu' : 'Non lu'}
+   780→   780→                              </Badge>
+   781→   781→                            </TableCell>
+   782→   782→                            <TableCell>
+   783→   783→                              <div className="flex gap-1">
+   784→   784→                                {!c.read && (
+   785→   785→                                  <Button variant="ghost" size="sm" onClick={async () => { await updateItem('/api/contact', c.id, { read: true }, contacts, setContacts); }} title="Marquer comme lu">
+   786→   786→                                    <Check className="w-4 h-4 text-green-600" />
+   787→   787→                                  </Button>
+   788→   788→                                )}
+   789→   789→                                <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => deleteItem('/api/contact', c.id, contacts, setContacts)}>
+   790→   790→                                  <Trash2 className="w-4 h-4" />
+   791→   791→                                </Button>
+   792→   792→                              </div>
+   793→   793→                            </TableCell>
+   794→   794→                          </TableRow>
+   795→   795→                        ))}
+   796→   796→                      </TableBody>
+   797→   797→                    </Table>
+   798→   798→                  </CardContent>
+   799→   799→                </Card>
+   800→   800→              </div>
+   801→   801→            )}
+   802→   802→
+   803→   803→            {/* Jobs CRUD */}
+   804→   804→            {activeTab === 'jobs' && (
+   805→   805→              <div>
+   806→   806→                <div className="flex items-center justify-between mb-6">
+   807→   807→                  <h2 className="text-2xl font-bold text-gray-900">Recrutement</h2>
+   808→   808→                  <Dialog>
+   809→   809→                    <DialogTrigger asChild><Button className="bg-gdv-gold hover:bg-gdv-gold-light text-gdv-dark font-semibold"><Plus className="w-4 h-4 mr-2" />Ajouter</Button></DialogTrigger>
+   810→   810→                    <DialogContent className="max-w-2xl">
+   811→   811→                      <GenericForm fields={[{ name: 'title', label: 'Titre du poste', required: true }, { name: 'description', label: 'Description', type: 'textarea' }, { name: 'requirements', label: 'Exigences', type: 'textarea' }, { name: 'location', label: 'Lieu' }, { name: 'type', label: 'Type (CDI/CDD)' }]} onSave={async (data) => { await createItem('/api/jobs', data, jobs, setJobs); }} />
+   812→   812→                    </DialogContent>
+   813→   813→                  </Dialog>
+   814→   814→                </div>
+   815→   815→                <Card>
+   816→   816→                  <Table>
+   817→   817→                    <TableHeader><TableRow><TableHead>Titre</TableHead><TableHead>Lieu</TableHead><TableHead>Type</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
+   818→   818→                    <TableBody>
+   819→   819→                      {jobs.map((j: any) => (
+   820→   820→                        <TableRow key={j.id}>
+   821→   821→                          <TableCell className="font-medium">{j.title}</TableCell>
+   822→   822→                          <TableCell className="text-sm text-gray-500">{j.location || '-'}</TableCell>
+   823→   823→                          <TableCell><Badge variant="secondary">{j.type || 'CDI'}</Badge></TableCell>
+   824→   824→                          <TableCell>
+   825→   825→                            <div className="flex gap-1">
+   826→   826→                              <Dialog>
+   827→   827→                                <DialogTrigger asChild><Button variant="ghost" size="sm"><Pencil className="w-4 h-4" /></Button></DialogTrigger>
+   828→   828→                                <DialogContent className="max-w-2xl"><GenericForm initial={j} fields={[{ name: 'title', label: 'Titre du poste', required: true }, { name: 'description', label: 'Description', type: 'textarea' }, { name: 'requirements', label: 'Exigences', type: 'textarea' }, { name: 'location', label: 'Lieu' }, { name: 'type', label: 'Type (CDI/CDD)' }]} onSave={async (data) => { await updateItem('/api/jobs', j.id, data, jobs, setJobs); }} /></DialogContent>
+   829→   829→                              </Dialog>
+   830→   830→                              <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700" onClick={() => deleteItem('/api/jobs', j.id, jobs, setJobs)}><Trash2 className="w-4 h-4" /></Button>
+   831→   831→                            </div>
+   832→   832→                          </TableCell>
+   833→   833→                        </TableRow>
+   834→   834→                      ))}
+   835→   835→                    </TableBody>
+   836→   836→                  </Table>
+   837→   837→                </Card>
+   838→   838→              </div>
+   839→   839→            )}
+   840→   840→
+   841→   841→            {/* Home Sections */}
+   842→   842→            {activeTab === 'home' && (
+   843→   843→              <div>
+   844→   844→                <h2 className="text-2xl font-bold text-gray-900 mb-6">Sections de la page d&apos;accueil</h2>
+   845→   845→                <div className="space-y-4">
+   846→   846→                  {homeSections.map((section: any) => (
+   847→   847→                    <Card key={section.id}>
+   848→   848→                      <CardHeader className="pb-3">
+   849→   849→                        <CardTitle className="text-base flex items-center gap-2">
+   850→   850→                          <Home className="w-5 h-5 text-amber-700" />
+   851→   851→                          {section.sectionKey}
+   852→   852→                        </CardTitle>
+   853→   853→                      </CardHeader>
+   854→   854→                      <CardContent className="space-y-3">
+   855→   855→                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+   856→   856→                          <div className="space-y-1">
+   857→   857→                            <Label className="text-xs text-gray-500">Titre</Label>
+   858→   858→                            <Input value={section.title || ''} onChange={(e) => setHomeSections(homeSections.map((s: any) => s.id === section.id ? { ...s, title: e.target.value } : s))} />
+   859→   859→                          </div>
+   860→   860→                          <div className="space-y-1">
+   861→   861→                            <Label className="text-xs text-gray-500">Sous-titre</Label>
+   862→   862→                            <Input value={section.subtitle || ''} onChange={(e) => setHomeSections(homeSections.map((s: any) => s.id === section.id ? { ...s, subtitle: e.target.value } : s))} />
+   863→   863→                          </div>
+   864→   864→                        </div>
+   865→   865→                        <div className="space-y-1">
+   866→   866→                          <Label className="text-xs text-gray-500">Contenu</Label>
+   867→   867→                          <Textarea value={section.content || ''} onChange={(e) => setHomeSections(homeSections.map((s: any) => s.id === section.id ? { ...s, content: e.target.value } : s))} rows={2} />
+   868→   868→                        </div>
+   869→   869→                        <Button size="sm" onClick={async () => { const res = await fetch(`/api/home-sections`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(homeSections.find((s: any) => s.id === section.id)) }); if (res.ok) { toast({ title: 'Section mise à jour' }); notifyDataChanged(); } else toast({ title: 'Erreur', variant: 'destructive' }); }} className="bg-gdv-teal hover:bg-gdv-teal-light text-white">
+   870→   870→                          <Save className="w-3.5 h-3.5 mr-1.5" /> Sauvegarder
+   871→   871→                        </Button>
+   872→   872→                      </CardContent>
+   873→   873→                    </Card>
+   874→   874→                  ))}
+   875→   875→                </div>
+   876→   876→              </div>
+   877→   877→            )}
+   878→   878→
+   879→   879→            {/* About */}
+   880→   880→            {activeTab === 'about' && (
+   881→   881→              <div className="max-w-3xl">
+   882→   882→                <h2 className="text-2xl font-bold text-gray-900 mb-6">Page À propos</h2>
+   883→   883→                <Card>
+   884→   884→                  <CardContent className="p-6 space-y-4">
+   885→   885→                    <div className="space-y-2">
+   886→   886→                      <Label>Titre du hero</Label>
+   887→   887→                      <Input value={aboutData.heroTitle || ''} onChange={(e) => setAboutData({ ...aboutData, heroTitle: e.target.value })} />
+   888→   888→                    </div>
+   889→   889→                    <div className="space-y-2">
+   890→   890→                      <Label>Sous-titre du hero</Label>
+   891→   891→                      <Input value={aboutData.heroSubtitle || ''} onChange={(e) => setAboutData({ ...aboutData, heroSubtitle: e.target.value })} />
+   892→   892→                    </div>
+   893→   893→                    <div className="space-y-2">
+   894→   894→                      <Label>Mission</Label>
+   895→   895→                      <Textarea value={aboutData.mission || ''} onChange={(e) => setAboutData({ ...aboutData, mission: e.target.value })} rows={3} />
+   896→   896→                    </div>
+   897→   897→                    <div className="space-y-2">
+   898→   898→                      <Label>Vision</Label>
+   899→   899→                      <Textarea value={aboutData.vision || ''} onChange={(e) => setAboutData({ ...aboutData, vision: e.target.value })} rows={3} />
+   900→   900→                    </div>
+   901→   901→                    <div className="space-y-2">
+   902→   902→                      <Label>Valeurs (séparées par des virgules)</Label>
+   903→   903→                      <Input value={Array.isArray(aboutData.values) ? aboutData.values.join(', ') : (aboutData.values || '')} onChange={(e) => setAboutData({ ...aboutData, values: e.target.value.split(',').map((v: string) => v.trim()).filter(Boolean) })} placeholder="Excellence, Intégrité, Innovation..." />
+   904→   904→                    </div>
+   905→   905→                    <div className="space-y-2">
+   906→   906→                      <Label>Notre Histoire</Label>
+   907→   907→                      <Textarea value={aboutData.story || ''} onChange={(e) => setAboutData({ ...aboutData, story: e.target.value })} rows={5} />
+   908→   908→                    </div>
+   909→   909→                    <Separator />
+   910→   910→                    <Button onClick={async () => {
+   911→   911→                      const res = await fetch('/api/about', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...aboutData, values: JSON.stringify(aboutData.values || []) }) });
+   912→   912→                      if (res.ok) { toast({ title: 'Page À propos mise à jour' }); notifyDataChanged(); } else toast({ title: 'Erreur de sauvegarde', variant: 'destructive' });
+   913→   913→                    }} className="bg-gdv-teal hover:bg-gdv-teal-light text-white">
+   914→   914→                      <Save className="w-4 h-4 mr-2" /> Sauvegarder
+   915→   915→                    </Button>
+   916→   916→                  </CardContent>
+   917→   917→                </Card>
+   918→   918→              </div>
+   919→   919→            )}
+   920→   920→          </motion.div>
+   921→   921→        </div>
+   922→   922→      </main>
+   923→   923→    </div>
+   924→   924→  );
+   925→   925→}
+   926→   926→
+   927→   927→// Reusable GenericForm
+   928→   928→function GenericForm({ initial, fields, onSave }: { initial?: Record<string, any>; fields: { name: string; label: string; type?: string; required?: boolean }[]; onSave: (data: Record<string, any>) => Promise<void> }) {
+   929→   929→  const [data, setData] = useState<Record<string, any>>(initial || {});
+   930→   930→  const { toast } = useToast();
+   931→   931→
+   932→   932→  const handleSave = async () => {
+   933→   933→    for (const f of fields) {
+   934→   934→      if (f.required && !data[f.name]) {
+   935→   935→        toast({ title: `Le champ "${f.label}" est obligatoire`, variant: 'destructive' });
+   936→   936→        return;
+   937→   937→      }
+   938→   938→    }
+   939→   939→    await onSave(data);
+   940→   940→    toast({ title: 'Sauvegardé avec succès' });
+   941→   941→  };
+   942→   942→
+   943→   943→  return (
+   944→   944→    <>
+   945→   945→      <DialogHeader><DialogTitle>{initial ? 'Modifier' : 'Ajouter'}</DialogTitle></DialogHeader>
+   946→   946→      <div className="space-y-4 pt-4">
+   947→   947→        {fields.map((field) => (
+   948→   948→          <div key={field.name} className="space-y-2">
+   949→   949→            <Label>{field.label} {field.required && <span className="text-red-500">*</span>}</Label>
+   950→   950→            {field.type === 'textarea' ? (
+   951→   951→              <Textarea value={data[field.name] || ''} onChange={(e) => setData({ ...data, [field.name]: e.target.value })} rows={3} />
+   952→   952→            ) : (
+   953→   953→              <Input type={field.type === 'number' ? 'number' : 'text'} value={data[field.name] || ''} onChange={(e) => setData({ ...data, [field.name]: e.target.value })} />
+   954→   954→            )}
+   955→   955→          </div>
+   956→   956→        ))}
+   957→   957→        <Button onClick={handleSave} className="bg-gdv-teal hover:bg-gdv-teal-light text-white w-full">
+   958→   958→          <Save className="w-4 h-4 mr-2" /> Sauvegarder
+   959→   959→        </Button>
+   960→   960→      </div>
+   961→   961→    </>
+   962→   962→  );
+   963→   963→}
+   964→   964→
+   965→   965→// Service form
+   966→   966→function ServiceForm({ initial, onSave }: { initial?: Record<string, any>; onSave: (data: Record<string, any>) => Promise<void> }) {
+   967→   967→  const [data, setData] = useState<Record<string, any>>(initial || { icon: 'Plane', visible: true });
+   968→   968→  const { toast } = useToast();
+   969→   969→
+   970→   970→  const handleSave = async () => {
+   971→   971→    if (!data.title || !data.slug) {
+   972→   972→      toast({ title: 'Titre et slug sont obligatoires', variant: 'destructive' });
+   973→   973→      return;
+   974→   974→    }
+   975→   975→    const features = data.featuresText ? data.featuresText.split('\n').filter(Boolean) : (data.features || []);
+   976→   976→    await onSave({ ...data, features: JSON.stringify(features) });
+   977→   977→    toast({ title: 'Service sauvegardé' });
+   978→   978→  };
+   979→   979→
+   980→   980→  return (
+   981→   981→    <>
+   982→   982→      <DialogHeader><DialogTitle>{initial ? 'Modifier le service' : 'Ajouter un service'}</DialogTitle></DialogHeader>
+   983→   983→      <div className="space-y-4 pt-4">
+   984→   984→        <div className="grid grid-cols-2 gap-4">
+   985→   985→          <div className="space-y-2"><Label>Titre *</Label><Input value={data.title || ''} onChange={(e) => setData({ ...data, title: e.target.value })} /></div>
+   986→   986→          <div className="space-y-2"><Label>Slug *</Label><Input value={data.slug || ''} onChange={(e) => setData({ ...data, slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') })} /></div>
+   987→   987→        </div>
+   988→   988→        <div className="space-y-2"><Label>Icône</Label><Input value={data.icon || ''} onChange={(e) => setData({ ...data, icon: e.target.value })} placeholder="Plane, Ticket, Passport, Hotel, ShieldCheck, Car, Package" /></div>
+   989→   989→        <div className="space-y-2"><Label>Courte description</Label><Input value={data.shortDesc || ''} onChange={(e) => setData({ ...data, shortDesc: e.target.value })} /></div>
+   990→   990→        <div className="space-y-2"><Label>Description complète</Label><Textarea value={data.description || ''} onChange={(e) => setData({ ...data, description: e.target.value })} rows={4} /></div>
+   991→   991→        <div className="space-y-2">
+   992→   992→          <Label>Fonctionnalités (une par ligne)</Label>
+   993→   993→          <Textarea value={data.featuresText || (Array.isArray(data.features) ? data.features.join('\n') : '')} onChange={(e) => setData({ ...data, featuresText: e.target.value })} rows={4} placeholder="Vols domestiques et internationaux&#10;Comparaison de prix&#10;Options flexibles" />
+   994→   994→        </div>
+   995→   995→        <Button onClick={handleSave} className="bg-gdv-teal hover:bg-gdv-teal-light text-white w-full"><Save className="w-4 h-4 mr-2" />Sauvegarder</Button>
+   996→   996→      </div>
+   997→   997→    </>
+   998→   998→  );
+   999→   999→}
+  1000→  1000→
+  1001→  1001→// Ad form
+  1002→  1002→function AdForm({ initial, onSave }: { initial?: Record<string, any>; onSave: (data: Record<string, any>) => Promise<void> }) {
+  1003→  1003→  const [data, setData] = useState<Record<string, any>>(initial || { position: 'popup', active: true });
+  1004→  1004→  const { toast } = useToast();
+  1005→  1005→
+  1006→  1006→  const handleSave = async () => {
+  1007→  1007→    if (!data.title) {
+  1008→  1008→      toast({ title: 'Le titre est obligatoire', variant: 'destructive' });
+  1009→  1009→      return;
+  1010→  1010→    }
+  1011→  1011→    await onSave(data);
+  1012→  1012→    toast({ title: 'Publicité sauvegardée' });
+  1013→  1013→  };
+  1014→  1014→
+  1015→  1015→  return (
+  1016→  1016→    <>
+  1017→  1017→      <DialogHeader><DialogTitle>{initial ? 'Modifier la publicité' : 'Ajouter une publicité'}</DialogTitle></DialogHeader>
+  1018→  1018→      <div className="space-y-4 pt-4">
+  1019→  1019→        <div className="space-y-2"><Label>Titre *</Label><Input value={data.title || ''} onChange={(e) => setData({ ...data, title: e.target.value })} /></div>
+  1020→  1020→        <div className="space-y-2"><Label>Description</Label><Textarea value={data.description || ''} onChange={(e) => setData({ ...data, description: e.target.value })} rows={2} /></div>
+  1021→  1021→        <div className="space-y-2"><Label>URL de l&apos;image</Label><Input value={data.imageUrl || ''} onChange={(e) => setData({ ...data, imageUrl: e.target.value })} /></div>
+  1022→  1022→        <div className="space-y-2"><Label>URL du lien</Label><Input value={data.linkUrl || ''} onChange={(e) => setData({ ...data, linkUrl: e.target.value })} /></div>
+  1023→  1023→        <div className="space-y-2"><Label>Message WhatsApp</Label><Input value={data.whatsappMsg || ''} onChange={(e) => setData({ ...data, whatsappMsg: e.target.value })} /></div>
+  1024→  1024→        <div className="grid grid-cols-2 gap-4">
+  1025→  1025→          <div className="space-y-2">
+  1026→  1026→            <Label>Position</Label>
+  1027→  1027→            <select value={data.position || 'popup'} onChange={(e) => setData({ ...data, position: e.target.value })} className="w-full h-10 rounded-md border border-gray-300 px-3 text-sm">
+  1028→  1028→              <option value="popup">Popup</option>
+  1029→  1029→              <option value="banner">Bannière</option>
+  1030→  1030→              <option value="inline">Inline</option>
+  1031→  1031→            </select>
+  1032→  1032→          </div>
+  1033→  1033→          <div className="space-y-2 flex flex-col">
+  1034→  1034→            <Label>Actif</Label>
+  1035→  1035→            <Switch checked={data.active !== false} onCheckedChange={(checked) => setData({ ...data, active: checked })} />
+  1036→  1036→          </div>
+  1037→  1037→        </div>
+  1038→  1038→        <Button onClick={handleSave} className="bg-gdv-teal hover:bg-gdv-teal-light text-white w-full"><Save className="w-4 h-4 mr-2" />Sauvegarder</Button>
+  1039→  1039→      </div>
+  1040→  1040→    </>
+  1041→  1041→  );
+  1042→  1042→}
+  1043→  1043→
