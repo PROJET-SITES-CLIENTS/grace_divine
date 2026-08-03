@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, ArrowRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,21 +16,15 @@ interface Ad {
   active: boolean;
 }
 
-export default function PromoBanner() {
-  const [bannerAds, setBannerAds] = useState<Ad[]>([]);
+interface PromoBannerProps {
+  ads?: Ad[] | null;
+}
+
+export default function PromoBanner({ ads }: PromoBannerProps) {
+  const bannerAds = (ads || []).filter((a) => a.position === 'banner');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [dismissed, setDismissed] = useState(false);
-
-  useEffect(() => {
-    fetch('/api/ads')
-      .then((res) => res.json())
-      .then((ads: Ad[]) => {
-        const banners = ads.filter((a) => a.position === 'banner');
-        setBannerAds(banners);
-      })
-      .catch(() => {});
-  }, []);
 
   const nextAd = useCallback(() => {
     if (bannerAds.length <= 1) return;
@@ -43,12 +37,6 @@ export default function PromoBanner() {
     setDirection(-1);
     setCurrentIndex((prev) => (prev - 1 + bannerAds.length) % bannerAds.length);
   }, [bannerAds.length]);
-
-  useEffect(() => {
-    if (bannerAds.length <= 1) return;
-    const interval = setInterval(nextAd, 5000);
-    return () => clearInterval(interval);
-  }, [bannerAds.length, nextAd]);
 
   if (dismissed || bannerAds.length === 0) return null;
 

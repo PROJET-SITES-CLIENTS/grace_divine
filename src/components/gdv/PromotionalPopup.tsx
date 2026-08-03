@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,28 +16,32 @@ interface Ad {
   active: boolean;
 }
 
-export default function PromotionalPopup() {
-  const [popupAd, setPopupAd] = useState<Ad | null>(null);
+interface PromotionalPopupProps {
+  ads?: Ad[] | null;
+}
+
+export default function PromotionalPopup({ ads }: PromotionalPopupProps) {
   const [showPopup, setShowPopup] = useState(false);
+  const hasCheckedRef = useRef(false);
 
   useEffect(() => {
+    if (hasCheckedRef.current) return;
+    hasCheckedRef.current = true;
+
     const shown = sessionStorage.getItem('gdv-popup-shown');
     if (shown) return;
 
-    fetch('/api/ads')
-      .then((res) => res.json())
-      .then((ads: Ad[]) => {
-        const popup = ads.find((a) => a.position === 'popup' && a.imageUrl);
-        if (popup) {
-          setPopupAd(popup);
-          setShowPopup(true);
-          sessionStorage.setItem('gdv-popup-shown', 'true');
-        }
-      })
-      .catch((err) => { console.error("Erreur popup:", err); });
-  }, []);
+    const allAds = ads || [];
+    const popup = allAds.find((a) => a.position === 'popup' && a.imageUrl);
+    if (popup) {
+      setShowPopup(true);
+      sessionStorage.setItem('gdv-popup-shown', 'true');
+    }
+  }, [ads]);
 
   const closePopup = () => setShowPopup(false);
+
+  const popupAd = (ads || []).find((a) => a.position === 'popup' && a.imageUrl);
 
   const openWhatsApp = () => {
     const msg = popupAd?.whatsappMsg || popupAd?.title || 'Bonjour, je suis intéressé par votre offre.';

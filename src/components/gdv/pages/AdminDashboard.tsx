@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
@@ -171,7 +171,10 @@ export default function AdminDashboard({ onNavigate, onDataChanged }: AdminDashb
   }, [fetchDashboard]);
 
   // Re-fetch specific data when switching tabs for perfect sync
+  // (skips the initial mount to avoid double-fetching with the effect above)
+  const isInitialMount = useRef(true);
   useEffect(() => {
+    if (isInitialMount.current) { isInitialMount.current = false; return; }
     if (activeTab === 'contact') {
       fetch('/api/contact').then((r) => r.json()).then((data) => {
         setContacts(data || []);

@@ -30,6 +30,7 @@ interface HomePageProps {
   services: { id: string; title: string; slug: string; shortDesc: string; icon: string }[] | null;
   testimonials: { id: string; name: string; role: string; content: string; rating: number }[] | null;
   homeSections: { sectionKey: string; title: string; subtitle: string; content: string }[] | null;
+  ads: { id: string; title: string; description: string; imageUrl: string; linkUrl: string; whatsappMsg: string; position: string; active: boolean }[] | null;
   onNavigate: (page: string) => void;
 }
 
@@ -57,7 +58,7 @@ const staggerContainer = {
   visible: { transition: { staggerChildren: 0.1 } },
 };
 
-export default function HomePage({ services, testimonials, homeSections, onNavigate }: HomePageProps) {
+export default function HomePage({ services, testimonials, homeSections, ads, onNavigate }: HomePageProps) {
   const [testimonialIndex, setTestimonialIndex] = useState(0);
 
   const nextTestimonial = useCallback(() => {
@@ -198,7 +199,7 @@ export default function HomePage({ services, testimonials, homeSections, onNavig
       </section>
 
       {/* Promo Banner */}
-      <PromoBanner />
+      <PromoBanner ads={ads} />
 
       {/* Services Preview */}
       <section className="py-20 lg:py-28 bg-white">

@@ -114,3 +114,41 @@ Stage Summary:
 - Flux de synchronisation final: Admin CRUD -> notifyDataChanged() -> refreshAllData() met à jour les 13 states -> handleNavigate(force=true) au départ de l'admin attend le refresh AVANT de changer de page -> les pages reçoivent les nouvelles props au montage (AnimatePresence key=currentPage démonte/remonte)
 - Toutes les autres pages (Services, About, FAQ, etc.) n'ont pas de fetch interne et utilisent directement les props du parent - elles se mettent à jour correctement au remontage
 - 2 fichiers modifiés: SiteRouter.tsx, GalleryPage.tsx
+
+---
+Task ID: 3
+Agent: main
+Task: Correction complète et exhaustive de tous les bugs de synchronisation
+
+Work Log:
+- Revérifié SiteRouter.tsx ligne par ligne - refreshAllData, handleNavigate, renderPage
+- Revérifié GalleryPage.tsx - confirmé plus aucun fetch interne
+- Revérifié AdminDashboard.tsx - confirmé notifyDataChanged() appelé après chaque CRUD (saveSettings, togglePage, deleteItem, createItem, updateItem, homeSections save, about save)
+- Vérifié ServiceDetailPage - fetch par slug est nécessaire et correct
+- TROUVÉ BUG: PromoBanner.tsx avait un useEffect([]) qui fetchait /api/ads indépendamment
+- TROUVÉ BUG: PromotionalPopup.tsx avait un useEffect([]) qui fetchait /api/ads indépendamment
+- TROUVÉ BUG: AdminDashboard double fetchDashboard() au montage (2 useEffects se déclenchent)
+- CORRIGE PromoBanner.tsx: supprimé le useEffect fetch, reçoit maintenant `ads` en props
+- CORRIGE PromotionalPopup.tsx: supprimé le useEffect fetch, reçoit maintenant `ads` en props
+- CORRIGE HomePage.tsx: ajouté `ads` aux props et transmis à PromoBanner
+- CORRIGE SiteRouter.tsx: passe `ads` à HomePage et PromotionalPopup
+- CORRIGE AdminDashboard.tsx: ajouté isInitialMountRef pour éviter le double fetch
+- Vérifié Header.tsx et Footer.tsx: aucun fetch interne, utilisent les props correctement
+- Vérifié page.tsx: toutes les données sont passées correctement en props initiales
+- Vérifié AUCUNE autre page (AboutPage, ServicesPage, TestimonialsPage, PartnersPage, FAQPage, RecrutementPage, TeamPage) n'a de fetch interne
+- Compilation réussie (next build) 0 erreurs
+- Tests API: POST/GET/DELETE gallery images OK, POST/GET/DELETE contact OK
+
+Stage Summary:
+- 5 fichiers modifiés au total: SiteRouter.tsx, GalleryPage.tsx, PromoBanner.tsx, PromotionalPopup.tsx, HomePage.tsx, AdminDashboard.tsx
+- 4 bugs corrigés dans cette session:
+  1. GalleryPage useEffect écrasait les props fraîches (CRITIQUE)
+  2. refreshAllData debounce de 2s bloquait les refreshs (CRITIQUE)
+  3. PromoBanner + PromotionalPopup fetchaient indépendamment au lieu d'utiliser les props (MAJEUR)
+  4. AdminDashboard double fetch au montage (MINEUR)
+- Architecture de synchronisation finale:
+  - SINGLE SOURCE OF TRUTH: SiteRouter détient les 13 states, rafraîchis via refreshAllData()
+  - AUCUN fetch interne dans les pages du site (sauf ServiceDetailPage par nécessité)
+  - Admin CRUD -> notifyDataChanged() -> refreshAllData() -> handleNavigate(force=true) -> pages montent avec props fraîches
+  - Header/Footer reçoivent pageVisibilities/settings directement du state et se mettent à jour instantanément
+  - PromoBanner/PromotionalPopup reçoivent ads en props, plus de fetch indépendant

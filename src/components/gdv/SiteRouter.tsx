@@ -133,7 +133,7 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
     }
     switch (currentPage) {
       case 'accueil':
-        return <HomePage services={services} testimonials={testimonials} homeSections={homeSections} onNavigate={handleNavigate} />;
+        return <HomePage services={services} testimonials={testimonials} homeSections={homeSections} ads={ads} onNavigate={handleNavigate} />;
       case 'a-propos':
         return <AboutPage aboutData={aboutData} team={team} onNavigate={handleNavigate} />;
       case 'services':
@@ -153,7 +153,7 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
       case 'contact':
         return <ContactPage settings={settings} services={services} />;
       default:
-        return <HomePage services={services} testimonials={testimonials} homeSections={homeSections} onNavigate={handleNavigate} />;
+        return <HomePage services={services} testimonials={testimonials} homeSections={homeSections} ads={ads} onNavigate={handleNavigate} />;
     }
   };
 
@@ -195,7 +195,7 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
         />
       )}
 
-      {!isAdmin && <PromotionalPopup />}
+      {!isAdmin && <PromotionalPopup ads={ads} />}
     </>
   );
 }
