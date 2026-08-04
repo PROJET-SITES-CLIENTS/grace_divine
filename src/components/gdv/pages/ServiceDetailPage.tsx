@@ -98,7 +98,8 @@ export default function ServiceDetailPage({ slug, onNavigate }: ServiceDetailPag
   let features: string[] = [];
   try {
     if (service.features) {
-      features = typeof service.features === 'string' ? JSON.parse(service.features) : Array.isArray(service.features) ? service.features : [];
+      const parsed = typeof service.features === 'string' ? JSON.parse(service.features) : service.features;
+      features = Array.isArray(parsed) ? parsed.map(String) : [];
     }
   } catch {
     features = [];
