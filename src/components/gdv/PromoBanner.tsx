@@ -119,8 +119,8 @@ export default function PromoBanner({ ads }: PromoBannerProps) {
         )}
       </div>
 
-      {/* Close button */}
-      <button onClick={() => setDismissed(true)} className="absolute top-2 right-2 text-gdv-cream/40 hover:text-gdv-cream transition-colors sm:hidden" aria-label="Fermer la banniere">
+      {/* Close button - visible on all screens */}
+      <button onClick={() => setDismissed(true)} className="absolute top-2 right-3 text-gdv-cream/50 hover:text-gdv-cream transition-colors z-10" aria-label="Fermer la banniere">
         <X className="w-4 h-4" />
       </button>
     </div>

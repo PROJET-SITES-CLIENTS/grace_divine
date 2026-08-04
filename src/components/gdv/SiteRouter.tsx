@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Header from '@/components/gdv/Header';
 import Footer from '@/components/gdv/Footer';
 import PromotionalPopup from '@/components/gdv/PromotionalPopup';
+import PromoBanner from '@/components/gdv/PromoBanner';
 import GlobalBanners from '@/components/gdv/GlobalBanners';
 import HomePage from '@/components/gdv/pages/HomePage';
 import AboutPage from '@/components/gdv/pages/AboutPage';
@@ -125,9 +126,20 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
   const isAdmin = currentPage === 'admin';
   const serviceSlug = currentPage.startsWith('service-') ? currentPage.replace('service-', '') : null;
 
+  // Check if a page key is visible (used to block direct navigation to hidden pages)
+  const isPageVisible = useCallback((pageKey: string) => {
+    if (!pageVisibilities) return true;
+    const vis = pageVisibilities.find((p) => p.pageKey === pageKey);
+    return vis ? vis.visible : true;
+  }, [pageVisibilities]);
+
   const renderPage = () => {
     if (isAdmin) {
       return <AdminDashboard onNavigate={handleNavigate} onDataChanged={handleDataChanged} />;
+    }
+    // Block access to hidden pages — redirect to accueil
+    if (!isPageVisible(currentPage) && !serviceSlug) {
+      return <HomePage services={services} testimonials={testimonials} homeSections={homeSections} ads={ads} onNavigate={handleNavigate} />;
     }
     if (serviceSlug) {
       return <ServiceDetailPage slug={serviceSlug} onNavigate={handleNavigate} />;
@@ -168,12 +180,15 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
       )}
 
       {!isAdmin && (
-        <Header
-          pageVisibilities={pageVisibilities}
-          settings={settings}
-          onNavigate={handleNavigate}
-          currentPage={currentPage}
-        />
+        <>
+          <Header
+            pageVisibilities={pageVisibilities}
+            settings={settings}
+            onNavigate={handleNavigate}
+            currentPage={currentPage}
+          />
+          <PromoBanner ads={ads} />
+        </>
       )}
 
       <AnimatePresence mode="wait">
@@ -199,6 +214,10 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
 
       {!isAdmin && <GlobalBanners ads={ads} />}
       {!isAdmin && <PromotionalPopup ads={ads} />}
+      {/* Spacer for bottom banner */}
+      {!isAdmin && (ads || []).some((a) => a.position === 'bottom' && a.active) && (
+        <div className="h-14" />
+      )}
     </>
   );
 }

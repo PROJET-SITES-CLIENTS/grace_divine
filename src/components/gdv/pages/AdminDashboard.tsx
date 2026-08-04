@@ -1034,7 +1034,7 @@ function AdForm({ initial, onSave }: { initial?: Record<string, any>; onSave: (d
             <Label>Position</Label>
             <select value={data.position || 'popup'} onChange={(e) => setData({ ...data, position: e.target.value })} className="w-full h-10 rounded-md border border-gray-300 px-3 text-sm">
               <option value="popup">Popup</option>
-              <option value="banner">Bannière (accueil)</option>
+              <option value="banner">Bannière haute (toutes pages)</option>
               <option value="inline">Inline</option>
               <option value="bottom">Bandeau fixe bas (toutes pages)</option>
               <option value="sidebar">Bannière latérale (toutes pages)</option>

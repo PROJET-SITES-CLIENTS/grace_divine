@@ -50,11 +50,14 @@ export default function Header({ pageVisibilities, settings, onNavigate, current
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const visibleNavItems = navItems.filter((item) => {
-    if (!pageVisibilities) return true;
-    const vis = pageVisibilities.find((p) => p.pageKey === item.key);
-    return vis ? vis.visible : true;
-  });
+  const visibleNavItems = navItems
+    .map((item) => {
+      if (!pageVisibilities) return { ...item, order: 0 };
+      const vis = pageVisibilities.find((p) => p.pageKey === item.key);
+      return { ...item, visible: vis ? vis.visible : true, order: vis ? vis.order : 0 };
+    })
+    .filter((item) => item.visible)
+    .sort((a, b) => a.order - b.order);
 
   // Handle navigation: scroll to top
   const prevPageRef = useRef(currentPage);
@@ -147,12 +150,12 @@ export default function Header({ pageVisibilities, settings, onNavigate, current
             </button>
 
             {/* Desktop Nav */}
-            <div className="hidden lg:flex items-center gap-1">
+            <div className="hidden lg:flex items-center gap-0.5">
               {visibleNavItems.map((item) => (
                 <button
                   key={item.key}
                   onClick={() => onNavigate(item.key)}
-                  className={`relative px-3 xl:px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                  className={`relative px-2 xl:px-3 py-2 text-xs font-medium rounded-lg transition-all duration-200 ${
                     currentPage === item.key
                       ? 'text-gdv-teal'
                       : 'text-gdv-brown-medium hover:text-gdv-brown hover:bg-gdv-beige/60'
@@ -163,7 +166,7 @@ export default function Header({ pageVisibilities, settings, onNavigate, current
                     {currentPage === item.key && (
                       <motion.div
                         layoutId="activeNav"
-                        className="absolute bottom-0 left-2 right-2 h-0.5 bg-gdv-teal rounded-full"
+                        className="absolute bottom-0 left-1 right-1 h-0.5 bg-gdv-teal rounded-full"
                         transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                       />
                     )}

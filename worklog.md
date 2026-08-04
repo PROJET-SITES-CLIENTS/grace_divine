@@ -1,154 +1,24 @@
+# Work Log
+
 ---
 Task ID: 1
-Agent: Main Agent
-Task: Build complete full-stack website for Grace Divine Voyage travel agency
+Agent: Main Agent (session continuation)
+Task: Corriger 5 bugs de synchronisation dashboard admin ↔ site frontend
 
 Work Log:
-- Analyzed PRD PDF and logo image using VLM to extract brand colors, identity, and business requirements
-- Designed Prisma schema with 14 models: SiteSettings, PageVisibility, Service, TeamMember, Testimonial, Partner, FAQ, GalleryImage, GalleryVideo, ContactSubmission, PromotionalAd, JobListing, HomePageSection, AboutPage
-- Pushed schema to SQLite and generated Prisma client
-- Created comprehensive seed data with 7 services, 4 team members, 4 testimonials, 5 partners, 6 FAQs, 2 jobs, home sections, about page content
-- Created 26 API routes covering all CRUD operations for all models plus file upload
-- Built complete frontend with 19 components including SiteRouter (client-side SPA), Header, Footer, 11 public pages, AdminDashboard with 14 sections, PromotionalPopup, PromoBanner, AnimatedSection
-- Applied Grace Divine Voyage brand theme: brown #5D3A1A, gold #B8860B, cream #FDF8F0
-- Added Framer Motion animations throughout (fadeIn, slideUp, stagger, floating elements)
-- Verified all pages via agent-browser: Homepage, Services, Service Detail, Contact, Partenaires, FAQ, Admin Dashboard, Page Visibility toggles, Ads management
-- Fixed hero title duplication issue
-- ESLint passes clean, dev server returns 200
+- Audit complet des 5 bugs signalés par l'utilisateur
+- Bug 1 (features.map is not a function): Déjà corrigé dans le code source (JSON.parse avec try/catch en place dans ServiceDetailPage.tsx:98-105)
+- Bug 2 (Multi emails/téléphones): Ajouté les champs `extraPhones` et `extraEmails` au schéma Prisma, exécuté `prisma db push`. L'admin gère déjà ces champs via des Textarea.
+- Bug 3 (Masquage des pages): Ajouté `isPageVisible()` dans SiteRouter pour bloquer l'accès direct aux pages masquées (redirect vers accueil). Ajouté le tri par `order` dans Header et Footer.
+- Bug 4 (Bannières pas visibles): Le composant `PromoBanner` (position='banner') n'était jamais rendu dans le SiteRouter. Ajouté après le Header. Ajouté un spacer h-14 pour les bannières bottom. Rendu le bouton fermer visible sur desktop.
+- Bug 5 (Menu recrutement invisible): 10 items dans la nav desktop causaient un débordement. Réduit le padding (px-2 xl:px-3) et la taille de police (text-xs) pour que tous les items tiennent.
+- Audit supplémentaire: vérifié que toutes les pages ont des protections contre les props null avant les .map() — toutes protégées ✅
+- Build final Next.js réussi sans erreurs
 
 Stage Summary:
-- Complete full-stack Next.js 16 website for Grace Divine Voyage
-- 26 API routes, 19 React components, 14 database models
-- Public pages: Accueil, À propos, Services (7 sub-pages), Galerie, Témoignages, Partenaires, FAQ, Recrutement, Équipe, Contact
-- Admin dashboard with 14 sections: Dashboard, Settings, Pages visibility, Services CRUD, Team CRUD, Testimonials CRUD, Partners CRUD, FAQ CRUD, Gallery, Ads management, Contact submissions, Jobs CRUD, Home sections, About page
-- Promotional system: popup (session-limited) and inline banners, both hidden when no active ads
-- Contact form with WhatsApp redirect
-- All pages navigable from both header nav and footer links
-- Page visibility toggle system working in admin
-
----
-Task ID: 2
-Agent: Main Agent
-Task: Comprehensive audit and fix all 42 identified issues
-
-Work Log:
-- Ran full code audit identifying 42 issues across 4 severity levels (4 Critical, 8 High, 14 Medium, 16 Low)
-- Fixed C3: SERVICE_IMAGE_MAP slug mismatch (5/7 services had wrong slugs)
-- Fixed C4: Upload route now validates file type, extension (whitelist), MIME type, and size (10MB max)
-- Fixed H4/M14: pages-visibility upsert now includes required 'title' field in create clause
-- Fixed H1/L5: Playfair Display font now loaded via next/font/google (was broken @font-face CSS URL)
-- Fixed C2: Added Zod validation schemas to 10 API routes (contact, services, ads, team, testimonials, partners, faq, jobs, gallery/images, gallery/videos)
-- Fixed M1: AdminDashboard empty catch blocks now log errors
-- Fixed M2: All admin CRUD operations (delete, create, update) now check response.ok before showing success toasts
-- Fixed H5: Contact form now checks response.ok before showing success message
-- Fixed H6: GalleryPage, PromotionalPopup, PromoBanner error handling (no more silent .catch(() => {}))
-- Fixed H7: ServiceDetailPage now checks res.ok before parsing JSON
-- Fixed H8/L1: Header duplicate phone display removed
-- Fixed L3: TikTok/LinkedIn icons added to Footer (conditional on settings) and TikTok to Header
-- Fixed M3: Footer newsletter form now functional (has form onSubmit handler)
-- Fixed M4: PromoBanner close button now works (dismissed state)
-- Fixed M5: Contact page map placeholder replaced with OpenStreetMap embed
-- Fixed M7: Copyright year now uses new Date().getFullYear()
-- Fixed M6: Created favicon.svg, updated layout.tsx icon reference
-- Fixed M8: React StrictMode enabled in next.config.ts
-- Fixed M10: Prisma query logging disabled in production
-- Fixed M11: TOAST_LIMIT changed from 1 to 5, TOAST_REMOVE_DELAY from 16min to 5s
-- Fixed M12: use-mobile.ts now uses mql.matches instead of window.innerWidth
-- Fixed M13: Removed dead tailwind.config.ts (Tailwind v4 doesn't use it)
-- Fixed L2: Gallery admin image alt attribute now uses img.title
-- Fixed L12: Added aria-labels to testimonial nav, gallery lightbox, promo banner nav buttons
-- Added L7: OpenGraph metadata in layout.tsx
-- Build passes successfully, all 26 API routes generated, dev server returns 200
-
-Stage Summary:
-- 35 of 42 issues fixed (7 remaining are C1 auth, H3 tsconfig, H8 hardcoded WhatsApp, M9 unused deps, L4 Twitter/X icon, L6 loading/error boundaries, L8-L9 Next.js Image)
-- C1 (admin auth) intentionally deferred: requires next-auth setup decision from user
-- H3 (tsconfig noImplicitAny) kept as-is since ignoreBuildErrors is true by design
-- H8 (hardcoded WhatsApp) partially fixed - noted for future dynamic setting pass-through
-- M9 (unused deps) deferred to avoid breaking changes
-- L6, L8, L9 are nice-to-have improvements, not bugs
-- Build verified: `next build` succeeds, all routes compile
----
-Task ID: 1
-Agent: main
-Task: Fix synchronisation admin ↔ site + contraste boutons
-
-Work Log:
-- Analysed full data flow: page.tsx (server) → SiteRouter (client state) → pages
-- Discovered CRITICAL destructuring bug in refreshAllData(): 14 variables for 13 results, variable f (ads) unused, all subsequent assignments shifted by 1
-- Fixed destructuring to use clear, correctly-mapped variable names
-- Modified GalleryPage to accept initialImages/initialVideos props from SiteRouter
-- Added useEffect in AdminDashboard to re-fetch contacts when switching to contact tab
-- Added useEffect in AdminDashboard to re-fetch gallery data when switching to gallery tab
-- Added useEffect in AdminDashboard to re-fetch all data when switching to dashboard tab
-- Fixed 6 Ajouter buttons: changed bg-gdv-gold hover:bg-gdv-gold-light text-white to text-gdv-dark font-semibold for WCAG contrast compliance
-- Clean build: 0 errors
-- API sync verified: POST contact → immediately visible in GET, POST gallery image → immediately visible in GET
-
-Stage Summary:
-- Root cause of sync failure: destructuring mismatch in refreshAllData() causing ads/jobs/homeSections/aboutData/galleryImages/galleryVideos to never update correctly
-- 3 files modified: SiteRouter.tsx, AdminDashboard.tsx, GalleryPage.tsx
-- Server running on port 3000, all APIs functional
-
----
-Task ID: 2
-Agent: main
-Task: Analyse complète et correction finale de la synchronisation dashboard ↔ site
-
-Work Log:
-- Lu SiteRouter.tsx (202 lignes) en entier - analysé refreshAllData, handleNavigate, handleDataChanged
-- Lu AdminDashboard.tsx (1040 lignes) en entier - analysé toutes les fonctions CRUD, notifyDataChanged
-- Lu GalleryPage.tsx (327 puis 305 lignes) - identifié le useEffect qui écrase les props
-- Lu ContactPage.tsx (392 lignes) - vérifié le flux d'envoi de messages
-- Lu HomePage.tsx (461 lignes) - vérifié la réception des props
-- Vérifié les autres pages (AboutPage, ServicesPage, etc.) pour les useEffect
-- Identifié 2 bugs critiques et analysé le comportement de toutes les pages
-- CORRIGE SiteRouter.tsx: remplacé le debounce temporel (2s) par une déduplication de promesse avec paramètre force
-- CORRIGE GalleryPage.tsx: supprimé le useEffect([]) qui refetchait et écrasait les données fraîches au mount
-- Compilation réussie (next build) sans erreurs
-- Testé toutes les API (gallery/images POST/GET/DELETE, contact POST/GET/DELETE) - OK
-
-Stage Summary:
-- BUG CRITIQUE 1 CORRIGE: GalleryPage avait un useEffect([]) qui refetchait les images au mount, écrasant les données fraîches transmises par refreshAllData via les props
-- BUG CRITIQUE 2 CORRIGE: refreshAllData avait un debounce de 2 secondes (lastRefreshRef) qui bloquait les refreshs consécutifs - remplacé par une déduplication de promesse
-- Flux de synchronisation final: Admin CRUD -> notifyDataChanged() -> refreshAllData() met à jour les 13 states -> handleNavigate(force=true) au départ de l'admin attend le refresh AVANT de changer de page -> les pages reçoivent les nouvelles props au montage (AnimatePresence key=currentPage démonte/remonte)
-- Toutes les autres pages (Services, About, FAQ, etc.) n'ont pas de fetch interne et utilisent directement les props du parent - elles se mettent à jour correctement au remontage
-- 2 fichiers modifiés: SiteRouter.tsx, GalleryPage.tsx
-
----
-Task ID: 3
-Agent: main
-Task: Correction complète et exhaustive de tous les bugs de synchronisation
-
-Work Log:
-- Revérifié SiteRouter.tsx ligne par ligne - refreshAllData, handleNavigate, renderPage
-- Revérifié GalleryPage.tsx - confirmé plus aucun fetch interne
-- Revérifié AdminDashboard.tsx - confirmé notifyDataChanged() appelé après chaque CRUD (saveSettings, togglePage, deleteItem, createItem, updateItem, homeSections save, about save)
-- Vérifié ServiceDetailPage - fetch par slug est nécessaire et correct
-- TROUVÉ BUG: PromoBanner.tsx avait un useEffect([]) qui fetchait /api/ads indépendamment
-- TROUVÉ BUG: PromotionalPopup.tsx avait un useEffect([]) qui fetchait /api/ads indépendamment
-- TROUVÉ BUG: AdminDashboard double fetchDashboard() au montage (2 useEffects se déclenchent)
-- CORRIGE PromoBanner.tsx: supprimé le useEffect fetch, reçoit maintenant `ads` en props
-- CORRIGE PromotionalPopup.tsx: supprimé le useEffect fetch, reçoit maintenant `ads` en props
-- CORRIGE HomePage.tsx: ajouté `ads` aux props et transmis à PromoBanner
-- CORRIGE SiteRouter.tsx: passe `ads` à HomePage et PromotionalPopup
-- CORRIGE AdminDashboard.tsx: ajouté isInitialMountRef pour éviter le double fetch
-- Vérifié Header.tsx et Footer.tsx: aucun fetch interne, utilisent les props correctement
-- Vérifié page.tsx: toutes les données sont passées correctement en props initiales
-- Vérifié AUCUNE autre page (AboutPage, ServicesPage, TestimonialsPage, PartnersPage, FAQPage, RecrutementPage, TeamPage) n'a de fetch interne
-- Compilation réussie (next build) 0 erreurs
-- Tests API: POST/GET/DELETE gallery images OK, POST/GET/DELETE contact OK
-
-Stage Summary:
-- 5 fichiers modifiés au total: SiteRouter.tsx, GalleryPage.tsx, PromoBanner.tsx, PromotionalPopup.tsx, HomePage.tsx, AdminDashboard.tsx
-- 4 bugs corrigés dans cette session:
-  1. GalleryPage useEffect écrasait les props fraîches (CRITIQUE)
-  2. refreshAllData debounce de 2s bloquait les refreshs (CRITIQUE)
-  3. PromoBanner + PromotionalPopup fetchaient indépendamment au lieu d'utiliser les props (MAJEUR)
-  4. AdminDashboard double fetch au montage (MINEUR)
-- Architecture de synchronisation finale:
-  - SINGLE SOURCE OF TRUTH: SiteRouter détient les 13 states, rafraîchis via refreshAllData()
-  - AUCUN fetch interne dans les pages du site (sauf ServiceDetailPage par nécessité)
-  - Admin CRUD -> notifyDataChanged() -> refreshAllData() -> handleNavigate(force=true) -> pages montent avec props fraîches
-  - Header/Footer reçoivent pageVisibilities/settings directement du state et se mettent à jour instantanément
-  - PromoBanner/PromotionalPopup reçoivent ads en props, plus de fetch indépendant
+- 4 bugs corrigés dans le code (1 déjà corrigé)
+- Schéma Prisma mis à jour avec extraPhones/extraEmails
+- SiteRouter amélioré: blocage pages masquées, PromoBanner intégré, spacer bottom banner
+- Header/Footer: tri par order des pageVisibilities
+- Header: nav items plus compacts (text-xs, px-2) pour fit 10 items
+- Build Next.js successful

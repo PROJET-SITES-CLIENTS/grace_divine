@@ -47,11 +47,14 @@ const fadeIn = {
 };
 
 export default function Footer({ pageVisibilities, settings, onNavigate }: FooterProps) {
-  const visibleLinks = quickLinks.filter((item) => {
-    if (!pageVisibilities) return true;
-    const vis = pageVisibilities.find((p) => p.pageKey === item.key);
-    return vis ? vis.visible : true;
-  });
+  const visibleLinks = quickLinks
+    .map((item) => {
+      if (!pageVisibilities) return { ...item, order: 0 };
+      const vis = pageVisibilities.find((p) => p.pageKey === item.key);
+      return { ...item, visible: vis ? vis.visible : true, order: vis ? vis.order : 0 };
+    })
+    .filter((item) => item.visible)
+    .sort((a, b) => a.order - b.order);
 
   const allPhones = parsePhones(settings);
   const allEmails = parseEmails(settings);
