@@ -57,7 +57,7 @@ export default function PromoBanner({ ads }: PromoBannerProps) {
 
   return (
     <div className="relative overflow-hidden bg-gradient-to-r from-gdv-brown via-gdv-dark to-gdv-brown">
-      <div className="absolute inset-0 bg-[url('/placeholder-promo.jpg')] bg-cover bg-center opacity-10" />
+      <div className="absolute inset-0 bg-black/5" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
