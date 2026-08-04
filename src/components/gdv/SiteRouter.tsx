@@ -19,6 +19,7 @@ import RecrutementPage from '@/components/gdv/pages/RecrutementPage';
 import TeamPage from '@/components/gdv/pages/TeamPage';
 import ContactPage from '@/components/gdv/pages/ContactPage';
 import AdminDashboard from '@/components/gdv/pages/AdminDashboard';
+import WhatsAppButton from '@/components/gdv/WhatsAppButton';
 
 interface SiteRouterProps {
   pageVisibilities: { pageKey: string; title: string; visible: boolean; order: number }[] | null;
@@ -214,6 +215,12 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
 
       {!isAdmin && <GlobalBanners ads={ads} />}
       {!isAdmin && <PromotionalPopup ads={ads} />}
+      {!isAdmin && (
+        <WhatsAppButton
+          whatsappNumber={settings?.whatsappNumber}
+          siteName={settings?.siteName}
+        />
+      )}
       {/* Spacer for bottom banner */}
       {!isAdmin && (ads || []).some((a) => a.position === 'bottom' && a.active) && (
         <div className="h-14" />
