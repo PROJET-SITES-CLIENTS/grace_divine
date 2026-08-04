@@ -35,7 +35,14 @@ const fadeInUp = {
 };
 
 export default function AboutPage({ aboutData, team, onNavigate }: AboutPageProps) {
-  const values = aboutData?.values ? JSON.parse(aboutData.values) : [];
+  let values: string[] = [];
+  try {
+    if (aboutData?.values) {
+      values = typeof aboutData.values === 'string' ? JSON.parse(aboutData.values) : Array.isArray(aboutData.values) ? aboutData.values : [];
+    }
+  } catch {
+    values = [];
+  }
 
   return (
     <div>

@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 
 interface HeaderProps {
   pageVisibilities: { pageKey: string; title: string; visible: boolean; order: number }[] | null;
+  settings: Record<string, string> | null;
   onNavigate: (page: string) => void;
   currentPage: string;
 }
@@ -34,7 +35,10 @@ const navItems = [
   { key: 'contact', label: 'Contact' },
 ];
 
-export default function Header({ pageVisibilities, onNavigate, currentPage }: HeaderProps) {
+export default function Header({ pageVisibilities, settings, onNavigate, currentPage }: HeaderProps) {
+  const phone1 = settings?.phone1 || '+224 627 10 46 46';
+  const phone2 = settings?.phone2 || '+224 627 10 49 49';
+  const email1 = settings?.email1 || 'contact@gracedivinevoyage.net';
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -74,35 +78,37 @@ export default function Header({ pageVisibilities, onNavigate, currentPage }: He
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between text-xs sm:text-sm">
           <div className="flex items-center gap-4 sm:gap-6">
-            <a href="tel:+224627104646" className="flex items-center gap-1.5 hover:text-gdv-teal transition-colors">
+            <a href={`tel:${phone1.replace(/\s/g, '')}`} className="flex items-center gap-1.5 hover:text-gdv-teal transition-colors">
               <Phone className="w-3 h-3" />
-              <span>+224 627 10 46 46</span>
+              <span>{phone1}</span>
             </a>
-            <a href="tel:+224627104949" className="flex items-center gap-1.5 hover:text-gdv-teal transition-colors hidden sm:flex">
+            <a href={`tel:${phone2.replace(/\s/g, '')}`} className="flex items-center gap-1.5 hover:text-gdv-teal transition-colors hidden sm:flex">
               <Phone className="w-3 h-3" />
-              +224 627 10 49 49
+              {phone2}
             </a>
-            <a href="mailto:contact@gracedivinevoyage.net" className="flex items-center gap-1.5 hover:text-gdv-teal transition-colors hidden md:flex">
+            <a href={`mailto:${email1}`} className="flex items-center gap-1.5 hover:text-gdv-teal transition-colors hidden md:flex">
               <Mail className="w-3 h-3" />
-              contact@gracedivinevoyage.net
+              {email1}
             </a>
           </div>
           <div className="flex items-center gap-3">
-            <a href="https://facebook.com/gracedivinevoyage" target="_blank" rel="noopener noreferrer" className="hover:text-gdv-teal transition-colors" aria-label="Facebook">
+            <a href={settings?.facebookUrl || '#'} target="_blank" rel="noopener noreferrer" className="hover:text-gdv-teal transition-colors" aria-label="Facebook">
               <Facebook className="w-3.5 h-3.5" />
             </a>
-            <a href="https://instagram.com/gracedivinevoyage" target="_blank" rel="noopener noreferrer" className="hover:text-gdv-teal transition-colors" aria-label="Instagram">
+            <a href={settings?.instagramUrl || '#'} target="_blank" rel="noopener noreferrer" className="hover:text-gdv-teal transition-colors" aria-label="Instagram">
               <Instagram className="w-3.5 h-3.5" />
             </a>
-            <a href="#" className="hover:text-gdv-teal transition-colors" aria-label="Twitter">
+            <a href={settings?.twitterUrl || '#'} target="_blank" rel="noopener noreferrer" className="hover:text-gdv-teal transition-colors" aria-label="Twitter">
               <Twitter className="w-3.5 h-3.5" />
             </a>
-            <a href="#" className="hover:text-gdv-teal transition-colors" aria-label="YouTube">
+            <a href={settings?.youtubeUrl || '#'} target="_blank" rel="noopener noreferrer" className="hover:text-gdv-teal transition-colors" aria-label="YouTube">
               <Youtube className="w-3.5 h-3.5" />
             </a>
-            <a href="https://tiktok.com/@gracedivinevoyage" target="_blank" rel="noopener noreferrer" className="hover:text-gdv-teal transition-colors" aria-label="TikTok">
-              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.42V13.2a8.16 8.16 0 005.58 2.18V11.9a4.85 4.85 0 01-3.77-1.82V6.69h3.77z"/></svg>
-            </a>
+            {settings?.tiktokUrl && (
+              <a href={settings.tiktokUrl} target="_blank" rel="noopener noreferrer" className="hover:text-gdv-teal transition-colors" aria-label="TikTok">
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.42V13.2a8.16 8.16 0 005.58 2.18V11.9a4.85 4.85 0 01-3.77-1.82V6.69h3.77z"/></svg>
+              </a>
+            )}
           </div>
         </div>
       </motion.div>

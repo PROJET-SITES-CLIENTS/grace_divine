@@ -169,6 +169,7 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
       {!isAdmin && (
         <Header
           pageVisibilities={pageVisibilities}
+          settings={settings}
           onNavigate={handleNavigate}
           currentPage={currentPage}
         />
