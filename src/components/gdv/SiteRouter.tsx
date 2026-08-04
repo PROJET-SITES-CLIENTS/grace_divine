@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Header from '@/components/gdv/Header';
 import Footer from '@/components/gdv/Footer';
 import PromotionalPopup from '@/components/gdv/PromotionalPopup';
+import GlobalBanners from '@/components/gdv/GlobalBanners';
 import HomePage from '@/components/gdv/pages/HomePage';
 import AboutPage from '@/components/gdv/pages/AboutPage';
 import ServicesPage from '@/components/gdv/pages/ServicesPage';
@@ -83,7 +84,7 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
       const [settingsData, pagesData, servicesData, teamData, testimonialsData, partnersData, faqsData, adsData, jobsData, homeSectionsData, aboutResult, galleryImagesData, galleryVideosData] = results;
       // Apply same filters as page.tsx server component for consistency
       if (settingsData) setSettings(settingsData);
-      if (pagesData) setPageVisibilities((pagesData as any[]).filter((p: any) => p.visible !== false));
+      if (pagesData) setPageVisibilities(pagesData as any[]); // ALL pages (including hidden) — Header/Footer filter by visible
       if (servicesData) setServices(servicesData); // API already filters visible: true
       if (teamData) setTeam((teamData as any[]).filter((t: any) => t.visible !== false));
       if (testimonialsData) setTestimonials((testimonialsData as any[]).filter((t: any) => t.visible !== false));
@@ -196,6 +197,7 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
         />
       )}
 
+      {!isAdmin && <GlobalBanners ads={ads} />}
       {!isAdmin && <PromotionalPopup ads={ads} />}
     </>
   );

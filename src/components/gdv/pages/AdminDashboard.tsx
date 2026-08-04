@@ -404,6 +404,14 @@ export default function AdminDashboard({ onNavigate, onDataChanged }: AdminDashb
                         <Label>Adresse</Label>
                         <Input value={settings.address || ''} onChange={(e) => setSettings({ ...settings, address: e.target.value })} />
                       </div>
+                      <div className="space-y-2 sm:col-span-2">
+                        <Label>Autres numéros de téléphone (un par ligne)</Label>
+                        <Textarea value={(() => { try { const arr = settings.extraPhones ? JSON.parse(settings.extraPhones) : []; return arr.join('\n'); } catch { return settings.extraPhones || ''; } })()} onChange={(e) => setSettings({ ...settings, extraPhones: JSON.stringify(e.target.value.split('\n').map((s: string) => s.trim()).filter(Boolean)) })} rows={3} placeholder={"+224 666 11 22 33\n+224 666 44 55 66"} />
+                      </div>
+                      <div className="space-y-2 sm:col-span-2">
+                        <Label>Autres adresses email (une par ligne)</Label>
+                        <Textarea value={(() => { try { const arr = settings.extraEmails ? JSON.parse(settings.extraEmails) : []; return arr.join('\n'); } catch { return settings.extraEmails || ''; } })()} onChange={(e) => setSettings({ ...settings, extraEmails: JSON.stringify(e.target.value.split('\n').map((s: string) => s.trim()).filter(Boolean)) })} rows={3} placeholder={"info@gracedivinevoyage.net\nreservation@gracedivinevoyage.net"} />
+                      </div>
                       <div className="space-y-2">
                         <Label>Numéro WhatsApp</Label>
                         <Input value={settings.whatsappNumber || ''} onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })} />
@@ -1026,8 +1034,10 @@ function AdForm({ initial, onSave }: { initial?: Record<string, any>; onSave: (d
             <Label>Position</Label>
             <select value={data.position || 'popup'} onChange={(e) => setData({ ...data, position: e.target.value })} className="w-full h-10 rounded-md border border-gray-300 px-3 text-sm">
               <option value="popup">Popup</option>
-              <option value="banner">Bannière</option>
+              <option value="banner">Bannière (accueil)</option>
               <option value="inline">Inline</option>
+              <option value="bottom">Bandeau fixe bas (toutes pages)</option>
+              <option value="sidebar">Bannière latérale (toutes pages)</option>
             </select>
           </div>
           <div className="space-y-2 flex flex-col">

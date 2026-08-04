@@ -20,6 +20,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import AnimatedSection from '@/components/gdv/AnimatedSection';
 import { IMAGES } from '@/lib/images';
+import { parsePhones, parseEmails } from '@/lib/contacts';
 
 interface ContactPageProps {
   settings: Record<string, string> | null;
@@ -89,9 +90,8 @@ export default function ContactPage({ settings, services }: ContactPageProps) {
     }
   };
 
-  const phone1 = settings?.phone1 || '+224 627 10 46 46';
-  const phone2 = settings?.phone2 || '+224 627 10 49 49';
-  const email1 = settings?.email1 || 'contact@gracedivinevoyage.net';
+  const allPhones = parsePhones(settings);
+  const allEmails = parseEmails(settings);
   const address = settings?.address || 'Kaloum Manque pas, Immeuble Yansané';
 
   return (
@@ -296,33 +296,28 @@ export default function ContactPage({ settings, services }: ContactPageProps) {
                 <CardContent className="p-6">
                   <h3 className="text-lg font-bold text-gdv-brown font-serif mb-5">Coordonnées</h3>
                   <div className="space-y-4">
-                    <a href={`tel:${phone1.replace(/\s/g, '')}`} className="flex items-start gap-3 text-gdv-brown-light hover:text-gdv-teal transition-colors group">
-                      <div className="w-10 h-10 rounded-lg bg-gdv-teal/10 flex items-center justify-center shrink-0 group-hover:bg-gdv-teal/20 transition-colors">
-                        <Phone className="w-5 h-5 text-gdv-teal" />
-                      </div>
-                      <div>
-                        <p className="text-xs text-gdv-brown-light/70 font-medium">Téléphone 1</p>
-                        <p className="text-sm font-medium">{phone1}</p>
-                      </div>
-                    </a>
-                    <a href={`tel:${phone2.replace(/\s/g, '')}`} className="flex items-start gap-3 text-gdv-brown-light hover:text-gdv-teal transition-colors group">
-                      <div className="w-10 h-10 rounded-lg bg-gdv-teal/10 flex items-center justify-center shrink-0 group-hover:bg-gdv-teal/20 transition-colors">
-                        <Phone className="w-5 h-5 text-gdv-teal" />
-                      </div>
-                      <div>
-                        <p className="text-xs text-gdv-brown-light/70 font-medium">Téléphone 2</p>
-                        <p className="text-sm font-medium">{phone2}</p>
-                      </div>
-                    </a>
-                    <a href={`mailto:${email1}`} className="flex items-start gap-3 text-gdv-brown-light hover:text-gdv-teal transition-colors group">
-                      <div className="w-10 h-10 rounded-lg bg-gdv-teal/10 flex items-center justify-center shrink-0 group-hover:bg-gdv-teal/20 transition-colors">
-                        <Mail className="w-5 h-5 text-gdv-teal" />
-                      </div>
-                      <div>
-                        <p className="text-xs text-gdv-brown-light/70 font-medium">Email</p>
-                        <p className="text-sm font-medium">{email1}</p>
-                      </div>
-                    </a>
+                    {allPhones.map((phone, i) => (
+                      <a key={i} href={`tel:${phone.replace(/\s/g, '')}`} className="flex items-start gap-3 text-gdv-brown-light hover:text-gdv-teal transition-colors group">
+                        <div className="w-10 h-10 rounded-lg bg-gdv-teal/10 flex items-center justify-center shrink-0 group-hover:bg-gdv-teal/20 transition-colors">
+                          <Phone className="w-5 h-5 text-gdv-teal" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-gdv-brown-light/70 font-medium">{i === 0 ? 'Téléphone principal' : `Téléphone ${i + 1}`}</p>
+                          <p className="text-sm font-medium">{phone}</p>
+                        </div>
+                      </a>
+                    ))}
+                    {allEmails.map((email, i) => (
+                      <a key={i} href={`mailto:${email}`} className="flex items-start gap-3 text-gdv-brown-light hover:text-gdv-teal transition-colors group">
+                        <div className="w-10 h-10 rounded-lg bg-gdv-teal/10 flex items-center justify-center shrink-0 group-hover:bg-gdv-teal/20 transition-colors">
+                          <Mail className="w-5 h-5 text-gdv-teal" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-gdv-brown-light/70 font-medium">{i === 0 ? 'Email principal' : `Email ${i + 1}`}</p>
+                          <p className="text-sm font-medium">{email}</p>
+                        </div>
+                      </a>
+                    ))}
                     <div className="flex items-start gap-3 text-gdv-brown-light">
                       <div className="w-10 h-10 rounded-lg bg-gdv-teal/10 flex items-center justify-center shrink-0">
                         <MapPin className="w-5 h-5 text-gdv-teal" />

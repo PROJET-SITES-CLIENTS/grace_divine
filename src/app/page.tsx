@@ -19,7 +19,7 @@ export default async function Home() {
     aboutDataData,
   ] = await Promise.all([
     db.siteSettings.findFirst().catch(() => null),
-    db.pageVisibility.findMany({ where: { visible: true }, orderBy: { order: 'asc' } }).catch(() => []),
+    db.pageVisibility.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
     db.service.findMany({ where: { visible: true }, orderBy: { order: 'asc' } }).catch(() => []),
     db.teamMember.findMany({ where: { visible: true }, orderBy: { order: 'asc' } }).catch(() => []),
     db.testimonial.findMany({ where: { visible: true }, orderBy: { order: 'asc' } }).catch(() => []),

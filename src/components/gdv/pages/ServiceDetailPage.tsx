@@ -95,7 +95,14 @@ export default function ServiceDetailPage({ slug, onNavigate }: ServiceDetailPag
     );
   }
 
-  const features = service.features ? JSON.parse(service.features) : [];
+  let features: string[] = [];
+  try {
+    if (service.features) {
+      features = typeof service.features === 'string' ? JSON.parse(service.features) : Array.isArray(service.features) ? service.features : [];
+    }
+  } catch {
+    features = [];
+  }
   const serviceImg = SERVICE_IMAGE_MAP[service.slug];
 
   return (

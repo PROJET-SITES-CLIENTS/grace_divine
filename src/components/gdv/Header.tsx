@@ -16,6 +16,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { parsePhones, parseEmails } from '@/lib/contacts';
 
 interface HeaderProps {
   pageVisibilities: { pageKey: string; title: string; visible: boolean; order: number }[] | null;
@@ -31,14 +32,15 @@ const navItems = [
   { key: 'galerie', label: 'Galerie' },
   { key: 'temoignages', label: 'Témoignages' },
   { key: 'partenaires', label: 'Partenaires' },
+  { key: 'equipe', label: 'Équipe' },
   { key: 'faq', label: 'FAQ' },
+  { key: 'recrutement', label: 'Recrutement' },
   { key: 'contact', label: 'Contact' },
 ];
 
 export default function Header({ pageVisibilities, settings, onNavigate, currentPage }: HeaderProps) {
-  const phone1 = settings?.phone1 || '+224 627 10 46 46';
-  const phone2 = settings?.phone2 || '+224 627 10 49 49';
-  const email1 = settings?.email1 || 'contact@gracedivinevoyage.net';
+  const allPhones = parsePhones(settings);
+  const allEmails = parseEmails(settings);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -78,18 +80,18 @@ export default function Header({ pageVisibilities, settings, onNavigate, current
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between text-xs sm:text-sm">
           <div className="flex items-center gap-4 sm:gap-6">
-            <a href={`tel:${phone1.replace(/\s/g, '')}`} className="flex items-center gap-1.5 hover:text-gdv-teal transition-colors">
-              <Phone className="w-3 h-3" />
-              <span>{phone1}</span>
-            </a>
-            <a href={`tel:${phone2.replace(/\s/g, '')}`} className="flex items-center gap-1.5 hover:text-gdv-teal transition-colors hidden sm:flex">
-              <Phone className="w-3 h-3" />
-              {phone2}
-            </a>
-            <a href={`mailto:${email1}`} className="flex items-center gap-1.5 hover:text-gdv-teal transition-colors hidden md:flex">
-              <Mail className="w-3 h-3" />
-              {email1}
-            </a>
+            {allPhones.slice(0, 3).map((phone, i) => (
+              <a key={i} href={`tel:${phone.replace(/\s/g, '')}`} className={`flex items-center gap-1.5 hover:text-gdv-teal transition-colors ${i > 0 ? 'hidden sm:flex' : ''}`}>
+                <Phone className="w-3 h-3" />
+                <span>{phone}</span>
+              </a>
+            ))}
+            {allEmails.slice(0, 2).map((email, i) => (
+              <a key={i} href={`mailto:${email}`} className={`flex items-center gap-1.5 hover:text-gdv-teal transition-colors ${i > 0 ? 'hidden lg:flex' : 'hidden md:flex'}`}>
+                <Mail className="w-3 h-3" />
+                {email}
+              </a>
+            ))}
           </div>
           <div className="flex items-center gap-3">
             <a href={settings?.facebookUrl || '#'} target="_blank" rel="noopener noreferrer" className="hover:text-gdv-teal transition-colors" aria-label="Facebook">

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { parsePhones, parseEmails } from '@/lib/contacts';
 
 interface FooterProps {
   pageVisibilities: { pageKey: string; title: string; visible: boolean; order: number }[] | null;
@@ -52,9 +53,8 @@ export default function Footer({ pageVisibilities, settings, onNavigate }: Foote
     return vis ? vis.visible : true;
   });
 
-  const phone1 = settings?.phone1 || '+224 627 10 46 46';
-  const phone2 = settings?.phone2 || '+224 627 10 49 49';
-  const email1 = settings?.email1 || 'contact@gracedivinevoyage.net';
+  const allPhones = parsePhones(settings);
+  const allEmails = parseEmails(settings);
   const address = settings?.address || 'Kaloum Manque pas, Immeuble Yansané';
 
   return (
@@ -146,18 +146,18 @@ export default function Footer({ pageVisibilities, settings, onNavigate }: Foote
           >
             <h3 className="text-gdv-gold font-semibold text-base uppercase tracking-wider">Contact</h3>
             <div className="space-y-3 text-sm">
-              <a href={`tel:${phone1.replace(/\s/g, '')}`} className="flex items-start gap-3 text-gdv-cream/60 hover:text-gdv-teal-light transition-colors">
-                <Phone className="w-4 h-4 mt-0.5 shrink-0 text-gdv-gold" />
-                <span>{phone1}</span>
-              </a>
-              <a href={`tel:${phone2.replace(/\s/g, '')}`} className="flex items-start gap-3 text-gdv-cream/60 hover:text-gdv-teal-light transition-colors">
-                <Phone className="w-4 h-4 mt-0.5 shrink-0 text-gdv-gold" />
-                <span>{phone2}</span>
-              </a>
-              <a href={`mailto:${email1}`} className="flex items-start gap-3 text-gdv-cream/60 hover:text-gdv-teal-light transition-colors">
-                <Mail className="w-4 h-4 mt-0.5 shrink-0 text-gdv-gold" />
-                <span>{email1}</span>
-              </a>
+              {allPhones.map((phone, i) => (
+                <a key={i} href={`tel:${phone.replace(/\s/g, '')}`} className="flex items-start gap-3 text-gdv-cream/60 hover:text-gdv-teal-light transition-colors">
+                  <Phone className="w-4 h-4 mt-0.5 shrink-0 text-gdv-gold" />
+                  <span>{phone}</span>
+                </a>
+              ))}
+              {allEmails.map((email, i) => (
+                <a key={i} href={`mailto:${email}`} className="flex items-start gap-3 text-gdv-cream/60 hover:text-gdv-teal-light transition-colors">
+                  <Mail className="w-4 h-4 mt-0.5 shrink-0 text-gdv-gold" />
+                  <span>{email}</span>
+                </a>
+              ))}
               <div className="flex items-start gap-3 text-gdv-cream/60">
                 <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-gdv-gold" />
                 <span>{address}</span>
