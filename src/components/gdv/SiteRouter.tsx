@@ -43,7 +43,7 @@ const pageVariants = {
   exit: { opacity: 0, y: -8, transition: { duration: 0.2 } },
 };
 
-export default function SiteRouter(initialProps: SiteRouterProps) {
+export default function SiteRouter(initialProps: SiteRouterProps & { initialPage?: string }) {
   const [settings, setSettings] = useState(initialProps.settings);
   const [pageVisibilities, setPageVisibilities] = useState(initialProps.pageVisibilities);
   const [services, setServices] = useState(initialProps.services);
@@ -57,7 +57,7 @@ export default function SiteRouter(initialProps: SiteRouterProps) {
   const [ads, setAds] = useState(initialProps.ads);
   const [galleryImages, setGalleryImages] = useState(initialProps.galleryImages);
   const [galleryVideos, setGalleryVideos] = useState(initialProps.galleryVideos);
-  const [currentPage, setCurrentPage] = useState('accueil');
+  const [currentPage, setCurrentPage] = useState(initialProps.initialPage || 'accueil');
   const [refreshing, setRefreshing] = useState(false);
   const prevPageRef = useRef('accueil');
   const refreshPromiseRef = useRef<Promise<void> | null>(null);

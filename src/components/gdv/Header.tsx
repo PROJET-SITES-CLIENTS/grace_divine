@@ -13,7 +13,6 @@ import {
   X,
   Plane,
   ChevronRight,
-  ShieldCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { parsePhones, parseEmails } from '@/lib/contacts';
@@ -184,16 +183,6 @@ export default function Header({ pageVisibilities, settings, onNavigate, current
               >
                 Devis Gratuit
               </Button>
-              <Button
-                onClick={() => onNavigate('admin')}
-                variant="ghost"
-                size="sm"
-                className="text-gdv-brown-light hover:text-gdv-teal hover:bg-gdv-teal/5 text-xs px-2"
-                aria-label="Administration"
-              >
-                <ShieldCheck className="w-4 h-4" />
-              </Button>
-
               {/* Mobile menu button */}
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
