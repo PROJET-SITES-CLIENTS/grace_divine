@@ -4,7 +4,7 @@ import { NextResponse } from "next/server"
 export default withAuth(
   function middleware(req) {
     // Si on est sur une route API et que ce n'est pas un GET, il faut être authentifié
-    if (req.nextUrl.pathname.startsWith("/api/")) {
+    if (req.nextUrl.pathname.startsWith("/api/") && !req.nextUrl.pathname.startsWith("/api/auth/")) {
       if (req.method !== "GET" && !req.nextauth.token) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
       }
