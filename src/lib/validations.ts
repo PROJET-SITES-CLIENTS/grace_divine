@@ -1,5 +1,15 @@
 import { z } from 'zod';
 
+const jsonArrayString = z.string().refine((val) => {
+  if (!val) return true;
+  try {
+    const parsed = JSON.parse(val);
+    return Array.isArray(parsed) && parsed.every((item: any) => typeof item === 'string');
+  } catch {
+    return false;
+  }
+}, { message: "Format JSON invalide. Doit être une liste valide comme [\"item1\", \"item2\"]." });
+
 export const contactSchema = z.object({
   name: z.string().min(1, 'Le nom est requis').max(200),
   email: z.string().email('Email invalide').max(200).optional().or(z.literal('')),
@@ -15,7 +25,7 @@ export const serviceSchema = z.object({
   shortDesc: z.string().max(500).optional(),
   description: z.string().max(5000).optional(),
   icon: z.string().max(100).optional(),
-  features: z.string().optional(),
+  features: jsonArrayString.optional(),
   visible: z.boolean().optional().default(true),
   order: z.number().int().optional(),
 });

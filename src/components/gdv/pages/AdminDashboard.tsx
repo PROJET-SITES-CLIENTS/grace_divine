@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { signOut } from 'next-auth/react';
 import {
   ArrowLeft,
+  ArrowRight,
   LayoutDashboard,
   Settings,
   Eye,
@@ -55,10 +57,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 
-interface AdminDashboardProps {
-  onNavigate: (page: string) => void;
-  onDataChanged?: () => void;
-}
+import Link from 'next/link';
+
+interface AdminDashboardProps {}
 
 type AdminTab = 'dashboard' | 'settings' | 'pages' | 'services' | 'team' | 'testimonials' | 'partners' | 'faq' | 'gallery' | 'ads' | 'contact' | 'jobs' | 'home' | 'about';
 
@@ -67,12 +68,12 @@ const fadeIn = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
 };
 
-export default function AdminDashboard({ onNavigate, onDataChanged }: AdminDashboardProps) {
+export default function AdminDashboard({}: AdminDashboardProps = {}) {
 
   // Notify parent that data changed so the site can refresh
   const notifyDataChanged = useCallback(() => {
-    onDataChanged?.();
-  }, [onDataChanged]);
+    // onDataChanged was removed. We can rely on Next.js revalidation.
+  }, []);
   const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { toast } = useToast();
@@ -293,10 +294,17 @@ export default function AdminDashboard({ onNavigate, onDataChanged }: AdminDashb
             </button>
             <h1 className="text-lg font-semibold text-gray-900">Administration</h1>
           </div>
-          <Button onClick={() => onNavigate('accueil')} size="sm" className="bg-gdv-teal hover:bg-gdv-teal-light text-white text-sm">
-            <ArrowLeft className="w-4 h-4 mr-1.5" />
-            Retour au site
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button onClick={() => signOut()} variant="outline" size="sm" className="text-sm">
+              Déconnexion
+            </Button>
+            <Link href="/" passHref>
+              <Button size="sm" className="bg-gdv-teal hover:bg-gdv-teal-light text-white text-sm">
+                Retour au site
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
         </header>
 
         <div className="p-4 sm:p-6 lg:p-8">

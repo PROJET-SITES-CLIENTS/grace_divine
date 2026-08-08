@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import {
   Phone,
   Mail,
@@ -21,7 +22,6 @@ import { parsePhones, parseEmails } from '@/lib/contacts';
 interface FooterProps {
   pageVisibilities: { pageKey: string; title: string; visible: boolean; order: number }[] | null;
   settings: Record<string, string> | null;
-  onNavigate: (page: string) => void;
 }
 
 const quickLinks = [
@@ -46,7 +46,20 @@ const fadeIn = {
   }),
 };
 
-export default function Footer({ pageVisibilities, settings, onNavigate }: FooterProps) {
+const pathMap: Record<string, string> = {
+  'accueil': '/',
+  'a-propos': '/a-propos',
+  'services': '/services',
+  'galerie': '/galerie',
+  'temoignages': '/temoignages',
+  'partenaires': '/partenaires',
+  'equipe': '/equipe',
+  'faq': '/faq',
+  'recrutement': '/recrutement',
+  'contact': '/contact',
+};
+
+export default function Footer({ pageVisibilities, settings }: FooterProps) {
   const visibleLinks = quickLinks
     .map((item) => {
       if (!pageVisibilities) return { ...item, order: 0 };
@@ -126,14 +139,14 @@ export default function Footer({ pageVisibilities, settings, onNavigate }: Foote
             <h3 className="text-gdv-gold font-semibold text-base uppercase tracking-wider">Liens Rapides</h3>
             <div className="grid grid-cols-2 gap-x-4 gap-y-2">
               {visibleLinks.map((link) => (
-                <button
+                <Link
                   key={link.key}
-                  onClick={() => onNavigate(link.key)}
+                  href={pathMap[link.key] || '/'}
                   className="text-gdv-cream/60 text-sm hover:text-gdv-teal-light transition-colors text-left flex items-center gap-1.5 group"
                 >
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-gdv-teal-light" />
                   {link.label}
-                </button>
+                </Link>
               ))}
             </div>
           </motion.div>

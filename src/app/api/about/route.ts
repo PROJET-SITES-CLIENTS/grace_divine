@@ -1,5 +1,6 @@
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
+import { aboutPageSchema } from '@/lib/validations_extras';
 
 export async function GET() {
   try {
@@ -14,16 +15,21 @@ export async function GET() {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
+    const validated = aboutPageSchema.safeParse(body);
+    if (!validated.success) {
+      return NextResponse.json({ error: validated.error.flatten().fieldErrors }, { status: 400 });
+    }
+    
     const existing = await db.aboutPage.findFirst();
 
     if (existing) {
       const updated = await db.aboutPage.update({
         where: { id: existing.id },
-        data: body,
+        data: validated.data,
       });
       return NextResponse.json(updated);
     } else {
-      const created = await db.aboutPage.create({ data: body });
+      const created = await db.aboutPage.create({ data: validated.data });
       return NextResponse.json(created, { status: 201 });
     }
   } catch (error) {

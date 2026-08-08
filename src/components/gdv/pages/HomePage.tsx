@@ -25,13 +25,13 @@ import AnimatedSection from '@/components/gdv/AnimatedSection';
 import PromoBanner from '@/components/gdv/PromoBanner';
 import { IMAGES, SERVICE_IMAGE_MAP } from '@/lib/images';
 import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 
 interface HomePageProps {
   services: { id: string; title: string; slug: string; shortDesc: string; icon: string }[] | null;
   testimonials: { id: string; name: string; role: string; content: string; rating: number }[] | null;
   homeSections: { sectionKey: string; title: string; subtitle: string; content: string }[] | null;
   ads: { id: string; title: string; description: string; imageUrl: string; linkUrl: string; whatsappMsg: string; position: string; active: boolean }[] | null;
-  onNavigate: (page: string) => void;
 }
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -58,7 +58,7 @@ const staggerContainer = {
   visible: { transition: { staggerChildren: 0.1 } },
 };
 
-export default function HomePage({ services, testimonials, homeSections, ads, onNavigate }: HomePageProps) {
+export default function HomePage({ services, testimonials, homeSections, ads }: HomePageProps) {
   const [testimonialIndex, setTestimonialIndex] = useState(0);
 
   const nextTestimonial = useCallback(() => {
@@ -143,27 +143,20 @@ export default function HomePage({ services, testimonials, homeSections, ads, on
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            variants={fadeInUp}
+            className="flex flex-col sm:flex-row items-center gap-4 pt-6 justify-center"
           >
-            <Button
-              onClick={() => onNavigate('services')}
-              size="lg"
-              className="bg-gdv-teal hover:bg-gdv-teal-light text-white font-semibold px-8 rounded-full shadow-lg shadow-gdv-teal/25 hover:shadow-xl hover:shadow-gdv-teal/30 transition-all duration-300 group"
-            >
-              Nos Services
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button
-              onClick={() => onNavigate('contact')}
-              size="lg"
-              variant="outline"
-              className="border-white/30 text-white hover:bg-white/10 hover:border-white/50 font-semibold px-8 rounded-full transition-all duration-300"
-            >
-              Contactez-nous
-            </Button>
+            <Link href="/services" passHref>
+              <Button className="w-full sm:w-auto h-12 px-8 text-base bg-gdv-teal hover:bg-gdv-teal-light text-white rounded-full">
+                Découvrir nos services
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </Link>
+            <Link href="/contact" passHref>
+              <Button variant="outline" className="w-full sm:w-auto h-12 px-8 text-base border-white text-white hover:bg-white/10 rounded-full">
+                Demander un devis
+              </Button>
+            </Link>
           </motion.div>
 
           {/* Stats */}
@@ -227,49 +220,49 @@ export default function HomePage({ services, testimonials, homeSections, ads, on
               const serviceImg = SERVICE_IMAGE_MAP[service.slug];
               return (
                 <motion.div key={service.id} variants={fadeInUp} custom={index * 0.08}>
-                  <Card
-                    onClick={() => onNavigate(`service-${service.slug}`)}
-                    className="group cursor-pointer border-gdv-brown-pale/40 hover:border-gdv-teal/40 bg-white hover:shadow-xl hover:shadow-gdv-teal/5 transition-all duration-300 overflow-hidden"
-                  >
-                    {/* Service image background */}
-                    <div className="relative h-40 overflow-hidden">
-                      {serviceImg && (
-                        <div
-                          className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500"
-                          style={{ backgroundImage: `url(${serviceImg})` }}
-                        />
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                      <div className="absolute bottom-4 left-4 w-12 h-12 rounded-xl bg-gdv-teal/90 flex items-center justify-center text-white group-hover:bg-gdv-teal group-hover:scale-110 transition-all duration-300 shadow-lg">
-                        {iconMap[service.icon] || <Plane className="w-7 h-7" />}
+                  <Link href={`/services/${service.slug}`}>
+                    <Card
+                      className="group cursor-pointer border-gdv-brown-pale/40 hover:border-gdv-teal/40 bg-white hover:shadow-xl hover:shadow-gdv-teal/5 transition-all duration-300 overflow-hidden"
+                    >
+                      {/* Service image background */}
+                      <div className="relative h-40 overflow-hidden">
+                        {serviceImg && (
+                          <div
+                            className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500"
+                            style={{ backgroundImage: `url(${serviceImg})` }}
+                          />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                        <div className="absolute bottom-4 left-4 w-12 h-12 rounded-xl bg-gdv-teal/90 flex items-center justify-center text-white group-hover:bg-gdv-teal group-hover:scale-110 transition-all duration-300 shadow-lg">
+                          {iconMap[service.icon] || <Plane className="w-7 h-7" />}
+                        </div>
                       </div>
-                    </div>
-                    <CardContent className="p-5">
-                      <h3 className="text-lg font-semibold text-gdv-brown mb-2 group-hover:text-gdv-teal transition-colors">
-                        {service.title}
-                      </h3>
-                      <p className="text-gdv-brown-light text-sm leading-relaxed line-clamp-2">
-                        {service.shortDesc}
-                      </p>
-                      <div className="mt-4 flex items-center gap-1 text-gdv-teal text-sm font-medium opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                        Découvrir <ArrowRight className="w-4 h-4" />
-                      </div>
-                    </CardContent>
-                  </Card>
+                      <CardContent className="p-5">
+                        <h3 className="text-lg font-semibold text-gdv-brown mb-2 group-hover:text-gdv-teal transition-colors">
+                          {service.title}
+                        </h3>
+                        <p className="text-gdv-brown-light text-sm leading-relaxed line-clamp-2">
+                          {service.shortDesc}
+                        </p>
+                        <div className="mt-4 flex items-center gap-1 text-gdv-teal text-sm font-medium opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                          Découvrir <ArrowRight className="w-4 h-4" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 </motion.div>
               );
             })}
           </motion.div>
 
-          <AnimatedSection delay={0.3} className="text-center mt-10">
-            <Button
-              onClick={() => onNavigate('services')}
-              variant="outline"
-              className="border-gdv-teal text-gdv-teal hover:bg-gdv-teal hover:text-white font-semibold rounded-full px-8 transition-all duration-300"
-            >
-              Voir tous les services <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </AnimatedSection>
+          <motion.div variants={fadeInUp} className="text-center mt-12">
+            <Link href="/services" passHref>
+              <Button variant="outline" className="border-gdv-teal text-gdv-teal hover:bg-gdv-teal hover:text-white rounded-full">
+                Voir tous nos services
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </motion.div>
         </div>
       </section>
 
@@ -430,14 +423,14 @@ export default function HomePage({ services, testimonials, homeSections, ads, on
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button
-                onClick={() => onNavigate('contact')}
-                size="lg"
-                className="bg-gdv-teal hover:bg-gdv-teal-light text-white font-semibold px-10 rounded-full shadow-lg shadow-gdv-teal/25 hover:shadow-xl transition-all duration-300 group"
-              >
-                Demander un Devis
-                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              <motion.div variants={fadeInUp}>
+                <Link href="/contact" passHref>
+                  <Button className="h-14 px-8 text-base bg-white text-gdv-teal hover:bg-gdv-cream hover:text-gdv-teal rounded-full shadow-xl shadow-gdv-teal/20 transition-all duration-300 hover:scale-105">
+                    Contactez-nous maintenant
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+              </motion.div>
               <a
                 href="https://wa.me/224627104646?text=Bonjour%2C%20je%20souhaite%20des%20informations%20sur%20vos%20services%20de%20voyage."
                 target="_blank"

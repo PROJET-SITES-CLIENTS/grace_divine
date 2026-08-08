@@ -1,7 +1,9 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   Phone,
   Mail,
@@ -20,8 +22,6 @@ import { parsePhones, parseEmails } from '@/lib/contacts';
 interface HeaderProps {
   pageVisibilities: { pageKey: string; title: string; visible: boolean; order: number }[] | null;
   settings: Record<string, string> | null;
-  onNavigate: (page: string) => void;
-  currentPage: string;
 }
 
 const navItems = [
@@ -37,11 +37,25 @@ const navItems = [
   { key: 'contact', label: 'Contact' },
 ];
 
-export default function Header({ pageVisibilities, settings, onNavigate, currentPage }: HeaderProps) {
+const pathMap: Record<string, string> = {
+  'accueil': '/',
+  'a-propos': '/a-propos',
+  'services': '/services',
+  'galerie': '/galerie',
+  'temoignages': '/temoignages',
+  'partenaires': '/partenaires',
+  'equipe': '/equipe',
+  'faq': '/faq',
+  'recrutement': '/recrutement',
+  'contact': '/contact',
+};
+
+export default function Header({ pageVisibilities, settings }: HeaderProps) {
   const allPhones = parsePhones(settings);
   const allEmails = parseEmails(settings);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 60);
@@ -58,16 +72,9 @@ export default function Header({ pageVisibilities, settings, onNavigate, current
     .filter((item) => item.visible)
     .sort((a, b) => a.order - b.order);
 
-  // Handle navigation: scroll to top
-  const prevPageRef = useRef(currentPage);
   useEffect(() => {
-    if (prevPageRef.current !== currentPage) {
-      prevPageRef.current = currentPage;
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentionally close menu on navigation
-      setMobileOpen(false);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [currentPage]);
+    setMobileOpen(false);
+  }, [pathname]);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
@@ -131,8 +138,8 @@ export default function Header({ pageVisibilities, settings, onNavigate, current
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
-            <button
-              onClick={() => onNavigate('accueil')}
+            <Link
+              href="/"
               className="flex items-center gap-2 group"
             >
               <div className="w-10 h-10 rounded-full bg-gdv-teal/10 flex items-center justify-center border border-gdv-teal/30 group-hover:bg-gdv-teal/20 transition-colors">
@@ -146,23 +153,23 @@ export default function Header({ pageVisibilities, settings, onNavigate, current
                   Voyage
                 </span>
               </div>
-            </button>
+            </Link>
 
             {/* Desktop Nav */}
             <div className="hidden lg:flex items-center gap-0.5">
               {visibleNavItems.map((item) => (
-                <button
+                <Link
                   key={item.key}
-                  onClick={() => onNavigate(item.key)}
+                  href={pathMap[item.key] || '/'}
                   className={`relative px-2 xl:px-3 py-2 text-xs font-medium rounded-lg transition-all duration-200 ${
-                    currentPage === item.key
+                    pathname === pathMap[item.key] || (pathname === '/' && item.key === 'accueil')
                       ? 'text-gdv-teal'
                       : 'text-gdv-brown-medium hover:text-gdv-brown hover:bg-gdv-beige/60'
                   }`}
                 >
                   <span className="flex items-center gap-1">
                     {item.label}
-                    {currentPage === item.key && (
+                    {(pathname === pathMap[item.key] || (pathname === '/' && item.key === 'accueil')) && (
                       <motion.div
                         layoutId="activeNav"
                         className="absolute bottom-0 left-1 right-1 h-0.5 bg-gdv-teal rounded-full"
@@ -170,19 +177,20 @@ export default function Header({ pageVisibilities, settings, onNavigate, current
                       />
                     )}
                   </span>
-                </button>
+                </Link>
               ))}
             </div>
 
             {/* Right side */}
             <div className="flex items-center gap-2 sm:gap-3">
-              <Button
-                onClick={() => onNavigate('contact')}
-                size="sm"
-                className="hidden sm:flex bg-gdv-teal hover:bg-gdv-teal-light text-white text-xs font-semibold px-4 rounded-full transition-all duration-200 hover:shadow-lg hover:shadow-gdv-teal/25"
-              >
-                Devis Gratuit
-              </Button>
+              <Link href="/contact" passHref>
+                <Button
+                  size="sm"
+                  className="hidden sm:flex bg-gdv-teal hover:bg-gdv-teal-light text-white text-xs font-semibold px-4 rounded-full transition-all duration-200 hover:shadow-lg hover:shadow-gdv-teal/25"
+                >
+                  Devis Gratuit
+                </Button>
+              </Link>
               {/* Mobile menu button */}
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
@@ -208,24 +216,21 @@ export default function Header({ pageVisibilities, settings, onNavigate, current
           >
             <div className="max-w-7xl mx-auto px-4 py-4 space-y-1">
               {visibleNavItems.map((item, index) => (
-                <motion.button
-                  key={item.key}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  onClick={() => {
-                    onNavigate(item.key);
-                    setMobileOpen(false);
-                  }}
-                  className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    currentPage === item.key
-                      ? 'bg-gdv-teal/10 text-gdv-teal border-l-2 border-gdv-teal'
-                      : 'text-gdv-brown-medium hover:bg-gdv-beige/60 hover:text-gdv-brown'
-                  }`}
-                >
-                  {item.label}
-                  <ChevronRight className="w-4 h-4 opacity-50" />
-                </motion.button>
+                <Link href={pathMap[item.key] || '/'} passHref key={item.key}>
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${
+                      pathname === pathMap[item.key] || (pathname === '/' && item.key === 'accueil')
+                        ? 'bg-gdv-teal/10 text-gdv-teal border-l-2 border-gdv-teal'
+                        : 'text-gdv-brown-medium hover:bg-gdv-beige/60 hover:text-gdv-brown'
+                    }`}
+                  >
+                    {item.label}
+                    <ChevronRight className="w-4 h-4 opacity-50" />
+                  </motion.div>
+                </Link>
               ))}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -233,15 +238,13 @@ export default function Header({ pageVisibilities, settings, onNavigate, current
                 transition={{ delay: visibleNavItems.length * 0.05 }}
                 className="pt-3 px-4"
               >
-                <Button
-                  onClick={() => {
-                    onNavigate('contact');
-                    setMobileOpen(false);
-                  }}
-                  className="w-full bg-gdv-teal hover:bg-gdv-teal-light text-white font-semibold rounded-full"
-                >
-                  Devis Gratuit
-                </Button>
+                <Link href="/contact" passHref>
+                  <Button
+                    className="w-full bg-gdv-teal hover:bg-gdv-teal-light text-white font-semibold rounded-full"
+                  >
+                    Devis Gratuit
+                  </Button>
+                </Link>
               </motion.div>
             </div>
           </motion.div>

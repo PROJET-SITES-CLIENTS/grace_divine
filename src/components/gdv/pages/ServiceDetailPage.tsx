@@ -19,10 +19,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import AnimatedSection from '@/components/gdv/AnimatedSection';
 import { SERVICE_IMAGE_MAP } from '@/lib/images';
+import Link from 'next/link';
 
 interface ServiceDetailPageProps {
   slug: string;
-  onNavigate: (page: string) => void;
 }
 
 interface ServiceData {
@@ -59,7 +59,7 @@ const staggerContainer = {
   visible: { transition: { staggerChildren: 0.08 } },
 };
 
-export default function ServiceDetailPage({ slug, onNavigate }: ServiceDetailPageProps) {
+export default function ServiceDetailPage({ slug }: ServiceDetailPageProps) {
   const [service, setService] = useState<ServiceData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -87,9 +87,11 @@ export default function ServiceDetailPage({ slug, onNavigate }: ServiceDetailPag
       <div className="min-h-screen flex items-center justify-center bg-gdv-cream">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gdv-brown mb-4">Service non trouvé</h2>
-          <Button onClick={() => onNavigate('services')} variant="outline" className="border-gdv-teal text-gdv-teal rounded-full">
-            Retour aux services
-          </Button>
+          <Link href="/services" passHref>
+            <Button variant="outline" className="border-gdv-teal text-gdv-teal rounded-full">
+              Retour aux services
+            </Button>
+          </Link>
         </div>
       </div>
     );
@@ -129,14 +131,18 @@ export default function ServiceDetailPage({ slug, onNavigate }: ServiceDetailPag
             transition={{ duration: 0.5 }}
             className="flex items-center gap-2 text-white/60 text-sm mb-8"
           >
-            <button onClick={() => onNavigate('accueil')} className="hover:text-gdv-teal-light transition-colors flex items-center gap-1">
-              <Home className="w-4 h-4" />
-              Accueil
-            </button>
+            <Link href="/" passHref>
+              <button className="hover:text-gdv-teal-light transition-colors flex items-center gap-1">
+                <Home className="w-4 h-4" />
+                Accueil
+              </button>
+            </Link>
             <ChevronRight className="w-4 h-4" />
-            <button onClick={() => onNavigate('services')} className="hover:text-gdv-teal-light transition-colors">
-              Services
-            </button>
+            <Link href="/services" passHref>
+              <button className="hover:text-gdv-teal-light transition-colors">
+                Services
+              </button>
+            </Link>
             <ChevronRight className="w-4 h-4" />
             <span className="text-gdv-teal-light">{service.title}</span>
           </motion.nav>
@@ -221,13 +227,14 @@ export default function ServiceDetailPage({ slug, onNavigate }: ServiceDetailPag
                     <p className="text-white/70 text-sm mb-5">
                       Demandez un devis gratuit pour ce service.
                     </p>
-                    <Button
-                      onClick={() => onNavigate('contact')}
-                      className="w-full bg-gdv-teal hover:bg-gdv-teal-light text-white font-semibold rounded-full transition-all duration-300 group"
-                    >
-                      Demander un Devis
-                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                    </Button>
+                    <div className="mt-8">
+                      <Link href="/contact" passHref>
+                        <Button className="w-full h-12 bg-gdv-teal hover:bg-gdv-teal-light text-white rounded-full">
+                          Demander ce service
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      </Link>
+                    </div>
                     <a
                       href={`https://wa.me/224627104646?text=${encodeURIComponent(`Bonjour, je suis intéressé par votre service de ${service.title}. Pouvez-vous me donner plus d'informations ?`)}`}
                       target="_blank"

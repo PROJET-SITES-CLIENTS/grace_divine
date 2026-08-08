@@ -15,10 +15,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import AnimatedSection from '@/components/gdv/AnimatedSection';
 import { IMAGES, SERVICE_IMAGE_MAP } from '@/lib/images';
+import Link from 'next/link';
 
 interface ServicesPageProps {
   services: { id: string; title: string; slug: string; shortDesc: string; icon: string }[] | null;
-  onNavigate: (page: string) => void;
 }
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -45,7 +45,7 @@ const fadeInUp = {
   }),
 };
 
-export default function ServicesPage({ services, onNavigate }: ServicesPageProps) {
+export default function ServicesPage({ services }: ServicesPageProps) {
   return (
     <div>
       {/* Hero */}
@@ -126,6 +126,15 @@ export default function ServicesPage({ services, onNavigate }: ServicesPageProps
                     <div className="h-0.5 bg-gradient-to-r from-gdv-teal via-gdv-teal-light to-gdv-teal transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
 
                     <CardContent className="p-6">
+                      <div className="absolute inset-0 bg-gdv-dark/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm z-20">
+                        <Link href={`/services/${service.slug}`} passHref>
+                          <Button
+                            className="bg-white text-gdv-teal hover:bg-gdv-teal hover:text-white rounded-full transition-colors"
+                          >
+                            Voir les détails
+                          </Button>
+                        </Link>
+                      </div>
                       <h3 className="text-xl font-bold text-gdv-brown mb-3 group-hover:text-gdv-teal transition-colors font-serif">
                         {service.title}
                       </h3>
@@ -155,14 +164,14 @@ export default function ServicesPage({ services, onNavigate }: ServicesPageProps
             <p className="text-white/70 mb-8">
               Contactez-nous pour discuter de vos besoins et obtenir un devis personnalisé.
             </p>
-            <Button
-              onClick={() => onNavigate('contact')}
-              size="lg"
-              className="bg-gdv-teal hover:bg-gdv-teal-light text-white font-semibold px-10 rounded-full shadow-lg transition-all duration-300 group"
-            >
-              Demander un Devis
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            <AnimatedSection delay={0.4} className="mt-8 flex justify-center">
+              <Link href="/contact" passHref>
+                <Button className="h-14 px-8 text-base bg-white text-gdv-teal hover:bg-gdv-cream hover:text-gdv-teal rounded-full shadow-xl shadow-gdv-teal/20 transition-all duration-300 hover:scale-105">
+                  Demander un devis personnalisé
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
+            </AnimatedSection>
           </AnimatedSection>
         </div>
       </section>

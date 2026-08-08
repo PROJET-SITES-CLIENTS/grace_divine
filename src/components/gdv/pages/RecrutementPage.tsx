@@ -7,10 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import AnimatedSection from '@/components/gdv/AnimatedSection';
 import { IMAGES } from '@/lib/images';
+import Link from 'next/link';
 
 interface RecrutementPageProps {
   jobs: { id: string; title: string; description: string; requirements: string; location: string; type: string }[] | null;
-  onNavigate: (page: string) => void;
 }
 
 const staggerContainer = {
@@ -27,7 +27,7 @@ const fadeInUp = {
   }),
 };
 
-export default function RecrutementPage({ jobs, onNavigate }: RecrutementPageProps) {
+export default function RecrutementPage({ jobs }: RecrutementPageProps) {
   return (
     <div>
       {/* Hero */}

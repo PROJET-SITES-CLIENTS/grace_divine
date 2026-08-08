@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import AnimatedSection from '@/components/gdv/AnimatedSection';
 import { IMAGES } from '@/lib/images';
+import Link from 'next/link';
 
 interface AboutPageProps {
   aboutData: {
@@ -17,7 +18,6 @@ interface AboutPageProps {
     story: string;
   } | null;
   team: { id: string; name: string; role: string; bio: string; photo: string }[] | null;
-  onNavigate: (page: string) => void;
 }
 
 const staggerContainer = {
@@ -34,7 +34,7 @@ const fadeInUp = {
   }),
 };
 
-export default function AboutPage({ aboutData, team, onNavigate }: AboutPageProps) {
+export default function AboutPage({ aboutData, team }: AboutPageProps) {
   let values: string[] = [];
   try {
     if (aboutData?.values) {
@@ -216,15 +216,13 @@ export default function AboutPage({ aboutData, team, onNavigate }: AboutPageProp
               ))}
             </motion.div>
 
-            <AnimatedSection delay={0.3} className="text-center mt-10">
-              <Button
-                onClick={() => onNavigate('equipe')}
-                variant="outline"
-                className="border-gdv-teal text-gdv-teal hover:bg-gdv-teal hover:text-white font-semibold rounded-full px-8 transition-all duration-300"
-              >
-                <Users className="w-4 h-4 mr-2" />
-                Voir l&apos;équipe <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
+            <AnimatedSection delay={0.4} className="text-center mt-12">
+              <Link href="/equipe" passHref>
+                <Button variant="outline" className="border-gdv-teal text-gdv-teal hover:bg-gdv-teal hover:text-white rounded-full">
+                  Voir toute l'équipe
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
             </AnimatedSection>
           </div>
         </section>
