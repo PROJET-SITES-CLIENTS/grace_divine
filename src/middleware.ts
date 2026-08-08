@@ -6,6 +6,7 @@ export default withAuth(
     // Si on est sur une route API et que ce n'est pas un GET, il faut être authentifié
     if (req.nextUrl.pathname.startsWith("/api/") && !req.nextUrl.pathname.startsWith("/api/auth/")) {
       if (req.method !== "GET" && !req.nextauth.token) {
+        console.log(`[Middleware] Blocage 401 de la requête ${req.method} vers ${req.nextUrl.pathname}`);
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
       }
     }
