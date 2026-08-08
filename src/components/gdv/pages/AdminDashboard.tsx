@@ -200,14 +200,14 @@ export default function AdminDashboard({}: AdminDashboardProps = {}) {
   // Settings
   const saveSettings = async (newSettings: Record<string, string>) => {
     setSettings(newSettings);
-    await fetch('/api/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newSettings) });
+    await fetch('/api/settings', { method: 'PUT', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newSettings) });
     toast({ title: 'Paramètres sauvegardés' });
     notifyDataChanged();
   };
 
   // Pages visibility
   const togglePage = async (pageKey: string, visible: boolean) => {
-    await fetch('/api/pages-visibility', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pageKey, visible }) });
+    await fetch('/api/pages-visibility', { method: 'PUT', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pageKey, visible }) });
     setPages(pages.map((p) => (p.pageKey === pageKey ? { ...p, visible } : p)));
     toast({ title: 'Visibilité mise à jour' });
     notifyDataChanged();
@@ -215,7 +215,7 @@ export default function AdminDashboard({}: AdminDashboardProps = {}) {
 
   // Generic delete
   const deleteItem = async (url: string, id: string, list: any[], setList: (v: any[]) => void) => {
-    await fetch(`${url}/${id}`, { method: 'DELETE' });
+    await fetch(`${url}/${id}`, { method: 'DELETE', credentials: 'include' });
     setList(list.filter((item) => item.id !== id));
     toast({ title: 'Élément supprimé' });
     notifyDataChanged();
@@ -223,7 +223,7 @@ export default function AdminDashboard({}: AdminDashboardProps = {}) {
 
   // Generic create
   const createItem = async (url: string, data: any, list: any[], setList: (v: any[]) => void) => {
-    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    const res = await fetch(url, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
     const item = await res.json();
     setList([...list, item]);
     toast({ title: 'Élément créé' });
@@ -233,7 +233,7 @@ export default function AdminDashboard({}: AdminDashboardProps = {}) {
 
   // Generic update
   const updateItem = async (url: string, id: string, data: any, list: any[], setList: (v: any[]) => void) => {
-    const res = await fetch(`${url}/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    const res = await fetch(`${url}/${id}`, { method: 'PUT', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
     const item = await res.json();
     setList(list.map((l) => (l.id === id ? { ...l, ...item } : l)));
     toast({ title: 'Élément mis à jour' });
