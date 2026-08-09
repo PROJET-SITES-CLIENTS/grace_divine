@@ -13,9 +13,9 @@ import {
   Youtube,
   Menu,
   X,
-  Plane,
   ChevronRight,
 } from 'lucide-react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { parsePhones, parseEmails } from '@/lib/contacts';
 
@@ -138,20 +138,16 @@ export default function Header({ pageVisibilities, settings }: HeaderProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
-            <Link
-              href="/"
-              className="flex items-center gap-2 group"
-            >
-              <div className="w-10 h-10 rounded-full bg-gdv-teal/10 flex items-center justify-center border border-gdv-teal/30 group-hover:bg-gdv-teal/20 transition-colors">
-                <Plane className="w-5 h-5 text-gdv-teal" />
-              </div>
-              <div className="flex flex-col leading-tight">
-                <span className="text-lg lg:text-xl font-bold text-gdv-brown tracking-wide">
-                  Grace Divine
-                </span>
-                <span className="text-gdv-teal text-sm lg:text-base font-semibold tracking-widest uppercase">
-                  Voyage
-                </span>
+            <Link href="/" className="flex items-center gap-2 group">
+              <div className="flex items-center">
+                <Image
+                  src="/logo.jpg"
+                  alt="Grace Divine Voyage"
+                  width={48}
+                  height={48}
+                  className="h-12 w-auto object-contain rounded"
+                  priority
+                />
               </div>
             </Link>
 

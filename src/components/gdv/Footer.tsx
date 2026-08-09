@@ -11,10 +11,10 @@ import {
   Instagram,
   Twitter,
   Youtube,
-  Plane,
   Send,
   ArrowRight,
 } from 'lucide-react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { parsePhones, parseEmails } from '@/lib/contacts';
@@ -90,13 +90,13 @@ export default function Footer({ pageVisibilities, settings }: FooterProps) {
             className="space-y-4"
           >
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-gdv-gold/20 flex items-center justify-center border border-gdv-gold/40">
-                <Plane className="w-5 h-5 text-gdv-gold" />
-              </div>
-              <div className="flex flex-col leading-tight">
-                <span className="text-lg font-bold text-gdv-cream">Grace Divine</span>
-                <span className="text-gdv-gold text-sm font-semibold tracking-widest uppercase">Voyage</span>
-              </div>
+              <Image
+                src="/logo.jpg"
+                alt="Grace Divine Voyage"
+                width={120}
+                height={48}
+                className="h-14 w-auto object-contain brightness-0 invert"
+              />
             </div>
             <p className="text-gdv-cream/60 text-sm italic font-serif">
               &ldquo;Vous satisfaire est notre priorité&rdquo;

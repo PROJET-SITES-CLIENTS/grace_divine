@@ -27,8 +27,10 @@ export const metadata: Metadata = {
   keywords: ["voyage", "billet d'avion", "visa", "hotel", "Guinee", "Conakry", "grace divine voyage"],
   icons: {
     icon: [
-    { url: "/favicon.svg", type: "image/svg+xml" },
-  ],
+      { url: '/favicon.jpg', type: 'image/jpeg' },
+    ],
+    apple: '/favicon.jpg',
+    shortcut: '/favicon.jpg',
   },
   openGraph: {
     title: "Grace Divine Voyage | Agence de Voyage",
