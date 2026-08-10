@@ -229,7 +229,7 @@ export default function HomePage({ services, testimonials, homeSections, ads }: 
                         {serviceImg && (
                           <div
                             className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500"
-                            style={{ backgroundImage: `url(${serviceImg})` }}
+                            style={{ backgroundImage: `url("${serviceImg}")` }}
                           />
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />

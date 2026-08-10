@@ -33,6 +33,7 @@ interface ServiceData {
   description: string;
   icon: string;
   features: string;
+  image?: string;
 }
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -114,7 +115,7 @@ export default function ServiceDetailPage({ slug }: ServiceDetailPageProps) {
       <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${serviceImg || ''})` }}
+          style={{ backgroundImage: `url("${serviceImg || ''}")` }}
         />
         <div className="hero-overlay absolute inset-0" />
         <motion.div

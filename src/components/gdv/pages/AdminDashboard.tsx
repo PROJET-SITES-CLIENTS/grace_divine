@@ -235,7 +235,7 @@ export default function AdminDashboard({}: AdminDashboardProps = {}) {
   const updateItem = async (url: string, id: string, data: any, list: any[], setList: (v: any[]) => void) => {
     const res = await fetch(`${url}/${id}`, { method: 'PUT', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
     const item = await res.json();
-    setList(list.map((l) => (l.id === id ? { ...l, ...item } : l)));
+    setList(list.map((l) => ((l.id === item.id || l.slug === id || l.pageKey === id) ? { ...l, ...item } : l)));
     toast({ title: 'Élément mis à jour' });
     notifyDataChanged();
   };
