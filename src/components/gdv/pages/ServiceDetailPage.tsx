@@ -106,7 +106,7 @@ export default function ServiceDetailPage({ slug }: ServiceDetailPageProps) {
   } catch {
     features = [];
   }
-  const serviceImg = service.image || SERVICE_IMAGE_MAP[service.slug];
+  const serviceImg = service.image || SERVICE_IMAGE_MAP[service.slug] || IMAGES.servicesHero;
 
   return (
     <div>

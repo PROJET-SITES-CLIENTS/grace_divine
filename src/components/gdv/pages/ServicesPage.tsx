@@ -10,6 +10,7 @@ import {
   Car,
   Package,
   ArrowRight,
+  CheckCircle2,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,7 +19,7 @@ import { IMAGES, SERVICE_IMAGE_MAP } from '@/lib/images';
 import Link from 'next/link';
 
 interface ServicesPageProps {
-  services: { id: string; title: string; slug: string; shortDesc: string; icon: string }[] | null;
+  services: { id: string; title: string; slug: string; shortDesc: string; icon: string; image?: string; features?: any }[] | null;
 }
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -100,7 +101,17 @@ export default function ServicesPage({ services }: ServicesPageProps) {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             {services?.map((service, index) => {
-              const serviceImg = service.image || SERVICE_IMAGE_MAP[service.slug];
+              const serviceImg = service.image || SERVICE_IMAGE_MAP[service.slug] || IMAGES.servicesHero;
+              let features: string[] = [];
+              try {
+                if (service.features) {
+                  const parsed = typeof service.features === 'string' ? JSON.parse(service.features) : service.features;
+                  features = Array.isArray(parsed) ? parsed.map(String) : [];
+                }
+              } catch {
+                features = [];
+              }
+              
               return (
                 <motion.div key={service.id} variants={fadeInUp} custom={index * 0.1}>
                   <Link href={`/services/${service.slug}`}>
@@ -126,17 +137,24 @@ export default function ServicesPage({ services }: ServicesPageProps) {
                     <div className="h-0.5 bg-gradient-to-r from-gdv-teal via-gdv-teal-light to-gdv-teal transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
 
                     <CardContent className="p-6">
-                      <div className="absolute inset-0 bg-gdv-dark/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm z-20">
-                        <span className="bg-white text-gdv-teal hover:bg-gdv-teal hover:text-white rounded-full transition-colors px-4 py-2 text-sm font-medium">
-                          Voir les détails
-                        </span>
-                      </div>
                       <h3 className="text-xl font-bold text-gdv-brown mb-3 group-hover:text-gdv-teal transition-colors font-serif">
                         {service.title}
                       </h3>
                       <p className="text-gdv-brown-light text-sm leading-relaxed mb-6">
                         {service.shortDesc}
                       </p>
+                      
+                      {features.length > 0 && (
+                        <ul className="space-y-2 mb-6">
+                          {features.slice(0, 3).map((feature: string, idx: number) => (
+                            <li key={idx} className="flex items-start gap-2 text-sm text-gdv-brown-light">
+                              <CheckCircle2 className="w-4 h-4 text-gdv-teal mt-0.5 flex-shrink-0" />
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      
                       <div className="flex items-center gap-2 text-gdv-teal text-sm font-semibold group-hover:gap-3 transition-all duration-300">
                         En savoir plus
                         <ArrowRight className="w-4 h-4" />
