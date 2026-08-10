@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { siteSettingsSchema } from '@/lib/validations_extras';
@@ -27,9 +28,11 @@ export async function PUT(request: NextRequest) {
         where: { id: existing.id },
         data: data,
       });
+      revalidatePath('/', 'layout');
       return NextResponse.json(updated);
     } else {
       const created = await db.siteSettings.create({ data: data });
+      revalidatePath('/', 'layout');
       return NextResponse.json(created, { status: 201 });
     }
   } catch (error) {

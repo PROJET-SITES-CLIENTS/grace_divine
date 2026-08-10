@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { jobSchema } from '@/lib/validations';
@@ -25,7 +26,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validated.error.flatten().fieldErrors }, { status: 400 });
     }
     const job = await db.jobListing.create({ data: validated.data });
-    return NextResponse.json(job, { status: 201 });
+    revalidatePath('/', 'layout');
+      return NextResponse.json(job, { status: 201 });
   } catch (error) {
     console.error('Error creating job:', error);
     return NextResponse.json({ error: 'Failed to create job' }, { status: 500 });

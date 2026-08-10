@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { contactSchema } from '@/lib/validations';
@@ -22,7 +23,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validated.error.flatten().fieldErrors }, { status: 400 });
     }
     const submission = await db.contactSubmission.create({ data: validated.data });
-    return NextResponse.json(submission, { status: 201 });
+    revalidatePath('/', 'layout');
+      return NextResponse.json(submission, { status: 201 });
   } catch (error) {
     console.error('Error creating contact submission:', error);
     return NextResponse.json({ error: 'Failed to create contact submission' }, { status: 500 });

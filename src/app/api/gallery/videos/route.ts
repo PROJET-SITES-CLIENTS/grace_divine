@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { galleryVideoSchema } from '@/lib/validations';
@@ -25,7 +26,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validated.error.flatten().fieldErrors }, { status: 400 });
     }
     const video = await db.galleryVideo.create({ data: validated.data });
-    return NextResponse.json(video, { status: 201 });
+    revalidatePath('/', 'layout');
+      return NextResponse.json(video, { status: 201 });
   } catch (error) {
     console.error('Error creating gallery video:', error);
     return NextResponse.json({ error: 'Failed to create gallery video' }, { status: 500 });

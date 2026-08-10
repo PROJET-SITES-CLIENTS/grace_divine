@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { teamMemberSchema } from '@/lib/validations';
@@ -26,7 +27,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validated.error.flatten().fieldErrors }, { status: 400 });
     }
     const member = await db.teamMember.create({ data: validated.data });
-    return NextResponse.json(member, { status: 201 });
+    revalidatePath('/', 'layout');
+      return NextResponse.json(member, { status: 201 });
   } catch (error) {
     console.error('Error creating team member:', error);
     return NextResponse.json({ error: 'Failed to create team member' }, { status: 500 });

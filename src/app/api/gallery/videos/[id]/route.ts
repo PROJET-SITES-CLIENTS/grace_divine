@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -12,7 +13,8 @@ export async function PUT(
       where: { id },
       data: body,
     });
-    return NextResponse.json(video);
+    revalidatePath('/', 'layout');
+      return NextResponse.json(video);
   } catch (error) {
     console.error('Error updating gallery video:', error);
     return NextResponse.json({ error: 'Failed to update gallery video' }, { status: 500 });

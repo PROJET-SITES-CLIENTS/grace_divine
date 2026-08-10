@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -24,7 +25,8 @@ export async function PUT(request: NextRequest) {
       update: { visible },
       create: { pageKey, visible, title: pageKey.charAt(0).toUpperCase() + pageKey.slice(1) },
     });
-    return NextResponse.json(updated);
+    revalidatePath('/', 'layout');
+      return NextResponse.json(updated);
   } catch (error) {
     console.error('Error updating page visibility:', error);
     return NextResponse.json({ error: 'Failed to update page visibility' }, { status: 500 });

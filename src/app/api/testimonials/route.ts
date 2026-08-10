@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { testimonialSchema } from '@/lib/validations';
@@ -25,7 +26,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validated.error.flatten().fieldErrors }, { status: 400 });
     }
     const testimonial = await db.testimonial.create({ data: validated.data });
-    return NextResponse.json(testimonial, { status: 201 });
+    revalidatePath('/', 'layout');
+      return NextResponse.json(testimonial, { status: 201 });
   } catch (error) {
     console.error('Error creating testimonial:', error);
     return NextResponse.json({ error: 'Failed to create testimonial' }, { status: 500 });

@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -29,7 +30,8 @@ export async function PUT(
       where: { slug },
       data: body,
     });
-    return NextResponse.json(service);
+    revalidatePath('/', 'layout');
+      return NextResponse.json(service);
   } catch (error) {
     console.error('Error updating service:', error);
     return NextResponse.json({ error: 'Failed to update service' }, { status: 500 });

@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { adSchema } from '@/lib/validations';
@@ -23,7 +24,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validated.error.flatten().fieldErrors }, { status: 400 });
     }
     const ad = await db.promotionalAd.create({ data: validated.data });
-    return NextResponse.json(ad, { status: 201 });
+    revalidatePath('/', 'layout');
+      return NextResponse.json(ad, { status: 201 });
   } catch (error) {
     console.error('Error creating ad:', error);
     return NextResponse.json({ error: 'Failed to create ad' }, { status: 500 });

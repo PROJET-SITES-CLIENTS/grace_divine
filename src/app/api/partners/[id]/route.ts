@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -12,7 +13,8 @@ export async function PUT(
       where: { id },
       data: body,
     });
-    return NextResponse.json(partner);
+    revalidatePath('/', 'layout');
+      return NextResponse.json(partner);
   } catch (error) {
     console.error('Error updating partner:', error);
     return NextResponse.json({ error: 'Failed to update partner' }, { status: 500 });
