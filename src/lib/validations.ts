@@ -25,6 +25,7 @@ export const serviceSchema = z.object({
   shortDesc: z.string().max(500).optional(),
   description: z.string().max(5000).optional(),
   icon: z.string().max(100).optional(),
+  image: z.string().max(500).optional(),
   features: jsonArrayString.optional(),
   visible: z.boolean().optional().default(true),
   order: z.number().int().optional(),

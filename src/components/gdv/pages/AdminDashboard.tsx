@@ -1002,6 +1002,7 @@ function ServiceForm({ initial, onSave }: { initial?: Record<string, any>; onSav
           <div className="space-y-2"><Label>Slug *</Label><Input value={data.slug || ''} onChange={(e) => setData({ ...data, slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') })} /></div>
         </div>
         <div className="space-y-2"><Label>Icône</Label><Input value={data.icon || ''} onChange={(e) => setData({ ...data, icon: e.target.value })} placeholder="Plane, Ticket, Passport, Hotel, ShieldCheck, Car, Package" /></div>
+        <div className="space-y-2"><Label>URL de l&apos;image</Label><Input value={data.image || ''} onChange={(e) => setData({ ...data, image: e.target.value })} placeholder="Lien vers l'image du service" /></div>
         <div className="space-y-2"><Label>Courte description</Label><Input value={data.shortDesc || ''} onChange={(e) => setData({ ...data, shortDesc: e.target.value })} /></div>
         <div className="space-y-2"><Label>Description complète</Label><Textarea value={data.description || ''} onChange={(e) => setData({ ...data, description: e.target.value })} rows={4} /></div>
         <div className="space-y-2">

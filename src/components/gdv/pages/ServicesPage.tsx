@@ -100,14 +100,14 @@ export default function ServicesPage({ services }: ServicesPageProps) {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             {services?.map((service, index) => {
-              const serviceImg = SERVICE_IMAGE_MAP[service.slug];
+              const serviceImg = service.image || SERVICE_IMAGE_MAP[service.slug];
               return (
                 <motion.div key={service.id} variants={fadeInUp} custom={index * 0.1}>
-                  <Card
-                    onClick={() => onNavigate(`service-${service.slug}`)}
-                    className="group cursor-pointer border-gdv-brown-pale/30 bg-white hover:shadow-2xl hover:shadow-gdv-teal/10 transition-all duration-500 overflow-hidden h-full"
-                  >
-                    {/* Service image background */}
+                  <Link href={`/services/${service.slug}`}>
+                    <Card
+                      className="group cursor-pointer border-gdv-brown-pale/30 bg-white hover:shadow-2xl hover:shadow-gdv-teal/10 transition-all duration-500 overflow-hidden h-full"
+                    >
+                      {/* Service image background */}
                     <div className="relative h-48 overflow-hidden">
                       {serviceImg && (
                         <div
@@ -127,13 +127,9 @@ export default function ServicesPage({ services }: ServicesPageProps) {
 
                     <CardContent className="p-6">
                       <div className="absolute inset-0 bg-gdv-dark/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm z-20">
-                        <Link href={`/services/${service.slug}`} passHref>
-                          <Button
-                            className="bg-white text-gdv-teal hover:bg-gdv-teal hover:text-white rounded-full transition-colors"
-                          >
-                            Voir les détails
-                          </Button>
-                        </Link>
+                        <span className="bg-white text-gdv-teal hover:bg-gdv-teal hover:text-white rounded-full transition-colors px-4 py-2 text-sm font-medium">
+                          Voir les détails
+                        </span>
                       </div>
                       <h3 className="text-xl font-bold text-gdv-brown mb-3 group-hover:text-gdv-teal transition-colors font-serif">
                         {service.title}
@@ -147,6 +143,7 @@ export default function ServicesPage({ services }: ServicesPageProps) {
                       </div>
                     </CardContent>
                   </Card>
+                </Link>
                 </motion.div>
               );
             })}
