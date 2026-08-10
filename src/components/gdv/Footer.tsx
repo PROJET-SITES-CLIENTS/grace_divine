@@ -91,11 +91,11 @@ export default function Footer({ pageVisibilities, settings }: FooterProps) {
           >
             <div className="flex items-center gap-2">
               <Image
-                src="/logo.jpg"
+                src="/logo.png"
                 alt="Grace Divine Voyage"
                 width={120}
                 height={48}
-                className="h-14 w-auto object-contain brightness-0 invert"
+                className="h-14 w-auto object-contain"
               />
             </div>
             <p className="text-gdv-cream/60 text-sm italic font-serif">

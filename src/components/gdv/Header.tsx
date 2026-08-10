@@ -141,7 +141,7 @@ export default function Header({ pageVisibilities, settings }: HeaderProps) {
             <Link href="/" className="flex items-center gap-2 group">
               <div className="flex items-center">
                 <Image
-                  src="/logo.jpg"
+                  src="/logo.png"
                   alt="Grace Divine Voyage"
                   width={48}
                   height={48}
